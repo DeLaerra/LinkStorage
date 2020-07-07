@@ -1,0 +1,18 @@
+server:
+  port: 8081
+
+logging:
+  level:
+    liquibase: INFO
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/сlothingstore
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+  jpa:
+    hibernate:
+      ddl-auto: none
