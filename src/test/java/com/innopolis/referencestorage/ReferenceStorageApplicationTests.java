@@ -1,10 +1,10 @@
-package com.innopolis.clothingstorerep;
+package com.innopolis.referencestorage;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ClothingstoreApplicationTests {
+class ReferenceStorageApplicationTests {
 
 	@Test
 	void contextLoads() {

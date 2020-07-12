@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.innopolis</groupId>
-    <artifactId>clothingstorerep</artifactId>
+    <artifactId>referencestorage</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>clothingstorerep</name>
-    <description>Online clothing store</description>
+    <name>referencestorage</name>
+    <description>Reference storage</description>
     <packaging>jar</packaging>
 
     <properties>
@@ -57,21 +57,27 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
-            <optional>true</optional>
         </dependency>
 
         <!--Adding Lombok Annotations-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <scope>provided</scope>
             <optional>true</optional>
             <version>${lombok.version}</version>
         </dependency>
 
         <!--Template Engine, WebJars-->
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-freemarker -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>2.3.30</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>

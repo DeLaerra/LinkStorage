@@ -4,10 +4,13 @@ server:
 logging:
   level:
     liquibase: INFO
-
+upload:
+  path: /home/dru/dev/sweater/uploads
 spring:
+  freemarker:
+    expose-request-attributes: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/сlothingstore
+    url: jdbc:postgresql://localhost:5432/reference-storage
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -16,3 +19,5 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+  mvc:
+    static-path-pattern: /static/**
