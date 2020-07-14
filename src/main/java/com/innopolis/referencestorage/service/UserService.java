@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException{
+    public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
         User user = userRepo.findByEmail(email);
 
         if (user == null) {
@@ -62,5 +62,4 @@ public class UserService implements UserDetailsService {
         String salt = BCrypt.gensalt(12);
         return (BCrypt.hashpw(password, salt));
     }
-
 }

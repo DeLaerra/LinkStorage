@@ -1,7 +1,10 @@
 package com.innopolis.referencestorage.repos;
 
 import com.innopolis.referencestorage.domain.Reference;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -10,8 +13,11 @@ import java.util.List;
  *
  * @author Roman Khokhlov
  */
-public interface ReferenceRepo extends CrudRepository<Reference, Long> {
-
+@Repository
+public interface ReferenceRepo extends JpaRepository<Reference, Long> {
     List<Reference> findByTag(String tag);
 
+    List<Reference> findByUidUser(Long uid);
+
+    Page<Reference> findByUidUser(Long uid, Pageable page);
 }
