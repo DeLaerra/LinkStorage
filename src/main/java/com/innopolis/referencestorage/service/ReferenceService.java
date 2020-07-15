@@ -8,8 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class ReferenceService {
     private ReferenceRepo referenceRepo;
@@ -19,11 +17,7 @@ public class ReferenceService {
         this.referenceRepo = referenceRepo;
     }
 
-    public List<Reference> loadAllUserRefs(User author) {
-        return referenceRepo.findByUidUser(author.getUid());
-    }
-
-    public Page<Reference> loadSortedUserRefs(User author, Pageable pageable) {
+    public Page<Reference> loadRefsByUserUid(User author, Pageable pageable) {
         return referenceRepo.findByUidUser(author.getUid(), pageable);
     }
 }

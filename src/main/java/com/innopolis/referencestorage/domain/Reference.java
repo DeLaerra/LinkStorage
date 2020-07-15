@@ -2,6 +2,9 @@ package com.innopolis.referencestorage.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.NumericField;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -14,6 +17,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "refs")
+@Indexed
 public class Reference {
     @Id
     @Getter
@@ -21,21 +25,27 @@ public class Reference {
     private Long uid;
     @Getter
     @Setter
+    @Field
+    @NumericField
     private Long uidUser;
     @Getter
     @Setter
+    @Field
     private String name;
     @Getter
     @Setter
+    @Field
     private String url;
     @Getter
     @Setter
+    @Field
     private String description;
     @Getter
     @Setter
     private byte uidReferenceType;
     @Getter
     @Setter
+    @Field
     private String tag;
     @Getter
     @Setter
@@ -43,6 +53,7 @@ public class Reference {
     private LocalDate additionDate;
     @Getter
     @Setter
+    @Field
     private String source;
     @Getter
     @Setter
@@ -53,6 +64,8 @@ public class Reference {
     private int rating;
     @Getter
     @Setter
+    @Field
+    @NumericField
     private int uidAccessLevel;
     @Getter
     @Setter
