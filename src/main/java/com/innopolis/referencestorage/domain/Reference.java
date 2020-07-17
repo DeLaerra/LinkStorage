@@ -21,7 +21,7 @@ public class Reference {
     @Id
     @Getter
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long uid;
+    public Long uid;
     @Getter
     @Setter
     private Long uidUser;

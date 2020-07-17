@@ -83,14 +83,14 @@ public class ReferenceService {
         return objectMapper.valueToTree(item);
     }
 
-    public JsonNode deleteRef(Long refId) {
+    public Reference deleteRef(Long refId) {
         log.info("Получен запрос на удаление ссылки'\n Ид элемента- {}", refId);
 
         Reference item = checkIfReferenceExists(refId);
 
         referenceRepo.delete(item);
 
-        return objectMapper.valueToTree(item);
+        return item;
     }
 
     /**
