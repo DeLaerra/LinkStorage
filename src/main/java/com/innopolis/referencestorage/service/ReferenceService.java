@@ -34,7 +34,7 @@ public class ReferenceService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final Short ADD_METHOD = 0;
+    private final Short UID_ADDITION_METHOD = 0;
 
 
     public List<Reference> loadAllUserRefs(User author) {
@@ -48,32 +48,38 @@ public class ReferenceService {
     /**
      *
      * @param userId - for which user reference
-     * @param detail - reference json
-     * @return json with id or exception
+     * @param reference - reference json
+     * @return reference
      */
-    public Reference addReference(Long userId, Reference detail){
-        log.info("Получена сущность на добавление\n ид пользователя- {}, \n сущность - {}", userId, detail);
+    public Reference addReference(Long userId, Reference reference){
+        log.info("Получена ссыдка на добавление\n userId- {}, \n reference - {}", userId, reference.toString());
         User user = checkIfUserExists(userId);
 
-        detail.setUidUser(userId);
-        detail.setRating(0);
-        detail.setUidAdditionMethod(ADD_METHOD);
-        detail.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        reference.setUidUser(userId);
+        reference.setRating(0);
+        reference.setUidAdditionMethod(UID_ADDITION_METHOD);
+        reference.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 
-        referenceRepo.save(detail);
+        referenceRepo.save(reference);
 
-        return detail;
+        return reference;
     }
 
-    public Reference updateRef(Long refId, Reference ref) {
-        log.info("Получена ссылка на обновление\n ид - {}, \n Ссылка - {}", ref.getUid(), ref);
+    /**
+     *
+     * @param refId id of reference
+     * @param reference reference
+     * @return reference
+     */
+    public Reference updateReference(Long refId, Reference reference) {
+        log.info("Получена ссылка на обновление\n refId - {}, \n Ссылка - {}", reference.getUid(), reference.toString());
 
         Reference item = checkIfReferenceExists(refId);
 
         BeanUtils.copyProperties(
-                ref,
+                reference,
                 item,
-                PropertyChecker.getNullPropertyNames(ref)
+                PropertyChecker.getNullPropertyNames(reference)
         );
 
         referenceRepo.save(item);
@@ -81,8 +87,8 @@ public class ReferenceService {
         return item;
     }
 
-    public Reference deleteRef(Long refId) {
-        log.info("Получен запрос на удаление ссылки'\n Ид элемента- {}", refId);
+    public Reference deleteReference(Long refId) {
+        log.info("Получен запрос на удаление ссылки\n refId- {}", refId);
 
         Reference item = checkIfReferenceExists(refId);
 
@@ -96,26 +102,14 @@ public class ReferenceService {
      * */
     private User checkIfUserExists(Long userId) {
         User user = userRepo.findByUid(userId);
-        assertNotNull(user, String.format("Указан не существующий идентификатор пользователя - %s", userId));
+        assertNotNull(user, String.format("Указан несуществующий userId - %s", userId));
         return user;
     }
 
     private Reference checkIfReferenceExists(Long refId) {
         Reference data = referenceRepo.findByUid(refId);
-        assertNotNull(data, String.format("Указана не существующая ссылка, ид - %s", refId));
+        assertNotNull(data, String.format("Указана несуществующая ссылка, refId - %s", refId));
 
         return data;
-    }
-
-    /**
-     * Преобразуем документ из *detail формата в поджо,
-     * для оохранения в бд
-     * */
-    private Reference convertItemToReference(JsonNode detail, User user) throws JsonProcessingException {
-
-        Reference dataItem = objectMapper.treeToValue(detail, Reference.class);
-        dataItem.setUidUser(user.getUid());
-
-        return dataItem;
     }
 }

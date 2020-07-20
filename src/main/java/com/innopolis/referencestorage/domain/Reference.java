@@ -14,6 +14,7 @@ import java.time.LocalDate;
  * @author Roman Khokhlov
  */
 
+@ToString
 @Entity
 @Table(name = "refs")
 @Indexed
