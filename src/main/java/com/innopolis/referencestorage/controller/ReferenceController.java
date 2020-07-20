@@ -30,20 +30,20 @@ public class ReferenceController {
     }
 
     @PostMapping("/add/{userId}")
-    public String add(Reference reference,  Model model, @PathVariable Long userId){
+    public String addReference(Reference reference,  Model model, @PathVariable Long userId){
         Reference addedRef =  referenceService.addReference(userId, reference);
         return "redirect:/userHome";
     }
 
     @PostMapping("/update/{refId}")
-    public String updateElement(Reference reference, Model model, @PathVariable Long refId){
+    public String updateReference(Reference reference, Model model, @PathVariable Long refId){
         log.info("Получен запрос на обновление записи ссылки: \n refId - {}, \n detail - {} ", reference.getUid(), reference);
         Reference updatedRef = referenceService.updateRef(refId, reference);
         return "redirect:/userHome";
     }
 
     @GetMapping("delete/{refId}")
-    public String deleteRef(@PathVariable Long refId, Model model) {
+    public String deleteReference(@PathVariable Long refId, Model model) {
         log.info("Получен запрос на удаление элемента: \n Ид - {}", refId);
         Reference refDelete = referenceService.deleteRef(refId);
         model.addAttribute("referenceDelete", refDelete);
