@@ -1,6 +1,7 @@
 package com.innopolis.referencestorage.controller;
 
 import com.innopolis.referencestorage.domain.User;
+import com.innopolis.referencestorage.service.UserInfoService;
 import com.innopolis.referencestorage.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,10 +18,12 @@ import java.util.Map;
 @Controller
 public class RegistrationController {
     private UserService userService;
+    private UserInfoService userInfoService;
 
     @Autowired
-    public RegistrationController(UserService userService) {
+    public RegistrationController(UserService userService, UserInfoService userInfoService) {
         this.userService = userService;
+        this.userInfoService = userInfoService;
     }
 
 
@@ -39,6 +42,7 @@ public class RegistrationController {
             model.put("usernameError", "Пользователь с таким никнеймом или email уже существует!");
             return "registration";
         }
+        userInfoService.createUserDetails(user.getUid());
         return "redirect:/login";
     }
 }

@@ -19,7 +19,7 @@
         <table class="table table-striped">
         <thead>
         <tr>
-            <form name="sorting" action="/userHome" method="GET">
+           <form name="sorting" action="/searchResult" method="GET">
             <th scope="col">
                 <button class="btn btn-light" type="submit" name="sortBy" value="nameDesc">
                     <span class="iconify" data-icon="gg:sort-az" data-inline="false"></span></button>
@@ -49,7 +49,7 @@
 
                     <button type="button" class="btn btn-success btn-sm"><span class="iconify" data-icon="mdi:circle-edit-outline" data-inline="false"></span></button>
                     <button type="button" class="btn btn btn-danger btn-sm"><span class="iconify" data-icon="mdi:delete-circle-outline" data-inline="false"></span></button>
-                    <button type="button" class="btn btn-info btn-sm"><span class="iconify" data-icon="mdi:share-circle" data-inline="false"></span></button>
+                    <button type="button" class="btn btn-info btn-sm"><span class="iconify" data-icon="el:download" data-inline="false"></span></button>
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-light btn-sm" data-toggle="modal"
                     data-target="#${userRef.uid}"><span class="iconify" data-icon="ion:ellipsis-horizontal-circle" data-inline="false"></span>
