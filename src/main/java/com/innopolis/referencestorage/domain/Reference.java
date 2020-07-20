@@ -2,6 +2,7 @@ package com.innopolis.referencestorage.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
@@ -22,7 +23,7 @@ public class Reference {
     @Id
     @Getter
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long uid;
+    private Long uid;
     @Getter
     @Setter
     private Long uidUser;
