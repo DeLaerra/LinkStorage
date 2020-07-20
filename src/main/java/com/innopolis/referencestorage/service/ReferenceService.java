@@ -56,9 +56,12 @@ public class ReferenceService {
         User user = checkIfUserExists(userId);
 
         reference.setUidUser(userId);
-        reference.setRating(0);
+        reference.setRating(1);
         reference.setUidAdditionMethod(UID_ADDITION_METHOD);
         reference.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+
+        if(reference.getName().equals(null) || reference.getName() == "")
+            reference.setName(reference.getUrl());
 
         referenceRepo.save(reference);
 
