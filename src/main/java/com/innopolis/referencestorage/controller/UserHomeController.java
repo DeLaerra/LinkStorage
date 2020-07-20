@@ -64,6 +64,7 @@ public class UserHomeController {
         if (!page.isEmpty()) {
             model.addAttribute("page", page);
             model.addAttribute("url", "/userHome");
+            model.addAttribute("user", user);
         }
         return "userHome";
     }

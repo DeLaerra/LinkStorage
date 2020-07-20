@@ -39,7 +39,7 @@ public class Reference {
     private String description;
     @Getter
     @Setter
-    private byte uidReferenceType;
+    private Short uidReferenceType;
     @Getter
     @Setter
     @Field
@@ -55,7 +55,7 @@ public class Reference {
     @Getter
     @Setter
     @Column(name = "uid_adding_method")
-    private byte uidAdditionMethod;
+    private Short uidAdditionMethod;
     @Getter
     @Setter
     private int rating;

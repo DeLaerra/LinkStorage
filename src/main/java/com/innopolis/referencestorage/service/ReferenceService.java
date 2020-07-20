@@ -16,6 +16,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
@@ -30,6 +33,8 @@ public class ReferenceService {
     private UserRepo userRepo;
     @Autowired
     private ObjectMapper objectMapper;
+
+    private final Short ADD_METHOD = 0;
 
 
     public List<Reference> loadAllUserRefs(User author) {
@@ -46,15 +51,18 @@ public class ReferenceService {
      * @param detail - reference json
      * @return json with id or exception
      */
-    public JsonNode addReference(Long userId, JsonNode detail) throws JsonProcessingException {
+    public Reference addReference(Long userId, Reference detail){
         log.info("Получена сущность на добавление\n ид пользователя- {}, \n сущность - {}", userId, detail);
         User user = checkIfUserExists(userId);
 
-        Reference item = convertItemToReference(detail, user);
+        detail.setUidUser(userId);
+        detail.setRating(0);
+        detail.setUidAdditionMethod(ADD_METHOD);
+        detail.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 
-        referenceRepo.save(item);
+        referenceRepo.save(detail);
 
-        return objectMapper.valueToTree(item);
+        return detail;
     }
 
     public JsonNode getRef(Long refId) {
@@ -65,22 +73,20 @@ public class ReferenceService {
         return objectMapper.valueToTree(item);
     }
 
-    public JsonNode updateRef(Long refId, JsonNode detail) throws JsonProcessingException {
-        log.info("Получена ссылка на обновление\n ид - {}, \n Ссылка - {}", refId, detail);
+    public Reference updateRef(Long refId, Reference ref) {
+        log.info("Получена ссылка на обновление\n ид - {}, \n Ссылка - {}", ref.getUid(), ref);
 
         Reference item = checkIfReferenceExists(refId);
 
-        Reference detailItem = objectMapper.treeToValue(detail, Reference.class);
-
         BeanUtils.copyProperties(
-                detailItem,
+                ref,
                 item,
-                PropertyChecker.getNullPropertyNames(detailItem)
+                PropertyChecker.getNullPropertyNames(ref)
         );
 
         referenceRepo.save(item);
 
-        return objectMapper.valueToTree(item);
+        return item;
     }
 
     public Reference deleteRef(Long refId) {

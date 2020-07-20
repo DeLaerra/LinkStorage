@@ -59,15 +59,15 @@ CREATE TABLE "refs" (
 	"uid_user" bigint NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"url" varchar(255) NOT NULL,
-	"description" varchar(255) NOT NULL,
+	"description" varchar(255),
 	"uid_reference_type" bigint NOT NULL,
-	"tag" varchar(255) NOT NULL,
+	"tag" varchar(255),
 	"adding_date" DATE NOT NULL,
-	"source" varchar(255) NOT NULL,
+	"source" varchar(255),
 	"uid_adding_method" bigint NOT NULL,
 	"rating" int NOT NULL,
 	"uid_access_level" bigint NOT NULL,
-	"uid_parent_ref" bigint NOT NULL,
+	"uid_parent_ref" bigint,
 	CONSTRAINT "refs_pk" PRIMARY KEY ("uid")
 ) WITH (
   OIDS=FALSE
