@@ -237,10 +237,6 @@
                                    <form method="post" name="userRef" action="reference/update/${userRef.uid}">
                                       <input type="hidden" name="_csrf" value="${_csrf.token}" />
                                       <input type="hidden" name="uidUser" value="${userRef.uidUser}" />
-                                      <#if userRef.uid??>
-                                        <input type="text" name="uid" value="${userRef.uid}" />
-
-                                      </#if>
                                       <a href="${userRef.url}">${userRef.url}</a><br>
                                       <div class="form-group">
                                         <label for="${userRef.uid}nameInput">Название:</label>
