@@ -35,11 +35,6 @@ public class ReferenceController {
         return "redirect:/userHome";
     }
 
-    @GetMapping("{refId}")
-    public JsonNode getRef( @PathVariable("refId") Long refId) {
-        return referenceService.getRef(refId);
-    }
-
     @PostMapping("/update/{refId}")
     public String updateElement(Reference reference, Model model, @PathVariable Long refId){
         log.info("Получен запрос на обновление записи ссылки: \n refId - {}, \n detail - {} ", reference.getUid(), reference);

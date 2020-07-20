@@ -65,14 +65,6 @@ public class ReferenceService {
         return detail;
     }
 
-    public JsonNode getRef(Long refId) {
-        log.info("Получена ссыдка на отправку \n ид - {}", refId);
-
-        Reference item = referenceRepo.findByUid(refId);
-
-        return objectMapper.valueToTree(item);
-    }
-
     public Reference updateRef(Long refId, Reference ref) {
         log.info("Получена ссылка на обновление\n ид - {}, \n Ссылка - {}", ref.getUid(), ref);
 
