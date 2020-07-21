@@ -93,6 +93,7 @@ CREATE TABLE "user_info" (
 	"age" smallint NOT NULL,
 	"sex" smallint NOT NULL,
 	"birth_date" DATE NOT NULL,
+	"avatar" BYTEA,
 	CONSTRAINT "user_info_pk" PRIMARY KEY ("uid")
 ) WITH (
   OIDS=FALSE
