@@ -17,6 +17,8 @@ import java.util.List;
 public interface ReferenceRepo extends JpaRepository<Reference, Long> {
     List<Reference> findByTag(String tag);
 
+    Reference findByUid(Long uid);
+
     List<Reference> findByUidUser(Long uid);
 
     Page<Reference> findByUidUser(Long uid, Pageable page);

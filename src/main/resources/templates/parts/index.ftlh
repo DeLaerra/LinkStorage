@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
               integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
               crossorigin="anonymous">
+
     </head>
     <body>
 
@@ -26,8 +27,10 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
+
             </ul>
-            <div class="navbar-text mr-3">${name}</div>
+            <div class="navbar-text mr-3">
+                ${name}</div>
             <#if name == "Анонимус"><a href="/login" class="btn btn-primary"
                                        target="_blank">Вход</a><#else><@l.logout /></#if>
         </div>
