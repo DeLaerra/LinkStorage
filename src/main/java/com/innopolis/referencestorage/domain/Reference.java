@@ -1,6 +1,13 @@
 package com.innopolis.referencestorage.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+
 import javax.persistence.*;
+import java.time.LocalDate;
 
 /**
  * Reference.
@@ -8,71 +15,56 @@ import javax.persistence.*;
  * @author Roman Khokhlov
  */
 
+@ToString
 @Entity
+@Table(name = "refs")
+@Indexed
 public class Reference {
     @Id
+    @Getter
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-
-    private String text;
+    private Long uid;
+    @Getter
+    @Setter
+    private Long uidUser;
+    @Getter
+    @Setter
+    @Field
+    private String name;
+    @Getter
+    @Setter
+    @Field
+    private String url;
+    @Getter
+    @Setter
+    @Field
+    private String description;
+    @Getter
+    @Setter
+    private Short uidReferenceType;
+    @Getter
+    @Setter
+    @Field
     private String tag;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "uid_user")
-    private User author;
-
-    private String filename;
-
-    public Reference() {
-    }
-
-    public Reference(String text, String tag, User user) {
-        this.author = user;
-        this.text = text;
-        this.tag = tag;
-    }
-
-    public String getAuthorName() {
-        return author != null ? author.getUsername() : "<none>";
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(User author) {
-        this.author = author;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
+    @Getter
+    @Setter
+    @Column(name = "adding_date")
+    private LocalDate additionDate;
+    @Getter
+    @Setter
+    @Field
+    private String source;
+    @Getter
+    @Setter
+    @Column(name = "uid_adding_method")
+    private Short uidAdditionMethod;
+    @Getter
+    @Setter
+    private int rating;
+    @Getter
+    @Setter
+    private int uidAccessLevel;
+    @Getter
+    @Setter
+    private Long uidParentRef;
 }
