@@ -2,6 +2,7 @@ package com.innopolis.referencestorage.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.NumericField;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
  * @author Roman Khokhlov
  */
 
+@ToString
 @Entity
 @Table(name = "refs")
 @Indexed
@@ -42,7 +44,7 @@ public class Reference {
     private String description;
     @Getter
     @Setter
-    private byte uidReferenceType;
+    private Short uidReferenceType;
     @Getter
     @Setter
     @Field
@@ -58,7 +60,7 @@ public class Reference {
     @Getter
     @Setter
     @Column(name = "uid_adding_method")
-    private byte uidAdditionMethod;
+    private Short uidAdditionMethod;
     @Getter
     @Setter
     private int rating;
