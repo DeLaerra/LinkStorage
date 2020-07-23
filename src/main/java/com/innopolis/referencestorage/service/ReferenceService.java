@@ -1,14 +1,11 @@
 package com.innopolis.referencestorage.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innopolis.referencestorage.commons.utils.PropertyChecker;
 import com.innopolis.referencestorage.domain.Reference;
 import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.repos.ReferenceRepo;
 import com.innopolis.referencestorage.repos.UserRepo;
-import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
@@ -24,43 +20,44 @@ import java.util.List;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
 @Slf4j
-@AllArgsConstructor
+@NoArgsConstructor
 @Service
 public class ReferenceService {
-    @Autowired
     private ReferenceRepo referenceRepo;
-    @Autowired
     private UserRepo userRepo;
+
+    private final Short uidAdditionMethod = 0;
+
     @Autowired
-    private ObjectMapper objectMapper;
-
-    private final Short UID_ADDITION_METHOD = 0;
-
+    public ReferenceService(ReferenceRepo referenceRepo, UserRepo userRepo) {
+        this.referenceRepo = referenceRepo;
+        this.userRepo = userRepo;
+    }
 
     public List<Reference> loadAllUserRefs(User author) {
         return referenceRepo.findByUidUser(author.getUid());
     }
 
-    public Page<Reference> loadSortedUserRefs(User author, Pageable pageable) {
+    public Page<Reference> loadRefsByUserUid(User author, Pageable pageable) {
         return referenceRepo.findByUidUser(author.getUid(), pageable);
     }
 
     /**
      *
      * @param userId - for which user reference
-     * @param reference - reference json
+     * @param reference - reference
      * @return reference
      */
     public Reference addReference(Long userId, Reference reference){
-        log.info("Получена ссыдка на добавление\n userId- {}, \n reference - {}", userId, reference.toString());
+        log.info("Получена ссылка на добавление\n userId- {}, \n reference - {}", userId, reference.toString());
         User user = checkIfUserExists(userId);
 
         reference.setUidUser(userId);
         reference.setRating(1);
-        reference.setUidAdditionMethod(UID_ADDITION_METHOD);
+        reference.setUidAdditionMethod(uidAdditionMethod);
         reference.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 
-        if(reference.getName().equals(null) || reference.getName() == "")
+        if(reference.getName()== null || reference.getName().equals(""))
             reference.setName(reference.getUrl());
 
         referenceRepo.save(reference);

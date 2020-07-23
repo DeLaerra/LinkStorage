@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.NumericField;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -26,6 +27,8 @@ public class Reference {
     private Long uid;
     @Getter
     @Setter
+    @Field
+    @NumericField
     private Long uidUser;
     @Getter
     @Setter
@@ -63,6 +66,8 @@ public class Reference {
     private int rating;
     @Getter
     @Setter
+    @Field
+    @NumericField
     private int uidAccessLevel;
     @Getter
     @Setter

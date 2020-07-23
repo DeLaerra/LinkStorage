@@ -33,7 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/registration").not().fullyAuthenticated()
                 .antMatchers("/userHome").hasRole("USER")
-                .antMatchers("/", "/index", "/login", "/passwordChange", "/static/**").permitAll()
+                .antMatchers("/swagger-ui.html", "/", "/index", "/login", "/passwordChange", "/static/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

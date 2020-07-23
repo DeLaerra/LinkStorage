@@ -3,8 +3,8 @@ package com.innopolis.referencestorage.controller;
 import com.innopolis.referencestorage.config.CurrentUser;
 import com.innopolis.referencestorage.domain.Reference;
 import com.innopolis.referencestorage.domain.User;
-import com.innopolis.referencestorage.service.ReferenceSearchService;
 import com.innopolis.referencestorage.service.ReferenceService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,57 +15,83 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-
+@Slf4j
 @Controller
 public class UserHomeController {
     private ReferenceService referenceService;
-    private ReferenceSearchService referenceSearchService;
 
     @Autowired
-    public UserHomeController(ReferenceService referenceService, ReferenceSearchService referenceSearchService) {
+    public UserHomeController(ReferenceService referenceService) {
         this.referenceService = referenceService;
-        this.referenceSearchService = referenceSearchService;
     }
 
     @GetMapping("/userHome")
-    public String showUserRefsPage(@CurrentUser User user, Model model, Pageable pageable,
-                                   @RequestParam(defaultValue = "") String sortBy,
-                                   @RequestParam(required = false) String load,
-                                   @RequestParam(value = "searchAll", required = false) String q) {
-        Page page;
-        if (sortBy.equals("rating")) {
-            page = referenceService.loadSortedUserRefs(user,
-                    PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(sortBy).descending()));
-        } else if (sortBy.isEmpty()) {
-            page = referenceService.loadSortedUserRefs(user, pageable);
-        } else if (load.equals("all")) {
-            page = referenceService.loadSortedUserRefs(user, Pageable.unpaged());
-        } else {
-            page = referenceService.loadSortedUserRefs(user,
-                    PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(sortBy).ascending()));
-        }
-
-        List<Reference> searchResults = null;
-        List<Reference> userSearchResults = null;
-        try {
-            searchResults = referenceSearchService.fullTextSearch(q);
-            model.addAttribute("searchAll", searchResults);
-            userSearchResults = searchResults.stream()
-                    .filter(ref -> ref.getUidUser().equals(user.getUid()))
-                    .collect(Collectors.toList());
-            model.addAttribute("search", userSearchResults);
-        } catch (Exception ex) {
-            ex.getStackTrace();
-        }
-
-        if (!page.isEmpty()) {
-            model.addAttribute("page", page);
-            model.addAttribute("url", "/userHome");
-            model.addAttribute("user", user);
-        }
+    public String showUserReferences(@CurrentUser User user, Model model, Pageable pageable,
+                                     @RequestParam(name = "sortBy", required = false) String sortBy,
+                                     @RequestParam(name = "load", required = false) String load,
+                                     @RequestParam(name = "search", required = false) String q,
+                                     @RequestParam(name = "area", required = false) String area) {
+        log.info("Получен запрос об отображении ссылок пользователя с uid - {}", user.getUid());
+        Page<Reference> page = getReferencesPage(user, pageable, sortBy, load);
+        model.addAttribute("page", page);
+        model.addAttribute("url", "/userHome");
         return "userHome";
+    }
+
+    private Page<Reference> getReferencesPage(@CurrentUser User user, Pageable pageable,
+                                              @RequestParam(name = "sortBy", required = false) String sortBy,
+                                              @RequestParam(name = "load", required = false) String load) {
+        Page<Reference> page = referenceService.loadRefsByUserUid(user, pageable);
+
+        if (load != null && load.equals("all")) {
+            log.info("Получен запрос на отображение всех ссылок пользователя с uid - {}", user.getUid());
+            page = referenceService.loadRefsByUserUid(user,
+                    PageRequest.of(0, pageable.getPageSize(), Sort.unsorted()));
+        } else if (sortBy != null) {
+            log.info("Получен запрос на сортировку ссылок пользователя с uid - {}", user.getUid());
+            page = getSortedReferences(user, pageable, sortBy);
+        }
+        return page;
+    }
+
+    private Page<Reference> getSortedReferences(@CurrentUser User user, Pageable pageable,
+                                                @RequestParam(name = "sortBy", required = false) String sortBy) {
+        Page<Reference> page;
+        switch (sortBy) {
+            case "nameDesc":
+                log.info("Сортировка ссылок пользователя с uid {} по имени, по-убыванию", user.getUid());
+                page = referenceService.loadRefsByUserUid(user,
+                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("name").descending()));
+                break;
+            case "nameAsc":
+                log.info("Сортировка ссылок пользователя с uid {} по имени, по-возрастанию", user.getUid());
+                page = referenceService.loadRefsByUserUid(user,
+                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("name").ascending()));
+                break;
+            case "sourceDesc":
+                log.info("Сортировка ссылок пользователя с uid {} по источнику, по-убыванию", user.getUid());
+                page = referenceService.loadRefsByUserUid(user,
+                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("source").descending()));
+                break;
+            case "sourceAsc":
+                log.info("Сортировка ссылок пользователя с uid {} по источнику, по-возрастанию", user.getUid());
+                page = referenceService.loadRefsByUserUid(user,
+                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("source").ascending()));
+                break;
+            case "ratingDesc":
+                log.info("Сортировка ссылок пользователя с uid {} по рейтингу, по-убыванию", user.getUid());
+                page = referenceService.loadRefsByUserUid(user,
+                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("rating").descending()));
+                break;
+            case "ratingAsc":
+                log.info("Сортировка ссылок пользователя с uid {} по рейтингу, по-возрастанию", user.getUid());
+                page = referenceService.loadRefsByUserUid(user,
+                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("rating").ascending()));
+                break;
+            default:
+                log.warn("Неверный аргумент sortBy от пользователя с uid {} при попытке сортировки ссылок", user.getUid());
+                throw new IllegalStateException("Неверный аргумент sortBy");
+        }
+        return page;
     }
 }
