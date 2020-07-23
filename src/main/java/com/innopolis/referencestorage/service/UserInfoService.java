@@ -6,9 +6,13 @@ import com.innopolis.referencestorage.repos.UserInfoRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.multipart.MultipartFile;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Base64;
 
 @Slf4j
 @Service
@@ -29,8 +33,11 @@ public class UserInfoService {
         userInfo.setAge(0);
         userInfo.setSex(0);
         userInfo.setBirthDate(LocalDate.now());
-        userInfo.setAvatar(null);
-        // TODO set avatar на аватар с вопросительным знаком
+        try {
+            userInfo.setAvatar(Files.readAllBytes(Paths.get("src\\resources\\otherFiles\\defaultAvatar.png")));
+        } catch (IOException e) {
+            log.error("Нет файла defaultAvatar.png");
+        }
         userInfoRepo.save(userInfo);
     }
 
@@ -46,7 +53,7 @@ public class UserInfoService {
         userInfoRepo.save(userInfo);
     }
 
-    public void checkAndAddData(User user, UserInfo userInfo, String birthDate) {
+    public void checkAndAddData(User user, UserInfo userInfo, String birthDate, MultipartFile file) {
         log.info("Получен запрос на проверку и добавление данных к сущности UserInfo от пользователя с uid {}: \n userInfo - {}, \n birthDate - {} ", user.getUid(), userInfo, birthDate);
         UserInfo originalUserInfo = getUserInfoWithUserUID(user);
         userInfo.setUid(originalUserInfo.getUid());
@@ -76,5 +83,30 @@ public class UserInfoService {
             userInfo.setBirthDate(originalUserInfo.getBirthDate());
         }
         userInfo.setAvatar(originalUserInfo.getAvatar());
+        if (!(file == null)) {
+            if ((!file.getOriginalFilename().toUpperCase().endsWith(".JPG"))
+                    && (!file.getOriginalFilename().toUpperCase().endsWith(".PNG"))
+                    && (!file.getOriginalFilename().toUpperCase().endsWith(".BMP"))) {
+                log.info("Был загружен файл, который не является картинкой, не меняется.");
+            } else {
+                log.info("Попытка преобразовать в байты и сохранить в файл в базе данных");
+                try {
+                    byte[] bytes = file.getBytes();
+                    userInfo.setAvatar(bytes);
+                } catch (IOException e) {
+                    log.error("Ошибка ввода-вывода при попытке преобразования файла в байты");
+                }
+            }
+        }
+    }
+
+    public String getFileFromUserInfo(byte[] avatarBytes) {
+        if (avatarBytes != null) {
+            byte[] encoded = Base64.getEncoder().encode(avatarBytes);
+            String imgDataAsBase64 = new String(encoded);
+            String imgAsBase64 = "data:image/png;base64," + imgDataAsBase64;
+            return imgAsBase64;
+        }
+        return "";
     }
 }
