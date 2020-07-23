@@ -27,3 +27,22 @@ spring:
             indexBase: /data/index
   mvc:
     static-path-pattern: /static/**
+
+  mail:
+    transport:
+      protocol: smtp
+    from:
+      email: link.storage@yandex.ru
+    username: link.storage@yandex.ru
+    password: link.storage1
+    host: smtp.yandex.ru
+    port: 587
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000

@@ -99,6 +99,16 @@ CREATE TABLE "user_info" (
   OIDS=FALSE
 );
 
+--changeset r.khokhlov:20200717-insert-tables runOnChange:true context:test
+CREATE TABLE "confirmation_token" (
+	"token_id" bigint NOT NULL PRIMARY KEY,
+	"uid" bigint NOT NULL,
+	"confirmation_token" varchar(255) NOT NULL,
+	"created_date" date NOT NULL,
+    CONSTRAINT "confirmation_token_pkey" PRIMARY KEY ("token_id")
+);
+
+
 
 
 ALTER TABLE "usercreds" ADD CONSTRAINT "user_fk0" FOREIGN KEY ("role_uid") REFERENCES "role"("uid");
