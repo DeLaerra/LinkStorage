@@ -27,7 +27,11 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-
+                 <#if name == "Анонимус"><#else>
+                     <li class="nav-item">
+                         <a class="nav-link" href="/userHome">Home</a>
+                     </li>
+                 </#if>
             </ul>
             <div class="navbar-text mr-3">
                 ${name}</div>

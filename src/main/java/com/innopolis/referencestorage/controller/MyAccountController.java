@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Controller
@@ -28,13 +29,14 @@ public class MyAccountController {
         UserInfo userInfo = userInfoService.getUserInfoWithUserUID(user);
         model.addAttribute("userInfo", userInfo);
         model.addAttribute("birthDateStr", userInfo.getBirthDate());
+        model.addAttribute("avatarImage", userInfoService.getFileFromUserInfo(userInfo.getAvatar()));
         return "myAccount";
     }
 
     @PostMapping("/myAccount")
-    public String editUserDetails(@CurrentUser User user, UserInfo userInfo, String birthDateStr) {
+    public String editUserDetails(@CurrentUser User user, UserInfo userInfo, String birthDateStr, MultipartFile file) {
         log.info("Получен запрос на изменение данных в личном кабинете от пользователя с uid {}: \n userInfo - {}, \n birthDate - {} ", user.getUid(), userInfo, birthDateStr);
-        userInfoService.checkAndAddData(user, userInfo, birthDateStr);
+        userInfoService.checkAndAddData(user, userInfo, birthDateStr, file);
         userInfoService.saveUserInfo(userInfo);
         return "redirect:/myAccount";
     }

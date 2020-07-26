@@ -102,7 +102,7 @@
                 <tr>
                     <#--                Шапка таблицы-->
                     <div class="row">
-                        <form name="sorting" action="/userHome" method="GET">
+                        <form name="sorting" action="/searchResult" method="GET">
                             <div class="col-sm">
                                 <th scope="col">
                                     <button class="btn btn-light btn-sm" type="submit" name="sortBy"
@@ -153,29 +153,36 @@
 
                                     <div class="btn-toolbar mr-4" role="toolbar"
                                          aria-label="Toolbar with button groups">
-                                        <div class="btn-group mr-2" role="group" aria-label="Edit">
-                                            <!-- Button trigger modal Edit Изменить...-->
-                                            <button type="submit" class="btn btn-success btn-sm" data-toggle="modal"
-                                                    data-target="#edit_${userRef.uid}">
+                                        <#if userUid == userRef.uidUser>
+                                            <div class="btn-group mr-2" role="group" aria-label="Edit">
+                                                <!-- Button trigger modal Edit Изменить...-->
+
+                                                <button type="submit" class="btn btn-success btn-sm" data-toggle="modal"
+                                                        data-target="#edit_${userRef.uid}">
                                                 <span class="iconify" data-icon="mdi:circle-edit-outline"
                                                       data-inline="false"></span></button>
-                                        </div>
-                                        <div class="btn-group mr-2" role="group" aria-label="Delete">
-                                            <!-- Button Delete Удалить...-->
-                                            <form method="get" action="reference/delete/${userRef.uid}">
-                                                <button class="btn btn btn-danger btn-sm" type="submit" name="Delete"
-                                                        value="Удалить">
+                                            </div>
+                                            <div class="btn-group mr-2" role="group" aria-label="Delete">
+                                                <!-- Button Delete Удалить...-->
+                                                <form method="get" action="reference/delete/${userRef.uid}">
+                                                    <button class="btn btn btn-danger btn-sm" type="submit"
+                                                            name="Delete"
+                                                            value="Удалить">
                                                     <span class="iconify" data-icon="mdi:delete-circle-outline"
                                                           data-inline="false"></span>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </#if>
+                                        <#if userUid == userRef.uidUser><#else>
+                                            <div class="btn-group mr-2" role="group" aria-label="Share">
+                                                <!-- Button Get Reference Добавить ссылку...-->
+                                                <button type="button" class="btn btn-info btn-sm"><span class="iconify"
+                                                                                                        data-icon="el:download"
+                                                                                                        data-inline="false"></span>
                                                 </button>
-                                            </form>
-                                        </div>
-                                        <div class="btn-group mr-2" role="group" aria-label="Share">
-                                            <button type="button" class="btn btn-info btn-sm"><span class="iconify"
-                                                                                                    data-icon="mdi:share-circle"
-                                                                                                    data-inline="false"></span>
-                                            </button>
-                                        </div>
+                                            </div>
+                                        </#if>
                                         <div class="btn-group mr-2" role="group" aria-label="Properties">
                                             <!-- Button trigger collapse Properties Подробнее...-->
                                             <button type="button" class="btn btn-light btn-sm" data-toggle="collapse"
