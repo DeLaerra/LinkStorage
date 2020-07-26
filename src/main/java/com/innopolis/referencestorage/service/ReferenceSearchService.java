@@ -1,6 +1,6 @@
 package com.innopolis.referencestorage.service;
 
-import com.innopolis.referencestorage.domain.Reference;
+import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.search.Query;
@@ -40,23 +40,23 @@ public class ReferenceSearchService {
     }
 
     @Transactional
-    public List<Reference> fullTextSearchAllReferences(String searchTerm, Pageable pageable) {
+    public List<ReferenceDescription> fullTextSearchAllReferences(String searchTerm, Pageable pageable) {
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(centityManager);
-        QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Reference.class).get();
+        QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(ReferenceDescription.class).get();
         Query luceneQuery = qb.keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1)
                 .onFields("name")
-                .andField("url")
+//                .andField("reference")
                 .andField("description")
-                .andField("tag")
+//                .andField("tag")
                 .matching(searchTerm).createQuery();
 
-        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Reference.class);
+        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, ReferenceDescription.class);
         return executeJpaQuery(jpaQuery, pageable);
     }
 
-    public List<Reference> fullTextSearchReferencesByUserUid(String searchTerm, User user, Pageable pageable) {
+    public List<ReferenceDescription> fullTextSearchReferencesByUserUid(String searchTerm, User user, Pageable pageable) {
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(centityManager);
-        QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Reference.class).get();
+        QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(ReferenceDescription.class).get();
 
         Query luceneQuery = qb
                 .bool()
@@ -68,20 +68,20 @@ public class ReferenceSearchService {
                 .must(qb
                         .keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1)
                         .onFields("name")
-                        .andField("url")
+//                        .andField("reference")
                         .andField("description")
-                        .andField("tag")
+//                        .andField("tag")
                         .matching(searchTerm).createQuery())
                 .createQuery();
 
-        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Reference.class);
+        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, ReferenceDescription.class);
         log.info("Запрос {} от пользователя с uid {}", jpaQuery, user.getUid());
         return executeJpaQuery(jpaQuery, pageable);
     }
 
-    public List<Reference> fullTextSearchPublicReferencesOnly(String searchTerm, Pageable pageable, User user) {
+    public List<ReferenceDescription> fullTextSearchPublicReferencesOnly(String searchTerm, Pageable pageable, User user) {
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(centityManager);
-        QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Reference.class).get();
+        QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(ReferenceDescription.class).get();
         Query luceneQuery = qb
                 .bool()
                 .must(qb
@@ -92,19 +92,19 @@ public class ReferenceSearchService {
                 .must(qb
                         .keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1)
                         .onFields("name")
-                        .andField("url")
+//                        .andField("reference")
                         .andField("description")
-                        .andField("tag")
+//                        .andField("tag")
                         .matching(searchTerm).createQuery())
                 .createQuery();
 
-        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Reference.class);
+        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, ReferenceDescription.class);
         log.info("Запрос {} от пользователя с uid {}", jpaQuery, user.getUid());
         return executeJpaQuery(jpaQuery, pageable);
     }
 
-    private List<Reference> executeJpaQuery(javax.persistence.Query jpaQuery, Pageable pageable) {
-        List<Reference> refs = null;
+    private List<ReferenceDescription> executeJpaQuery(javax.persistence.Query jpaQuery, Pageable pageable) {
+        List<ReferenceDescription> refs = null;
         try {
             refs = jpaQuery.getResultList();
         } catch (NoResultException nre) {

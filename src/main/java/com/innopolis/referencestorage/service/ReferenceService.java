@@ -2,6 +2,7 @@ package com.innopolis.referencestorage.service;
 
 import com.innopolis.referencestorage.commons.utils.PropertyChecker;
 import com.innopolis.referencestorage.domain.Reference;
+import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.repos.ReferenceRepo;
 import com.innopolis.referencestorage.repos.UserRepo;
@@ -34,11 +35,11 @@ public class ReferenceService {
         this.userRepo = userRepo;
     }
 
-    public List<Reference> loadAllUserRefs(User author) {
+    public List<ReferenceDescription> loadAllUserRefs(User author) {
         return referenceRepo.findByUidUser(author.getUid());
     }
 
-    public Page<Reference> loadRefsByUserUid(User author, Pageable pageable) {
+    public Page<ReferenceDescription> loadRefsByUserUid(User author, Pageable pageable) {
         return referenceRepo.findByUidUser(author.getUid(), pageable);
     }
 
@@ -48,17 +49,17 @@ public class ReferenceService {
      * @param reference - reference
      * @return reference
      */
-    public Reference addReference(Long userId, Reference reference){
+    public ReferenceDescription addReference(Long userId, ReferenceDescription reference, String url){
         log.info("Получена ссылка на добавление\n userId- {}, \n reference - {}", userId, reference.toString());
         User user = checkIfUserExists(userId);
 
         reference.setUidUser(userId);
-        reference.setRating(1);
+        reference.setReference(new Reference(url, 1));
         reference.setUidAdditionMethod(uidAdditionMethod);
         reference.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 
         if(reference.getName()== null || reference.getName().equals(""))
-            reference.setName(reference.getUrl());
+            reference.setName(reference.getReference().getUrl());
 
         referenceRepo.save(reference);
 
@@ -71,10 +72,10 @@ public class ReferenceService {
      * @param reference reference
      * @return reference
      */
-    public Reference updateReference(Long refId, Reference reference) {
-        log.info("Получена ссылка на обновление\n refId - {}, \n Ссылка - {}", reference.getUid(), reference.toString());
+    public ReferenceDescription updateReference(Long refId, ReferenceDescription reference, String url) {
+        log.info("Получена ссылка на обновление\n refId - {}, \n Ссылка - {}", reference.getUid(), url);
 
-        Reference item = checkIfReferenceExists(refId);
+        ReferenceDescription item = checkIfReferenceExists(refId);
 
         BeanUtils.copyProperties(
                 reference,
@@ -87,10 +88,10 @@ public class ReferenceService {
         return item;
     }
 
-    public Reference deleteReference(Long refId) {
+    public ReferenceDescription deleteReference(Long refId) {
         log.info("Получен запрос на удаление ссылки\n refId- {}", refId);
 
-        Reference item = checkIfReferenceExists(refId);
+        ReferenceDescription item = checkIfReferenceExists(refId);
 
         referenceRepo.delete(item);
 
@@ -106,8 +107,8 @@ public class ReferenceService {
         return user;
     }
 
-    private Reference checkIfReferenceExists(Long refId) {
-        Reference data = referenceRepo.findByUid(refId);
+    private ReferenceDescription checkIfReferenceExists(Long refId) {
+        ReferenceDescription data = referenceRepo.findByUid(refId);
         assertNotNull(data, String.format("Указана несуществующая ссылка, refId - %s", refId));
 
         return data;
