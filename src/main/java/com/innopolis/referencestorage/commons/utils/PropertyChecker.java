@@ -20,6 +20,8 @@ public interface PropertyChecker {
 
         for(PropertyDescriptor descriptor : src.getPropertyDescriptors()) {
 
+            if(descriptor.getReadMethod() == null || descriptor.getWriteMethod() == null)
+                continue;
             if (src.getPropertyValue(descriptor.getName()) == null) {
                 emptyNames.add(descriptor.getName());
             }

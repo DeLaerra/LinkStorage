@@ -147,8 +147,8 @@
                         <#--                            Строки таблицы-->
                         <div class="row">
                             <div class="col-sm">
-                                <td> <#if userRef.name??><a href="${userRef.url}">${userRef.name}</a><br><#else><a
-                                        href="${userRef.url}">${userRef.url}<br></a></#if>
+                                <td> <#if userRef.name??><a href="${userRef.reference.url}">${userRef.name}</a><br><#else><a
+                                        href="${userRef.reference.url}">${userRef.reference.url}<br></a></#if>
                                     <#if userRef.tag??>Теги: ${userRef.tag}<br></#if>
 
                                     <div class="btn-toolbar mr-4" role="toolbar"
@@ -190,7 +190,7 @@
                                          aria-labelledby="${userRef.uid}Label" aria-hidden="true">
                                         <div class="card card-body">
                                             <div class="body">
-                                                <a href="${userRef.url}">${userRef.url}</a><br>
+                                                <a href="${userRef.reference.url}">${userRef.reference.url}</a><br>
                                                 <#if userRef.tag??><b>Теги</b>: ${userRef.tag}<br></#if>
                                                 <#if userRef.source??><b>Источник</b>: <a
                                                         href="${userRef.source}">${userRef.source}</a><br></#if>
@@ -221,8 +221,8 @@
                                                 <div class="modal-header">
                                                     <h5 class="modal-title"
                                                         id="${userRef.uid}Label"><#if userRef.name??><a
-                                                            href="${userRef.url}">${userRef.name}</a><br><#else><a
-                                                            href="${userRef.url}">${userRef.url}<br></a></#if></h5>
+                                                            href="${userRef.reference.url}">${userRef.name}</a><br><#else><a
+                                                            href="${userRef.reference.url}">${userRef.reference.url}<br></a></#if></h5>
                                                     <button type="button" class="close" data-dismiss="modal"
                                                             aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
@@ -233,7 +233,7 @@
                                                           action="reference/update/${userRef.uid}">
                                                         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
                                                         <input type="hidden" name="uidUser" value="${userRef.uidUser}"/>
-                                                        <a href="${userRef.url}">${userRef.url}</a><br>
+                                                        <a href="${userRef.reference.url}">${userRef.reference.url}</a><br>
                                                         <div class="form-group">
                                                             <label for="${userRef.uid}nameInput">Название:</label>
                                                             <input type="text" name="name" class="form-control"
@@ -244,7 +244,7 @@
                                                             <label for="${userRef.uid}urlInput">Ссылка:</label>
                                                             <input type="text" name="url" class="form-control"
                                                                    id="${userRef.uid}urlInput" placeholder="Ссылка"
-                                                                   value="<#if userRef.url??>${userRef.url}</#if>">
+                                                                   value="<#if userRef.reference.url??>${userRef.reference.url}</#if>">
                                                         </div>
                                                         <#if userRef.description??>
                                                             <div class="form-group">
