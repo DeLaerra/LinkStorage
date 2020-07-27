@@ -1,6 +1,7 @@
 package com.innopolis.referencestorage.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -14,16 +15,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "confirmation_token")
+@NoArgsConstructor
 public class ConfirmationToken {
-
-    public String getConfirmationToken() {
-        return confirmationToken;
-    }
-
-    public void setConfirmationToken(String confirmationToken) {
-        this.confirmationToken = confirmationToken;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name="token_id")
@@ -46,15 +39,10 @@ public class ConfirmationToken {
     @Setter
     private User user;
 
-    public ConfirmationToken() {
-
-    }
     public ConfirmationToken(User user) {
         this.user = user;
         createdDate = new Date();
         confirmationToken = UUID.randomUUID().toString();
     }
-
-
 }
 

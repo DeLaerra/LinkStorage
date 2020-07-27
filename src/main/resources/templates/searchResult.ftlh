@@ -33,6 +33,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
+                                <b>Добавление ссылки</b>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -47,7 +48,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="add_urlInput">Ссылка:</label>
-                                        <input type="text" name="url" class="form-control" id="add_urlInput"
+                                        <input type="url" name="url" class="form-control" id="add_urlInput"
                                                placeholder="Ссылка">
                                     </div>
                                     <div class="form-group">
@@ -69,11 +70,6 @@
                                         <label for="add_tagInput">Теги:</label>
                                         <input type="text" name="tag" class="form-control" id="add_tagInput"
                                                placeholder="Тэг">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="add_sourceInput">Источник:</label>
-                                        <input type="text" name="source" class="form-control" id="add_sourceInput"
-                                               placeholder="Источник">
                                     </div>
                                     <div class="form-group">
                                         <label for="add_accessLevelInput">Уровень доступа:</label>
@@ -216,7 +212,7 @@
                                                 <#elseif userRef.uidReferenceType == 2>файл
                                                     <br><#elseif userRef.uidReferenceType == 3>картинка
                                                     <br></#if>
-                                                <#if userRef.rating??><b>Рейтинг: </b>${userRef.rating}</#if>
+                                                <#if userRef.reference.rating??><b>Рейтинг: </b>${userRef.reference.rating}</#if>
                                             </div>
                                         </div>
                                     </div>
@@ -327,7 +323,7 @@
                                 <td><#if userRef.source??><a href="${userRef.source}">${userRef.source}</a></#if></td>
                             </div>
                             <div class="col-sm">
-                                <td><#if userRef.rating??>${userRef.rating}</#if></td>
+                                <td><#if userRef.reference.rating??>${userRef.reference.rating}</#if></td>
                             </div>
                         </div>
                     </tr>

@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.NumericField;
 
 import javax.persistence.*;
@@ -26,7 +27,8 @@ public class ReferenceDescription {
     private Long uidUser;
     @Getter
     @Setter
-    @ManyToOne (cascade=CascadeType.ALL)
+    @IndexedEmbedded(depth = 1)
+    @ManyToOne
     @JoinColumn (name="uid_reference", nullable = false)
     private Reference reference;
     @Getter
@@ -60,5 +62,4 @@ public class ReferenceDescription {
     @Getter
     @Setter
     private Long uidParentRef;
-
 }

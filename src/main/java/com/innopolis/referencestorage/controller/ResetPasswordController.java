@@ -69,10 +69,13 @@ public class ResetPasswordController {
             // Create the email
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setTo(existingUser.getEmail());
-            mailMessage.setSubject("Complete Password Reset!");
+            mailMessage.setSubject("Подтвердите восстановление пароля");
             mailMessage.setFrom("roman.oilman@yandex.ru");
-            mailMessage.setText("Пожалуйста, перейдите по ссылке для продолжения процедуры смены пароля: "
-                    + "http://localhost:8081/confirm-reset?token=" + confirmationToken.getConfirmationToken());
+            mailMessage.setText("Уважаемый пользователь!\n" +
+                    "\n" +
+                    "От вашего имени подана заявка на восстановление пароля. Пожалуйста, перейдите по ссылке для продолжения процедуры смены пароля: \n"
+                    + "http://localhost:8081/confirm-reset?token=" + confirmationToken.getConfirmationToken() + "\n"
+                    + "Это письмо отправлено автоматически, пожалуйста, не отвечайте на него.");
 
             // Send the email
             emailSenderService.sendEmail(mailMessage);

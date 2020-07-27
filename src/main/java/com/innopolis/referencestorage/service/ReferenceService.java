@@ -15,9 +15,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
@@ -52,15 +55,22 @@ public class ReferenceService {
      * @param referenceDescription - reference
      * @return reference
      */
-    public ReferenceDescription addReference(Long userId, ReferenceDescription referenceDescription, String url){
+    public ReferenceDescription addReference(Long userId, ReferenceDescription referenceDescription, String urlText){
         log.info("Получена ссылка на добавление\n userId- {}, \n reference - {}", userId, referenceDescription.toString());
         User user = checkIfUserExists(userId);
 
-        assertNotNull(url, "Отсутствует url ссылки");
+        assertNotNull(urlText, "Отсутствует текст url ссылки");
 
-        Reference reference = referenceRepo.findByUrl(url);
+        URL url = null;
+        try {
+            url = new URL(urlText);
+        } catch (MalformedURLException e) {
+            log.error("В тексте {} нет ссылки!", urlText, e);
+        }
+
+        Reference reference = referenceRepo.findByUrl(urlText);
         if(reference == null){
-            reference = new Reference(url,1);
+            reference = new Reference(urlText,1);
 
             reference = referenceRepo.saveAndFlush(reference);
         }
@@ -77,9 +87,10 @@ public class ReferenceService {
         referenceDescription.setUidUser(userId);
         referenceDescription.setUidAdditionMethod(uidAdditionMethod);
         referenceDescription.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        Optional.ofNullable(url.getHost()).ifPresent(referenceDescription::setSource);
 
         if(referenceDescription.getName()== null || referenceDescription.getName().equals(""))
-            referenceDescription.setName(url);
+            referenceDescription.setName(url.toString());
 
         return referenceDescriptionRepo.save(referenceDescription);
     }
@@ -130,9 +141,14 @@ public class ReferenceService {
         assertNotNull(reference, "Отсутствует ссылка");
 
         reference.setRating(reference.getRating() - 1);
+
         referenceRepo.saveAndFlush(reference);
 
         referenceDescriptionRepo.delete(item);
+
+        if (reference.getRating() == 0) {
+            referenceRepo.delete(reference);
+        }
 
         return item;
     }

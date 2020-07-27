@@ -115,16 +115,19 @@ public class SearchResultController {
                 references.sort(Comparator.comparing(ReferenceDescription::getSource));
                 page = new PageImpl<>(references, pageable, references.size());
                 break;
-//            case "ratingDesc":
-//                log.info("Сортировка результатов поиска пользователя с uid {} по рейтингу, по-убыванию", user.getUid());
-//                references.sort(Comparator.comparing(ReferenceDescription::getRating).reversed());
-//                page = new PageImpl<>(references, pageable, references.size());
-//                break;
-//            case "ratingAsc":
-//                log.info("Сортировка результатов поиска пользователя с uid {} по рейтингу, по-возрастанию", user.getUid());
-//                references.sort(Comparator.comparing(ReferenceDescription::getRating));
-//                page = new PageImpl<>(references, pageable, references.size());
-//                break;
+            case "ratingDesc":
+                log.info("Сортировка результатов поиска пользователя с uid {} по рейтингу, по-убыванию", user.getUid());
+                references.sort(Comparator
+                        .comparing((ReferenceDescription referenceDescription) -> referenceDescription.getReference().getRating())
+                        .reversed());
+                page = new PageImpl<>(references, pageable, references.size());
+                break;
+            case "ratingAsc":
+                log.info("Сортировка результатов поиска пользователя с uid {} по рейтингу, по-возрастанию", user.getUid());
+                references.sort(Comparator
+                        .comparing((ReferenceDescription referenceDescription) -> referenceDescription.getReference().getRating()));
+                page = new PageImpl<>(references, pageable, references.size());
+                break;
             default:
                 log.warn("Неверный аргумент sortBy от пользователя с uid {} при попытке сортировки результатов поиска", user.getUid());
                 throw new IllegalStateException("Неверный аргумент sortBy");

@@ -81,12 +81,12 @@ public class UserHomeController {
             case "ratingDesc":
                 log.info("Сортировка ссылок пользователя с uid {} по рейтингу, по-убыванию", user.getUid());
                 page = referenceService.loadRefsByUserUid(user,
-                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("rating").descending()));
+                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("reference.rating").descending()));
                 break;
             case "ratingAsc":
                 log.info("Сортировка ссылок пользователя с uid {} по рейтингу, по-возрастанию", user.getUid());
                 page = referenceService.loadRefsByUserUid(user,
-                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("rating").ascending()));
+                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("reference.rating").ascending()));
                 break;
             default:
                 log.warn("Неверный аргумент sortBy от пользователя с uid {} при попытке сортировки ссылок", user.getUid());

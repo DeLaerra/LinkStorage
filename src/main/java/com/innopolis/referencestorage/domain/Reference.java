@@ -4,8 +4,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.search.annotations.ContainedIn;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -36,6 +38,8 @@ public class Reference {
     private int rating;
     @Getter
     @Setter
+    @ContainedIn
+    @IndexedEmbedded
     @OneToMany(mappedBy="reference", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ReferenceDescription> referenceDescriptions = new HashSet<>();
 
