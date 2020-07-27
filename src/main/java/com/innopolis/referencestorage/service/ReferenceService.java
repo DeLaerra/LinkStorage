@@ -4,6 +4,7 @@ import com.innopolis.referencestorage.commons.utils.PropertyChecker;
 import com.innopolis.referencestorage.domain.Reference;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
+import com.innopolis.referencestorage.repos.ReferenceDescriptionRepo;
 import com.innopolis.referencestorage.repos.ReferenceRepo;
 import com.innopolis.referencestorage.repos.UserRepo;
 import lombok.NoArgsConstructor;
@@ -24,66 +25,95 @@ import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 @NoArgsConstructor
 @Service
 public class ReferenceService {
+    private ReferenceDescriptionRepo referenceDescriptionRepo;
     private ReferenceRepo referenceRepo;
     private UserRepo userRepo;
 
     private final Short uidAdditionMethod = 0;
 
     @Autowired
-    public ReferenceService(ReferenceRepo referenceRepo, UserRepo userRepo) {
+    public ReferenceService(ReferenceRepo referenceRepo, UserRepo userRepo, ReferenceDescriptionRepo referenceDescriptionRepo) {
         this.referenceRepo = referenceRepo;
         this.userRepo = userRepo;
+        this.referenceDescriptionRepo = referenceDescriptionRepo;
     }
 
     public List<ReferenceDescription> loadAllUserRefs(User author) {
-        return referenceRepo.findByUidUser(author.getUid());
+        return referenceDescriptionRepo.findByUidUser(author.getUid());
     }
 
     public Page<ReferenceDescription> loadRefsByUserUid(User author, Pageable pageable) {
-        return referenceRepo.findByUidUser(author.getUid(), pageable);
+        return referenceDescriptionRepo.findByUidUser(author.getUid(), pageable);
     }
 
     /**
      *
      * @param userId - for which user reference
-     * @param reference - reference
+     * @param referenceDescription - reference
      * @return reference
      */
-    public ReferenceDescription addReference(Long userId, ReferenceDescription reference, String url){
-        log.info("Получена ссылка на добавление\n userId- {}, \n reference - {}", userId, reference.toString());
+    public ReferenceDescription addReference(Long userId, ReferenceDescription referenceDescription, String url){
+        log.info("Получена ссылка на добавление\n userId- {}, \n reference - {}", userId, referenceDescription.toString());
         User user = checkIfUserExists(userId);
 
-        reference.setUidUser(userId);
-        reference.setReference(new Reference(url, 1));
-        reference.setUidAdditionMethod(uidAdditionMethod);
-        reference.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        assertNotNull(url, "Отсутствует url ссылки");
 
-        if(reference.getName()== null || reference.getName().equals(""))
-            reference.setName(reference.getReference().getUrl());
+        Reference reference = referenceRepo.findByUrl(url);
+        if(reference == null){
+            reference = new Reference(url,1);
 
-        referenceRepo.save(reference);
+            reference = referenceRepo.saveAndFlush(reference);
+        }
+        else{
+            reference.setRating(reference.getRating() + 1);
+            referenceRepo.saveAndFlush(reference);
+        }
 
-        return reference;
+
+        referenceDescription.setReference(reference);
+        referenceDescription.setUidUser(userId);
+        referenceDescription.setUidAdditionMethod(uidAdditionMethod);
+        referenceDescription.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+
+        if(referenceDescription.getName()== null || referenceDescription.getName().equals(""))
+            referenceDescription.setName(url);
+
+        return referenceDescriptionRepo.save(referenceDescription);
     }
 
     /**
      *
      * @param refId id of reference
-     * @param reference reference
+     * @param referenceDescription reference
      * @return reference
      */
-    public ReferenceDescription updateReference(Long refId, ReferenceDescription reference, String url) {
-        log.info("Получена ссылка на обновление\n refId - {}, \n Ссылка - {}", reference.getUid(), url);
+    public ReferenceDescription updateReference(Long refId, ReferenceDescription referenceDescription, String url) {
+        log.info("Получена ссылка на обновление\n refId - {}, \n Ссылка - {}", referenceDescription.getUid(), referenceDescription.toString());
 
         ReferenceDescription item = checkIfReferenceExists(refId);
 
-        BeanUtils.copyProperties(
-                reference,
-                item,
-                PropertyChecker.getNullPropertyNames(reference)
-        );
+        assertNotNull(url, "Отсутствует url ссылки");
 
-        referenceRepo.save(item);
+        Reference reference = referenceRepo.findByUrl(url);
+        if(reference == null){
+            reference = new Reference(url,0);
+
+            reference = referenceRepo.saveAndFlush(reference);
+        }
+        if(!reference.getUrl().equals(item.getReference().getUrl())){
+            Reference oldReference = item.getReference();
+            oldReference.setRating(oldReference.getRating() - 1);
+            reference.setRating(reference.getRating() + 1);
+            reference = referenceRepo.saveAndFlush(reference);
+        }
+
+        BeanUtils.copyProperties(
+                referenceDescription,
+                item,
+                PropertyChecker.getNullPropertyNames(referenceDescription)
+        );
+        item.setReference(reference);
+        referenceDescriptionRepo.save(item);
 
         return item;
     }
@@ -93,7 +123,13 @@ public class ReferenceService {
 
         ReferenceDescription item = checkIfReferenceExists(refId);
 
-        referenceRepo.delete(item);
+        Reference reference = referenceRepo.findByUid(item.getReference().getUid());
+        assertNotNull(reference, "Отсутствует ссылка");
+
+        reference.setRating(reference.getRating() - 1);
+        referenceRepo.saveAndFlush(reference);
+
+        referenceDescriptionRepo.delete(item);
 
         return item;
     }
@@ -108,7 +144,7 @@ public class ReferenceService {
     }
 
     private ReferenceDescription checkIfReferenceExists(Long refId) {
-        ReferenceDescription data = referenceRepo.findByUid(refId);
+        ReferenceDescription data = referenceDescriptionRepo.findByUid(refId);
         assertNotNull(data, String.format("Указана несуществующая ссылка, refId - %s", refId));
 
         return data;

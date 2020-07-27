@@ -58,7 +58,6 @@ CREATE TABLE "ref_description" (
 	"uid" serial NOT NULL,
 	"uid_user" bigint NOT NULL,
 	"uid_reference" bigint NOT NULL,
-	"url" varchar(255) NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"description" varchar(255),
 	"uid_reference_type" bigint NOT NULL,
