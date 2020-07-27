@@ -69,6 +69,9 @@ public class ReferenceService {
             referenceRepo.saveAndFlush(reference);
         }
 
+        ReferenceDescription existingReference = referenceDescriptionRepo.findAnyByUidUserAndReference(userId, reference);
+        if(existingReference != null)
+            assertNotNull(null, "Описание для ссылки уже существует");
 
         referenceDescription.setReference(reference);
         referenceDescription.setUidUser(userId);
