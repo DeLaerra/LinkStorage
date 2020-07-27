@@ -1,9 +1,9 @@
 package com.innopolis.referencestorage.controller;
 
 import com.innopolis.referencestorage.config.CurrentUser;
-import com.innopolis.referencestorage.domain.Reference;
+import com.innopolis.referencestorage.domain.RefDescription;
 import com.innopolis.referencestorage.domain.User;
-import com.innopolis.referencestorage.service.ReferenceService;
+import com.innopolis.referencestorage.service.RefDescriptionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Slf4j
 @Controller
 public class UserHomeController {
-    private ReferenceService referenceService;
+    private RefDescriptionService referenceService;
 
     @Autowired
-    public UserHomeController(ReferenceService referenceService) {
+    public UserHomeController(RefDescriptionService referenceService) {
         this.referenceService = referenceService;
     }
 
@@ -32,16 +32,16 @@ public class UserHomeController {
                                      @RequestParam(name = "search", required = false) String q,
                                      @RequestParam(name = "area", required = false) String area) {
         log.info("Получен запрос об отображении ссылок пользователя с uid - {}", user.getUid());
-        Page<Reference> page = getReferencesPage(user, pageable, sortBy, load);
+        Page<RefDescription> page = getReferencesPage(user, pageable, sortBy, load);
         model.addAttribute("page", page);
         model.addAttribute("url", "/userHome");
         return "userHome";
     }
 
-    private Page<Reference> getReferencesPage(@CurrentUser User user, Pageable pageable,
-                                              @RequestParam(name = "sortBy", required = false) String sortBy,
-                                              @RequestParam(name = "load", required = false) String load) {
-        Page<Reference> page = referenceService.loadRefsByUserUid(user, pageable);
+    private Page<RefDescription> getReferencesPage(@CurrentUser User user, Pageable pageable,
+                                                   @RequestParam(name = "sortBy", required = false) String sortBy,
+                                                   @RequestParam(name = "load", required = false) String load) {
+        Page<RefDescription> page = referenceService.loadRefsByUserUid(user, pageable);
 
         if (load != null && load.equals("all")) {
             log.info("Получен запрос на отображение всех ссылок пользователя с uid - {}", user.getUid());
@@ -54,9 +54,9 @@ public class UserHomeController {
         return page;
     }
 
-    private Page<Reference> getSortedReferences(@CurrentUser User user, Pageable pageable,
-                                                @RequestParam(name = "sortBy", required = false) String sortBy) {
-        Page<Reference> page;
+    private Page<RefDescription> getSortedReferences(@CurrentUser User user, Pageable pageable,
+                                                     @RequestParam(name = "sortBy", required = false) String sortBy) {
+        Page<RefDescription> page;
         switch (sortBy) {
             case "nameDesc":
                 log.info("Сортировка ссылок пользователя с uid {} по имени, по-убыванию", user.getUid());

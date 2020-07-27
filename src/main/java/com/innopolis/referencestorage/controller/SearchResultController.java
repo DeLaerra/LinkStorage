@@ -1,7 +1,7 @@
 package com.innopolis.referencestorage.controller;
 
 import com.innopolis.referencestorage.config.CurrentUser;
-import com.innopolis.referencestorage.domain.Reference;
+import com.innopolis.referencestorage.domain.RefDescription;
 import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.service.ReferenceSearchService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.util.List;
 @SessionAttributes({"searchText", "areaText"})
 @Controller
 public class SearchResultController {
-    private ReferenceSearchService referenceSearchService;
+    private final ReferenceSearchService referenceSearchService;
 
     @Autowired
     public SearchResultController(ReferenceSearchService referenceSearchService) {
@@ -46,7 +46,7 @@ public class SearchResultController {
                                @RequestParam(name = "load", required = false) String load,
                                @RequestParam(name = "search", required = false) String q,
                                @RequestParam(name = "area", required = false) String area) {
-        Page<Reference> page;
+        Page<RefDescription> page;
         if (q != null && !q.equals("")) {
             model.addAttribute("searchText", q);
         }
@@ -64,12 +64,12 @@ public class SearchResultController {
         return "searchResult";
     }
 
-    private Page<Reference> getSearchResultReferencesPage(@CurrentUser User user, Model model, Pageable pageable,
-                                                          String sortBy,
-                                                          String load,
-                                                          String q,
-                                                          String area) {
-        List<Reference> references;
+    private Page<RefDescription> getSearchResultReferencesPage(@CurrentUser User user, Model model, Pageable pageable,
+                                                               String sortBy,
+                                                               String load,
+                                                               String q,
+                                                               String area) {
+        List<RefDescription> references;
 
         if (area != null && area.equals("all")) {
             references = referenceSearchService.fullTextSearchPublicReferencesOnly(q, pageable, user);
@@ -79,7 +79,7 @@ public class SearchResultController {
             log.info("Выполнен поиск по личным ссылкам пользователя с uid {} с текстом {}", user.getUid(), q);
         }
 
-        Page<Reference> page = new PageImpl<>(references, pageable, references.size());
+        Page<RefDescription> page = new PageImpl<>(references, pageable, references.size());
 
         if (load != null && load.equals("all")) {
             page = new PageImpl<>(references, pageable, references.size());
@@ -91,38 +91,38 @@ public class SearchResultController {
         return page;
     }
 
-    private Page<Reference> getSortedReferences(@CurrentUser User user, Pageable pageable, List<Reference> references,
-                                                @RequestParam(name = "sortBy", required = false) String sortBy) {
-        Page<Reference> page;
+    private Page<RefDescription> getSortedReferences(@CurrentUser User user, Pageable pageable, List<RefDescription> references,
+                                                     @RequestParam(name = "sortBy", required = false) String sortBy) {
+        Page<RefDescription> page;
         switch (sortBy) {
             case "nameDesc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по имени, по-убыванию", user.getUid());
-                references.sort(Comparator.comparing(Reference::getName).reversed());
+                references.sort(Comparator.comparing(RefDescription::getName).reversed());
                 page = new PageImpl<>(references, pageable, references.size());
                 break;
             case "nameAsc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по имени, по-возрастанию", user.getUid());
-                references.sort(Comparator.comparing(Reference::getName));
+                references.sort(Comparator.comparing(RefDescription::getName));
                 page = new PageImpl<>(references, pageable, references.size());
                 break;
             case "sourceDesc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по источнику, по-убыванию", user.getUid());
-                references.sort(Comparator.comparing(Reference::getSource).reversed());
+                references.sort(Comparator.comparing(RefDescription::getSource).reversed());
                 page = new PageImpl<>(references, pageable, references.size());
                 break;
             case "sourceAsc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по источнику, по-возрастанию", user.getUid());
-                references.sort(Comparator.comparing(Reference::getSource));
+                references.sort(Comparator.comparing(RefDescription::getSource));
                 page = new PageImpl<>(references, pageable, references.size());
                 break;
             case "ratingDesc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по рейтингу, по-убыванию", user.getUid());
-                references.sort(Comparator.comparing(Reference::getRating).reversed());
+                references.sort(Comparator.comparing(RefDescription::getRating).reversed());
                 page = new PageImpl<>(references, pageable, references.size());
                 break;
             case "ratingAsc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по рейтингу, по-возрастанию", user.getUid());
-                references.sort(Comparator.comparing(Reference::getRating));
+                references.sort(Comparator.comparing(RefDescription::getRating));
                 page = new PageImpl<>(references, pageable, references.size());
                 break;
             default:

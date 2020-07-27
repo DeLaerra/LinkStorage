@@ -1,6 +1,6 @@
 package com.innopolis.referencestorage.repos;
 
-import com.innopolis.referencestorage.domain.Reference;
+import com.innopolis.referencestorage.domain.RefDescription;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,12 +14,10 @@ import java.util.List;
  * @author Roman Khokhlov
  */
 @Repository
-public interface ReferenceRepo extends JpaRepository<Reference, Long> {
-    List<Reference> findByTag(String tag);
+public interface RefDescriptionRepo extends JpaRepository<RefDescription, Long> {
+    RefDescription findByUid(Long uid);
 
-    Reference findByUid(Long uid);
+    List<RefDescription> findByUidUser(Long uid);
 
-    List<Reference> findByUidUser(Long uid);
-
-    Page<Reference> findByUidUser(Long uid, Pageable page);
+    Page<RefDescription> findByUidUser(Long uid, Pageable page);
 }

@@ -1,7 +1,7 @@
 package com.innopolis.referencestorage.controller;
 
-import com.innopolis.referencestorage.domain.Reference;
-import com.innopolis.referencestorage.service.ReferenceService;
+import com.innopolis.referencestorage.domain.RefDescription;
+import com.innopolis.referencestorage.service.RefDescriptionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,22 +20,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/reference")
 @Controller
 public class ReferenceController {
-    private ReferenceService referenceService;
+    private RefDescriptionService referenceService;
 
     @Autowired
-    public ReferenceController(ReferenceService referenceService) {
+    public ReferenceController(RefDescriptionService referenceService) {
         this.referenceService = referenceService;
     }
 
     @PostMapping("/add/{userId}")
-    public String addReference(Reference reference,  Model model, @PathVariable Long userId){
+    public String addReference(RefDescription reference, Model model, @PathVariable Long userId){
         log.info("Получен запрос на добавление записи ссылки: \n userId - {}, \n reference - {} ", userId, reference.toString());
         referenceService.addReference(userId, reference);
         return "redirect:/userHome";
     }
 
     @PostMapping("/update/{refId}")
-    public String updateReference(Reference reference, Model model, @PathVariable Long refId){
+    public String updateReference(RefDescription reference, Model model, @PathVariable Long refId){
         log.info("Получен запрос на обновление записи ссылки: \n refId - {}, \n reference - {} ", refId, reference.toString());
         referenceService.updateReference(refId, reference);
         return "redirect:/userHome";
@@ -44,7 +44,7 @@ public class ReferenceController {
     @GetMapping("delete/{refId}")
     public String deleteReference(@PathVariable Long refId, Model model) {
         log.info("Получен запрос на удаление элемента: \n refId - {}", refId);
-        Reference refDelete = referenceService.deleteReference(refId);
+        RefDescription refDelete = referenceService.deleteReference(refId);
         model.addAttribute("referenceDelete", refDelete);
         return "redirect:/userHome";
     }
