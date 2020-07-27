@@ -3,11 +3,6 @@
 <@c.page>
     <div class="container">
         <form action="/myAccount" method="post" enctype="multipart/form-data">
-            <div class="form-group row">
-                <div class="col-sm-6">
-                    <h5>Личный кабинет</h5>
-                </div>
-            </div>
             <#if userInfo.avatar??>
                 <div class="form-group row" style="text-align: center">
                     <div class="col-sm-6" style="height: 300px">
@@ -16,9 +11,15 @@
                     </div>
                 </div>
             </#if>
+            <#if userInfoAvatarError??>
+                <div class="text-danger">
+                    ${userInfoAvatarError}
+                </div>
+            </#if>
             <div class="form-group row" style="display: inline-block">
                 <div class="col-sm-10">
-                    <input type="file" class="form-control-file" name="file" id="file">
+                    <label for="file" class="btn btn-primary btn-sm mb-2">Выберите файл</label>
+                    <input type="file" class="form-control-file" id="file" name="file" style="display: none">
                 </div>
             </div>
             <div class="form-group row" style="display: inline-block">
@@ -58,7 +59,7 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">Возраст:</label>
                 <div class="col-sm-6">
-                    <input required type="text" minlength="1" maxlength="15" name="age" value="${(userInfo.age)!''}"
+                    <input required type="number" minlength="1" maxlength="15" name="age" value="${(userInfo.age)!''}"
                            class="form-control ${(userInfoAgeError??)?string('is-invalid', '')}"
                            placeholder="${(userInfo.age)!''}"/>
                     <#if userInfoAgeError??>
