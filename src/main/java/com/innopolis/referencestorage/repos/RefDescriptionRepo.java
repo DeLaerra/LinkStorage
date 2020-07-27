@@ -1,6 +1,6 @@
 package com.innopolis.referencestorage.repos;
 
-import com.innopolis.referencestorage.domain.ReferenceDescription;
+import com.innopolis.referencestorage.domain.Reference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

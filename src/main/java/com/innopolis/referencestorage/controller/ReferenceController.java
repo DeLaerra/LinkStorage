@@ -1,12 +1,15 @@
 package com.innopolis.referencestorage.controller;
 
-import com.innopolis.referencestorage.domain.ReferenceDescription;
+import com.innopolis.referencestorage.domain.Reference;
 import com.innopolis.referencestorage.service.ReferenceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * ReferenceController.
