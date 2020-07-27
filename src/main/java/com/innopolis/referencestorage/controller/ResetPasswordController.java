@@ -5,8 +5,10 @@ import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.repos.ConfirmationTokenRepository;
 import com.innopolis.referencestorage.repos.UserRepo;
 import com.innopolis.referencestorage.service.EmailSenderService;
+import com.innopolis.referencestorage.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,26 +25,30 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ResetPasswordController {
 
-
+    // Instantiate our encoder
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
     private ConfirmationTokenRepository confirmationTokenRepository;
-
     private EmailSenderService emailSenderService;
-
     private UserRepo userRepo;
+    private UserService userService;
 
     @Autowired
     public ResetPasswordController(ConfirmationTokenRepository confirmationTokenRepository,
-                                  EmailSenderService emailSenderService, UserRepo userRepo) {
+                                   EmailSenderService emailSenderService, UserRepo userRepo,
+                                   UserService userService) {
         this.confirmationTokenRepository = confirmationTokenRepository;
         this.emailSenderService = emailSenderService;
         this.userRepo = userRepo;
+        this.userService = userService;
     }
-    // Instantiate our encoder
-    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
+    private static String hashPassword(String password) {
+        String salt = BCrypt.gensalt(12);
+        return (BCrypt.hashpw(password, salt));
+    }
 
     // Display the form
-    @RequestMapping(value="/passwordChange", method= RequestMethod.GET)
+    @RequestMapping(value = "/passwordChange", method = RequestMethod.GET)
     public ModelAndView displayResetPassword(ModelAndView modelAndView, User user) {
         modelAndView.addObject("user", user);
         modelAndView.setViewName("passwordChange");
@@ -50,7 +56,7 @@ public class ResetPasswordController {
     }
 
     //     Receive the address and send an email
-    @RequestMapping(value="/passwordChange", method=RequestMethod.POST)
+    @RequestMapping(value = "/passwordChange", method = RequestMethod.POST)
     public ModelAndView forgotUserPassword(ModelAndView modelAndView, User user) {
         User existingUser = userRepo.findByEmail(user.getEmail());
         if (existingUser != null) {
@@ -61,13 +67,12 @@ public class ResetPasswordController {
             confirmationTokenRepository.save(confirmationToken);
 
             // Create the email
-
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setTo(existingUser.getEmail());
             mailMessage.setSubject("Complete Password Reset!");
             mailMessage.setFrom("roman.oilman@yandex.ru");
             mailMessage.setText("Пожалуйста, перейдите по ссылке для продолжения процедуры смены пароля: "
-                    + "http://localhost:8081/confirm-reset?token="+confirmationToken.getConfirmationToken());
+                    + "http://localhost:8081/confirm-reset?token=" + confirmationToken.getConfirmationToken());
 
             // Send the email
             emailSenderService.sendEmail(mailMessage);
@@ -83,8 +88,8 @@ public class ResetPasswordController {
     }
 
     // Endpoint to confirm the token
-    @RequestMapping(value="/confirm-reset", method= {RequestMethod.GET, RequestMethod.POST})
-    public ModelAndView validateResetToken(ModelAndView modelAndView, @RequestParam("token")String confirmationToken) {
+    @RequestMapping(value = "/confirm-reset", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView validateResetToken(ModelAndView modelAndView, @RequestParam("token") String confirmationToken) {
         ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
 
         if (token != null) {
@@ -96,31 +101,29 @@ public class ResetPasswordController {
             modelAndView.setViewName("resetPassword");
         } else {
             modelAndView.addObject("confirmError", "Ссылка недействительна!");
-            modelAndView.setViewName("errorconfirm");
+            modelAndView.setViewName("error");
         }
         return modelAndView;
     }
 
     // Endpoint to update a user's password
-    @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
+    @RequestMapping(value = "/resetPassword", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView resetUserPassword(ModelAndView modelAndView, User user) {
 
-
         if (user.getEmail() != null) {
-
-            // Use email to find user
             User tokenUser = userRepo.findByEmail(user.getEmail());
-
-            tokenUser.setPassword(encoder.encode(user.getPassword()));
-
-            userRepo.save(tokenUser);
-
-            modelAndView.addObject("message", "Password successfully reset. You can now log in with the new credentials.");
-            modelAndView.setViewName("successResetPassword");
+            tokenUser.setActive(true);
+            if (!user.getPassword().equals(user.getPasswordConfirmation())) {
+                modelAndView.addObject("passwordConfirmationError", "Введённые пароли не совпадают!");
+            } else {
+                tokenUser.setPassword(hashPassword(user.getPassword()));
+                userRepo.save(tokenUser);
+                modelAndView.setViewName("successResetPassword");
+            }
         } else {
-            modelAndView.addObject("messageError","The link is invalid or broken!");
             modelAndView.setViewName("error");
         }
+
         return modelAndView;
     }
 }
