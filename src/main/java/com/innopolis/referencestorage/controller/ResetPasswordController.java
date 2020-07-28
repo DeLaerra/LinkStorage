@@ -75,6 +75,7 @@ public class ResetPasswordController {
                     "\n" +
                     "От вашего имени подана заявка на восстановление пароля. Пожалуйста, перейдите по ссылке для продолжения процедуры смены пароля: \n"
                     + "http://localhost:8081/confirm-reset?token=" + confirmationToken.getConfirmationToken() + "\n"
+                    + "\n"
                     + "Это письмо отправлено автоматически, пожалуйста, не отвечайте на него.");
 
             // Send the email

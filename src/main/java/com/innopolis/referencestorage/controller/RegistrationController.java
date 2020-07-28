@@ -1,5 +1,6 @@
 package com.innopolis.referencestorage.controller;
 
+import com.innopolis.referencestorage.commons.utils.EmailValidator;
 import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.service.UserInfoService;
 import com.innopolis.referencestorage.service.UserService;
@@ -36,6 +37,10 @@ public class RegistrationController {
     public String addUser(User user, Map<String, Object> model) {
         if (!user.getPassword().equals(user.getPasswordConfirmation())){
             model.put("passwordError", "Введённые пароли не совпадают!");
+            return "registration";
+        }
+        if (!EmailValidator.isValid(user.getEmail())) {
+            model.put("emailError", "Некорректный email");
             return "registration";
         }
         if (!userService.saveUser(user)) {

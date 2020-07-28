@@ -17,6 +17,15 @@ import java.util.UUID;
 @Table(name = "confirmation_token")
 @NoArgsConstructor
 public class ConfirmationToken {
+
+    public String getConfirmationToken() {
+        return confirmationToken;
+    }
+
+    public void setConfirmationToken(String confirmationToken) {
+        this.confirmationToken = confirmationToken;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name="token_id")
@@ -45,4 +54,3 @@ public class ConfirmationToken {
         confirmationToken = UUID.randomUUID().toString();
     }
 }
-
