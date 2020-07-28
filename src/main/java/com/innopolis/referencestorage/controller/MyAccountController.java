@@ -34,10 +34,19 @@ public class MyAccountController {
     }
 
     @PostMapping("/myAccount")
-    public String editUserDetails(@CurrentUser User user, UserInfo userInfo, String birthDateStr, MultipartFile file) {
+    public String editUserDetails(@CurrentUser User user, UserInfo userInfo, String birthDateStr, MultipartFile file, Model model) {
         log.info("Получен запрос на изменение данных в личном кабинете от пользователя с uid {}: \n userInfo - {}, \n birthDate - {} ", user.getUid(), userInfo, birthDateStr);
-        userInfoService.checkAndAddData(user, userInfo, birthDateStr, file);
+        userInfoService.checkAndAddData(user, userInfo, birthDateStr, file, model);
         userInfoService.saveUserInfo(userInfo);
+        if (model.getAttribute("userInfoNameError") != null || model.getAttribute("userInfoSurnameError") != null ||
+                model.getAttribute("userInfoAgeError") != null || model.getAttribute("userInfoBirthDateError") != null ||
+                model.getAttribute("userInfoAvatarError") != null) {
+            UserInfo originalUserInfo = userInfoService.getUserInfoWithUserUID(user);
+            model.addAttribute("userInfo", originalUserInfo);
+            model.addAttribute("birthDateStr", originalUserInfo.getBirthDate());
+            model.addAttribute("avatarImage", userInfoService.getFileFromUserInfo(originalUserInfo.getAvatar()));
+            return "myAccount";
+        }
         return "redirect:/myAccount";
     }
 }
