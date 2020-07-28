@@ -22,7 +22,7 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addRedirectViewController("/", "index");
         registry.addViewController("/login").setViewName("login");
         registry.addViewController("/index").setViewName("index");
-        registry.addViewController("/passwordChange").setViewName("passwordChange");
+        registry.addViewController("/error").setViewName("error");
     }
 
     @Override

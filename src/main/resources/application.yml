@@ -32,10 +32,10 @@ spring:
     transport:
       protocol: smtp
     from:
-      email: link.storage@yandex.ru
-    username: link.storage@yandex.ru
-    password: link.storage1
-    host: smtp.yandex.ru
+      email: roman.oilman@yandex.ru
+      username: roman.oilman@yandex.ru
+      password: rkuoutquvqpgysko
+      host: smtp.yandex.ru
     port: 587
     properties:
       mail:
