@@ -100,12 +100,15 @@ CREATE TABLE "user_info" (
 );
 
 --changeset r.khokhlov:20200717-insert-tables runOnChange:true context:test
-CREATE TABLE "confirmation_token" (
-	"token_id" bigint NOT NULL PRIMARY KEY,
-	"uid" bigint NOT NULL,
-	"confirmation_token" varchar(255) NOT NULL,
-	"created_date" date NOT NULL,
-    CONSTRAINT "confirmation_token_pkey" PRIMARY KEY ("token_id")
+CREATE TABLE confirmation_token
+(
+    confirmation_token text,
+    created_date date,
+    token_id bigint NOT NULL,
+    uid bigint,
+    CONSTRAINT confirmation_token_pkey PRIMARY KEY (token_id)
+) WITH (
+  OIDS=FALSE
 );
 
 
