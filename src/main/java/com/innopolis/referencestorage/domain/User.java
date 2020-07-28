@@ -1,7 +1,9 @@
 package com.innopolis.referencestorage.domain;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,6 +11,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 /**
  * User.
@@ -18,10 +21,13 @@ import java.util.Collections;
 
 @Entity
 @Table(name = "usercreds")
+@ToString
+@EqualsAndHashCode
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Getter
+    @Setter
     private Long uid;
     @Getter
     @Setter
@@ -46,6 +52,25 @@ public class User implements UserDetails {
     @Getter
     @Setter
     private int roleUid;
+
+    @Getter
+    @Setter
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @OneToOne(optional = false, mappedBy = "user")
+    private UserInfo userInfo;
+
+    @Getter
+    @Setter
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "friends",
+            joinColumns = @JoinColumn(name = "user_friend"),
+            inverseJoinColumns = @JoinColumn(name = "user_owner")
+    )
+    private Set<User> friends;
+
 
     public boolean isAdmin() {
         return roleUid == 1;

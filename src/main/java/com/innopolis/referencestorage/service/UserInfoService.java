@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -27,7 +28,9 @@ public class UserInfoService {
     public void createUserDetails(Long userUId) {
         log.info("Получен запрос на создание новой сущности UserInfo userUId - {}", userUId);
         UserInfo userInfo = new UserInfo();
-        userInfo.setUidUser(userUId);
+        User user = new User();
+        user.setUid(userUId);
+        userInfo.setUser(user);
         userInfo.setName("Name");
         userInfo.setSurname("Surname");
         userInfo.setAge(0);
@@ -44,12 +47,12 @@ public class UserInfoService {
     public UserInfo getUserInfoWithUserUID(User user) {
         log.info("Получен запрос на получение данных пользователя с userUId - {}", user.getUid());
         long uid = user.getUid();
-        UserInfo userInfo = userInfoRepo.findByUidUser(uid);
+        UserInfo userInfo = userInfoRepo.findByUser(user);
         return userInfo;
     }
 
     public void saveUserInfo(UserInfo userInfo) {
-        log.info("Получен запрос на сохранение данных пользователя с userUId {} \n userUId - {}", userInfo.getUidUser(), userInfo);
+        log.info("Получен запрос на сохранение данных пользователя с userUId {} \n userUId - {}", userInfo.getUser().getUid(), userInfo);
         userInfoRepo.save(userInfo);
     }
 
@@ -57,7 +60,7 @@ public class UserInfoService {
         log.info("Получен запрос на проверку и добавление данных к сущности UserInfo от пользователя с uid {}: \n userInfo - {}, \n birthDate - {} ", user.getUid(), userInfo, birthDate);
         UserInfo originalUserInfo = getUserInfoWithUserUID(user);
         userInfo.setUid(originalUserInfo.getUid());
-        userInfo.setUidUser(originalUserInfo.getUidUser());
+        userInfo.setUser(originalUserInfo.getUser());
         String newName = userInfo.getName();
         newName = newName.replaceAll("\\d", "");
         if (newName.equals("")) {
@@ -109,4 +112,5 @@ public class UserInfoService {
         }
         return "";
     }
+
 }

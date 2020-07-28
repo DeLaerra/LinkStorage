@@ -4,6 +4,7 @@ import com.innopolis.referencestorage.config.CurrentUser;
 import com.innopolis.referencestorage.domain.Reference;
 import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.service.ReferenceService;
+import com.innopolis.referencestorage.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,9 +21,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserHomeController {
     private ReferenceService referenceService;
 
+    private UserService userService;
+
     @Autowired
-    public UserHomeController(ReferenceService referenceService) {
+    public UserHomeController(ReferenceService referenceService, UserService userService) {
         this.referenceService = referenceService;
+        this.userService = userService;
     }
 
     @GetMapping("/userHome")
@@ -35,6 +39,7 @@ public class UserHomeController {
         Page<Reference> page = getReferencesPage(user, pageable, sortBy, load);
         model.addAttribute("page", page);
         model.addAttribute("url", "/userHome");
+        model.addAttribute("userFriends", userService.loadUserByUsername(user.getUsername()));
         return "userHome";
     }
 
