@@ -86,7 +86,7 @@ public class ResetPasswordController {
 
         } else {
             modelAndView.addObject("usernameErr", "Пользователя с таким email не существует!");
-            modelAndView.setViewName("error");
+            modelAndView.setViewName("passwordChange");
         }
         return modelAndView;
     }

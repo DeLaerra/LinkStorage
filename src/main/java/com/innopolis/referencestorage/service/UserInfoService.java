@@ -19,6 +19,8 @@ import java.util.Base64;
 @Service
 public class UserInfoService {
     private UserInfoRepo userInfoRepo;
+    private final static String NAME_SURNAME_WARNING = "В введенных данных имени есть цифры или символы, остаётся прежнее имя/фамилия";
+    private final static String ONLY_LETTERS = "Пожалуйста, используйте только буквы";
 
     @Autowired
     public UserInfoService(UserInfoRepo userInfoRepo) {
@@ -60,18 +62,18 @@ public class UserInfoService {
         userInfo.setUid(originalUserInfo.getUid());
         userInfo.setUidUser(originalUserInfo.getUidUser());
         String newName = userInfo.getName();
-        if (newName.matches(".*\\d.*")) {
-            log.info("В введенных данных имени есть цифры, присваивается имеющееся имя");
+        if (!isText(newName)) {
+            log.info(NAME_SURNAME_WARNING);
             userInfo.setName(originalUserInfo.getName());
-            model.addAttribute("userInfoNameError", "В введенных вами данных были цифры");
+            model.addAttribute("userInfoNameError", ONLY_LETTERS);
         } else {
             userInfo.setName(newName.substring(0, 1).toUpperCase() + newName.substring(1));
         }
         String newSurname = userInfo.getSurname();
-        if (newSurname.matches(".*\\d.*")) {
-            log.info("В введенных данных фамилии есть цифры, присваивается имеющаяся фамилия");
+        if (!isText(newSurname)) {
+            log.info(NAME_SURNAME_WARNING);
             userInfo.setSurname(originalUserInfo.getSurname());
-            model.addAttribute("userInfoSurnameError", "В введенных вами данных были цифры");
+            model.addAttribute("userInfoSurnameError", ONLY_LETTERS);
         } else {
             userInfo.setSurname(newSurname.substring(0, 1).toUpperCase() + newSurname.substring(1));
         }
@@ -120,5 +122,9 @@ public class UserInfoService {
             return "data:image/png;base64," + imgDataAsBase64;
         }
         return "";
+    }
+
+    public boolean isText(String string) {
+        return string.matches("[a-zA-Zа-яА-Я]+");
     }
 }
