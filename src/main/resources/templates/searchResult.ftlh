@@ -33,6 +33,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
+                                <b>Добавление ссылки</b>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -47,7 +48,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="add_urlInput">Ссылка:</label>
-                                        <input type="text" name="url" class="form-control" id="add_urlInput"
+                                        <input type="url" name="url" class="form-control" id="add_urlInput"
                                                placeholder="Ссылка">
                                     </div>
                                     <div class="form-group">
@@ -69,11 +70,6 @@
                                         <label for="add_tagInput">Теги:</label>
                                         <input type="text" name="tag" class="form-control" id="add_tagInput"
                                                placeholder="Тэг">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="add_sourceInput">Источник:</label>
-                                        <input type="text" name="source" class="form-control" id="add_sourceInput"
-                                               placeholder="Источник">
                                     </div>
                                     <div class="form-group">
                                         <label for="add_accessLevelInput">Уровень доступа:</label>
@@ -147,8 +143,8 @@
                         <#--                            Строки таблицы-->
                         <div class="row">
                             <div class="col-sm">
-                                <td> <#if userRef.name??><a href="${userRef.url}">${userRef.name}</a><br><#else><a
-                                        href="${userRef.url}">${userRef.url}<br></a></#if>
+                                <td> <#if userRef.name??><a href="${userRef.reference.url}">${userRef.name}</a><br><#else><a
+                                        href="${userRef.reference.url}">${userRef.reference.url}<br></a></#if>
                                     <#if userRef.tag??>Теги: ${userRef.tag}<br></#if>
 
                                     <div class="btn-toolbar mr-4" role="toolbar"
@@ -197,7 +193,7 @@
                                          aria-labelledby="${userRef.uid}Label" aria-hidden="true">
                                         <div class="card card-body">
                                             <div class="body">
-                                                <a href="${userRef.url}">${userRef.url}</a><br>
+                                                <a href="${userRef.reference.url}">${userRef.reference.url}</a><br>
                                                 <#if userRef.tag??><b>Теги</b>: ${userRef.tag}<br></#if>
                                                 <#if userRef.source??><b>Источник</b>: <a
                                                         href="${userRef.source}">${userRef.source}</a><br></#if>
@@ -216,7 +212,7 @@
                                                 <#elseif userRef.uidReferenceType == 2>файл
                                                     <br><#elseif userRef.uidReferenceType == 3>картинка
                                                     <br></#if>
-                                                <#if userRef.rating??><b>Рейтинг: </b>${userRef.rating}</#if>
+                                                <#if userRef.reference.rating??><b>Рейтинг: </b>${userRef.reference.rating}</#if>
                                             </div>
                                         </div>
                                     </div>
@@ -228,8 +224,8 @@
                                                 <div class="modal-header">
                                                     <h5 class="modal-title"
                                                         id="${userRef.uid}Label"><#if userRef.name??><a
-                                                            href="${userRef.url}">${userRef.name}</a><br><#else><a
-                                                            href="${userRef.url}">${userRef.url}<br></a></#if></h5>
+                                                            href="${userRef.reference.url}">${userRef.name}</a><br><#else><a
+                                                            href="${userRef.reference.url}">${userRef.reference.url}<br></a></#if></h5>
                                                     <button type="button" class="close" data-dismiss="modal"
                                                             aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
@@ -240,7 +236,7 @@
                                                           action="reference/update/${userRef.uid}">
                                                         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
                                                         <input type="hidden" name="uidUser" value="${userRef.uidUser}"/>
-                                                        <a href="${userRef.url}">${userRef.url}</a><br>
+                                                        <a href="${userRef.reference.url}">${userRef.reference.url}</a><br>
                                                         <div class="form-group">
                                                             <label for="${userRef.uid}nameInput">Название:</label>
                                                             <input type="text" name="name" class="form-control"
@@ -251,7 +247,7 @@
                                                             <label for="${userRef.uid}urlInput">Ссылка:</label>
                                                             <input type="text" name="url" class="form-control"
                                                                    id="${userRef.uid}urlInput" placeholder="Ссылка"
-                                                                   value="<#if userRef.url??>${userRef.url}</#if>">
+                                                                   value="<#if userRef.reference.url??>${userRef.reference.url}</#if>">
                                                         </div>
                                                         <#if userRef.description??>
                                                             <div class="form-group">
@@ -327,7 +323,7 @@
                                 <td><#if userRef.source??><a href="${userRef.source}">${userRef.source}</a></#if></td>
                             </div>
                             <div class="col-sm">
-                                <td><#if userRef.rating??>${userRef.rating}</#if></td>
+                                <td><#if userRef.reference.rating??>${userRef.reference.rating}</#if></td>
                             </div>
                         </div>
                     </tr>

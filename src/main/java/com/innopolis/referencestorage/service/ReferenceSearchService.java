@@ -1,6 +1,6 @@
 package com.innopolis.referencestorage.service;
 
-import com.innopolis.referencestorage.domain.Reference;
+import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.search.Query;
@@ -16,7 +16,12 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -40,76 +45,116 @@ public class ReferenceSearchService {
     }
 
     @Transactional
-    public List<Reference> fullTextSearchAllReferences(String searchTerm, Pageable pageable) {
+    public List<ReferenceDescription> fullTextSearchAllReferences(String searchTerm, Pageable pageable) {
+        List<ReferenceDescription> searchResults = new ArrayList<>();
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(centityManager);
-        QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Reference.class).get();
-        Query luceneQuery = qb.keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1)
-                .onFields("name")
-                .andField("url")
-                .andField("description")
-                .andField("tag")
-                .matching(searchTerm).createQuery();
+        QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(ReferenceDescription.class).get();
+        Query luceneQuery = null;
+        try {
+            luceneQuery = qb.keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1)
+                    .onFields("name")
+                    .andField("reference.url")
+                    .andField("description")
+                    //                .andField("tag")
+                    .matching(searchTerm).createQuery();
+        } catch (Exception e) {
+            log.error("Ошибка при попытке создания поискового запроса по терминам \"{}\"", searchTerm, e);
+            return searchResults;
+        }
 
-        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Reference.class);
+        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, ReferenceDescription.class);
         return executeJpaQuery(jpaQuery, pageable);
     }
 
-    public List<Reference> fullTextSearchReferencesByUserUid(String searchTerm, User user, Pageable pageable) {
+    public List<ReferenceDescription> fullTextSearchReferencesByUserUid(String searchTerm, User user, Pageable pageable) {
+        List<ReferenceDescription> searchResults = new ArrayList<>();
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(centityManager);
-        QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Reference.class).get();
+        QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(ReferenceDescription.class).get();
 
-        Query luceneQuery = qb
-                .bool()
-                .must(qb
-                        .keyword()
-                        .onField("uidUser")
-                        .matching(user.getUid())
-                        .createQuery())
-                .must(qb
-                        .keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1)
-                        .onFields("name")
-                        .andField("url")
-                        .andField("description")
-                        .andField("tag")
-                        .matching(searchTerm).createQuery())
-                .createQuery();
+        Query luceneQuery = null;
+        try {
+            luceneQuery = qb
+                    .bool()
+                    .must(qb
+                            .keyword()
+                            .onField("uidUser")
+                            .matching(user.getUid())
+                            .createQuery())
+                    .must(qb
+                            .keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1)
+                            .onFields("name")
+                            .andField("reference.url")
+                            .andField("description")
+                            //                        .andField("tag")
+                            .matching(searchTerm).createQuery())
+                    .createQuery();
+        } catch (Exception e) {
+            log.error("Ошибка при попытке создания поискового запроса по терминам \"{}\"", searchTerm, e);
+            return searchResults;
+        }
 
-        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Reference.class);
+        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, ReferenceDescription.class);
         log.info("Запрос {} от пользователя с uid {}", jpaQuery, user.getUid());
         return executeJpaQuery(jpaQuery, pageable);
     }
 
-    public List<Reference> fullTextSearchPublicReferencesOnly(String searchTerm, Pageable pageable, User user) {
+    public List<ReferenceDescription> fullTextSearchPublicReferencesOnly(String searchTerm, Pageable pageable, User user) {
+        List<ReferenceDescription> searchResults = new ArrayList<>();
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(centityManager);
-        QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(Reference.class).get();
-        Query luceneQuery = qb
-                .bool()
-                .must(qb
-                        .keyword()
-                        .onField("uidAccessLevel")
-                        .matching(0)
-                        .createQuery())
-                .must(qb
-                        .keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1)
-                        .onFields("name")
-                        .andField("url")
-                        .andField("description")
-                        .andField("tag")
-                        .matching(searchTerm).createQuery())
-                .createQuery();
+        QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(ReferenceDescription.class).get();
+        Query luceneQuery = null;
+        try {
+            luceneQuery = qb
+                    .bool()
+                    .must(qb
+                            .keyword()
+                            .onField("uidAccessLevel")
+                            .matching(0)
+                            .createQuery())
+                    .must(qb
+                            .keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1)
+                            .onFields("name")
+                            .andField("reference.url")
+                            .andField("description")
+                            //                        .andField("tag")
+                            .matching(searchTerm).createQuery())
+                    .createQuery();
+        } catch (Exception e) {
+            log.error("Ошибка при попытке создания поискового запроса по терминам \"{}\"", searchTerm, e);
+            return searchResults;
+        }
 
-        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, Reference.class);
+        javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, ReferenceDescription.class);
         log.info("Запрос {} от пользователя с uid {}", jpaQuery, user.getUid());
         return executeJpaQuery(jpaQuery, pageable);
     }
 
-    private List<Reference> executeJpaQuery(javax.persistence.Query jpaQuery, Pageable pageable) {
-        List<Reference> refs = null;
+    private List<ReferenceDescription> executeJpaQuery(javax.persistence.Query jpaQuery, Pageable pageable) {
+        List<ReferenceDescription> refs = new ArrayList<>();
         try {
             refs = jpaQuery.getResultList();
         } catch (NoResultException nre) {
             log.error("Ничего не найдено по запросу " + jpaQuery, nre);
         }
+        try {
+            refs = filterDuplicateReferenceDescriptions(refs);
+        } catch (NullPointerException e) {
+            log.error("Ничего не найдено.", e);
+        }
+
         return refs;
+    }
+
+    private List<ReferenceDescription> filterDuplicateReferenceDescriptions(List<ReferenceDescription> sourceRefs) {
+        return sourceRefs.stream()
+                .collect(Collectors
+                        .groupingBy((ReferenceDescription referenceDescription) -> referenceDescription.getReference().getUid(),
+                                Collectors
+                                        .minBy(Comparator.comparing(ReferenceDescription::getAdditionDate))))
+                .values()
+                .stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 }

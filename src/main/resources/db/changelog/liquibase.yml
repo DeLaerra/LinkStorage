@@ -1,5 +1,5 @@
 liquibase:
   changeLogFile: src/main/resources/db/changelog/changelog-master.xml
-  url: jdbc:postgresql://localhost:5432/reference-storage
+  url: jdbc:postgresql://localhost:5434/reference-storage
   username: postgres
   password: postgres

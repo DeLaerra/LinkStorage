@@ -2,7 +2,9 @@ package com.innopolis.referencestorage.service;
 
 import com.innopolis.referencestorage.commons.utils.PropertyChecker;
 import com.innopolis.referencestorage.domain.Reference;
+import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
+import com.innopolis.referencestorage.repos.ReferenceDescriptionRepo;
 import com.innopolis.referencestorage.repos.ReferenceRepo;
 import com.innopolis.referencestorage.repos.UserRepo;
 import lombok.NoArgsConstructor;
@@ -13,9 +15,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
@@ -23,76 +28,127 @@ import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 @NoArgsConstructor
 @Service
 public class ReferenceService {
+    private ReferenceDescriptionRepo referenceDescriptionRepo;
     private ReferenceRepo referenceRepo;
     private UserRepo userRepo;
 
     private final Short uidAdditionMethod = 0;
 
     @Autowired
-    public ReferenceService(ReferenceRepo referenceRepo, UserRepo userRepo) {
+    public ReferenceService(ReferenceRepo referenceRepo, UserRepo userRepo, ReferenceDescriptionRepo referenceDescriptionRepo) {
         this.referenceRepo = referenceRepo;
         this.userRepo = userRepo;
+        this.referenceDescriptionRepo = referenceDescriptionRepo;
     }
 
-    public List<Reference> loadAllUserRefs(User author) {
-        return referenceRepo.findByUidUser(author.getUid());
+    public List<ReferenceDescription> loadAllUserRefs(User author) {
+        return referenceDescriptionRepo.findByUidUser(author.getUid());
     }
 
-    public Page<Reference> loadRefsByUserUid(User author, Pageable pageable) {
-        return referenceRepo.findByUidUser(author.getUid(), pageable);
+    public Page<ReferenceDescription> loadRefsByUserUid(User author, Pageable pageable) {
+        return referenceDescriptionRepo.findByUidUser(author.getUid(), pageable);
     }
 
     /**
      *
      * @param userId - for which user reference
-     * @param reference - reference
+     * @param referenceDescription - reference
      * @return reference
      */
-    public Reference addReference(Long userId, Reference reference){
-        log.info("Получена ссылка на добавление\n userId- {}, \n reference - {}", userId, reference.toString());
+    public ReferenceDescription addReference(Long userId, ReferenceDescription referenceDescription, String urlText){
+        log.info("Получена ссылка на добавление\n userId- {}, \n reference - {}", userId, referenceDescription.toString());
         User user = checkIfUserExists(userId);
 
-        reference.setUidUser(userId);
-        reference.setRating(1);
-        reference.setUidAdditionMethod(uidAdditionMethod);
-        reference.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        assertNotNull(urlText, "Отсутствует текст url ссылки");
 
-        if(reference.getName()== null || reference.getName().equals(""))
-            reference.setName(reference.getUrl());
+        URL url = null;
+        try {
+            url = new URL(urlText);
+        } catch (MalformedURLException e) {
+            log.error("В тексте {} нет ссылки!", urlText, e);
+        }
 
-        referenceRepo.save(reference);
+        Reference reference = referenceRepo.findByUrl(urlText);
+        if(reference == null){
+            reference = new Reference(urlText,1);
 
-        return reference;
+            reference = referenceRepo.saveAndFlush(reference);
+        }
+        else{
+            reference.setRating(reference.getRating() + 1);
+            referenceRepo.saveAndFlush(reference);
+        }
+
+        ReferenceDescription existingReference = referenceDescriptionRepo.findAnyByUidUserAndReference(userId, reference);
+        if(existingReference != null)
+            assertNotNull(null, "Описание для ссылки уже существует");
+
+        referenceDescription.setReference(reference);
+        referenceDescription.setUidUser(userId);
+        referenceDescription.setUidAdditionMethod(uidAdditionMethod);
+        referenceDescription.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        Optional.ofNullable(url.getHost()).ifPresent(referenceDescription::setSource);
+
+        if(referenceDescription.getName()== null || referenceDescription.getName().equals(""))
+            referenceDescription.setName(url.toString());
+
+        return referenceDescriptionRepo.save(referenceDescription);
     }
 
     /**
      *
      * @param refId id of reference
-     * @param reference reference
+     * @param referenceDescription reference
      * @return reference
      */
-    public Reference updateReference(Long refId, Reference reference) {
-        log.info("Получена ссылка на обновление\n refId - {}, \n Ссылка - {}", reference.getUid(), reference.toString());
+    public ReferenceDescription updateReference(Long refId, ReferenceDescription referenceDescription, String url) {
+        log.info("Получена ссылка на обновление\n refId - {}, \n Ссылка - {}", referenceDescription.getUid(), referenceDescription.toString());
 
-        Reference item = checkIfReferenceExists(refId);
+        ReferenceDescription item = checkIfReferenceExists(refId);
+
+        assertNotNull(url, "Отсутствует url ссылки");
+
+        Reference reference = referenceRepo.findByUrl(url);
+        if(reference == null){
+            reference = new Reference(url,0);
+
+            reference = referenceRepo.saveAndFlush(reference);
+        }
+        if(!reference.getUrl().equals(item.getReference().getUrl())){
+            Reference oldReference = item.getReference();
+            oldReference.setRating(oldReference.getRating() - 1);
+            reference.setRating(reference.getRating() + 1);
+            reference = referenceRepo.saveAndFlush(reference);
+        }
 
         BeanUtils.copyProperties(
-                reference,
+                referenceDescription,
                 item,
-                PropertyChecker.getNullPropertyNames(reference)
+                PropertyChecker.getNullPropertyNames(referenceDescription)
         );
-
-        referenceRepo.save(item);
+        item.setReference(reference);
+        referenceDescriptionRepo.save(item);
 
         return item;
     }
 
-    public Reference deleteReference(Long refId) {
+    public ReferenceDescription deleteReference(Long refId) {
         log.info("Получен запрос на удаление ссылки\n refId- {}", refId);
 
-        Reference item = checkIfReferenceExists(refId);
+        ReferenceDescription item = checkIfReferenceExists(refId);
 
-        referenceRepo.delete(item);
+        Reference reference = referenceRepo.findByUid(item.getReference().getUid());
+        assertNotNull(reference, "Отсутствует ссылка");
+
+        reference.setRating(reference.getRating() - 1);
+
+        referenceRepo.saveAndFlush(reference);
+
+        referenceDescriptionRepo.delete(item);
+
+        if (reference.getRating() == 0) {
+            referenceRepo.delete(reference);
+        }
 
         return item;
     }
@@ -106,8 +162,8 @@ public class ReferenceService {
         return user;
     }
 
-    private Reference checkIfReferenceExists(Long refId) {
-        Reference data = referenceRepo.findByUid(refId);
+    private ReferenceDescription checkIfReferenceExists(Long refId) {
+        ReferenceDescription data = referenceDescriptionRepo.findByUid(refId);
         assertNotNull(data, String.format("Указана несуществующая ссылка, refId - %s", refId));
 
         return data;

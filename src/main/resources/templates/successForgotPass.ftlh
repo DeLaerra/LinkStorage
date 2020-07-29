@@ -2,7 +2,6 @@
 
 <@c.page>
 
-    <div>Письмо отправлено</div>
-    <div>"${message}"</div>
+    <div>${message}</div>
 
 </@c.page>
