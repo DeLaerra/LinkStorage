@@ -48,7 +48,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="add_urlInput">Ссылка:</label>
-                                        <input type="url" name="url" class="form-control" id="add_urlInput"
+                                        <input type="url" name="url" required class="form-control" id="add_urlInput"
                                                placeholder="Ссылка">
                                     </div>
                                     <div class="form-group">
@@ -143,7 +143,8 @@
                         <#--                            Строки таблицы-->
                         <div class="row">
                             <div class="col-sm">
-                                <td> <#if userRef.name??><a href="${userRef.reference.url}">${userRef.name}</a><br><#else><a
+                                <td> <#if userRef.name??><a href="${userRef.reference.url}">${userRef.name}</a>
+                                        <br><#else><a
                                         href="${userRef.reference.url}">${userRef.reference.url}<br></a></#if>
                                     <#if userRef.tag??>Теги: ${userRef.tag}<br></#if>
 
@@ -173,10 +174,19 @@
                                         <#if userUid == userRef.uidUser><#else>
                                             <div class="btn-group mr-2" role="group" aria-label="Share">
                                                 <!-- Button Get Reference Добавить ссылку...-->
-                                                <button type="button" class="btn btn-info btn-sm"><span class="iconify"
-                                                                                                        data-icon="el:download"
-                                                                                                        data-inline="false"></span>
-                                                </button>
+                                                <form method="post" name="userRefAddToHome" action="reference/copy/${userRef.uid}">
+                                                    <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+                                                    <button type="submit" class="btn btn-info btn-sm"><span
+                                                                class="iconify"
+                                                                data-icon="el:download"
+                                                                data-inline="false"></span>
+                                                    </button>
+                                                    <#if refAddError??>
+                                                        <div class="invalid-feedback">
+                                                            ${refAddError}
+                                                        </div>
+                                                    </#if>
+                                                </form>
                                             </div>
                                         </#if>
                                         <div class="btn-group mr-2" role="group" aria-label="Properties">
@@ -212,7 +222,8 @@
                                                 <#elseif userRef.uidReferenceType == 2>файл
                                                     <br><#elseif userRef.uidReferenceType == 3>картинка
                                                     <br></#if>
-                                                <#if userRef.reference.rating??><b>Рейтинг: </b>${userRef.reference.rating}</#if>
+                                                <#if userRef.reference.rating??>
+                                                    <b>Рейтинг: </b>${userRef.reference.rating}</#if>
                                             </div>
                                         </div>
                                     </div>
@@ -224,8 +235,10 @@
                                                 <div class="modal-header">
                                                     <h5 class="modal-title"
                                                         id="${userRef.uid}Label"><#if userRef.name??><a
-                                                            href="${userRef.reference.url}">${userRef.name}</a><br><#else><a
-                                                            href="${userRef.reference.url}">${userRef.reference.url}<br></a></#if></h5>
+                                                            href="${userRef.reference.url}">${userRef.name}</a>
+                                                            <br><#else><a
+                                                            href="${userRef.reference.url}">${userRef.reference.url}<br>
+                                                            </a></#if></h5>
                                                     <button type="button" class="close" data-dismiss="modal"
                                                             aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
@@ -239,13 +252,13 @@
                                                         <a href="${userRef.reference.url}">${userRef.reference.url}</a><br>
                                                         <div class="form-group">
                                                             <label for="${userRef.uid}nameInput">Название:</label>
-                                                            <input type="text" name="name" class="form-control"
+                                                            <input type="text" name="name" required class="form-control"
                                                                    id="${userRef.uid}nameInput" placeholder="Название"
                                                                    value="<#if userRef.name??>${userRef.name}</#if>">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="${userRef.uid}urlInput">Ссылка:</label>
-                                                            <input type="text" name="url" class="form-control"
+                                                            <input type="text" name="url" required class="form-control"
                                                                    id="${userRef.uid}urlInput" placeholder="Ссылка"
                                                                    value="<#if userRef.reference.url??>${userRef.reference.url}</#if>">
                                                         </div>

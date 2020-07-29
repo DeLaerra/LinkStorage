@@ -1,6 +1,8 @@
 package com.innopolis.referencestorage.controller;
 
+import com.innopolis.referencestorage.config.CurrentUser;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
+import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.service.ReferenceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,15 @@ public class ReferenceController {
                                @RequestParam(name = "url", required = false) String url){
         log.info("Получен запрос на добавление записи ссылки: \n userId - {}, \n reference - {} ", userId, url);
         referenceService.addReference(userId, reference, url);
+        return "redirect:/userHome";
+    }
+
+    @PostMapping("/copy/{refId}")
+    public String addReferenceToUserHome(ReferenceDescription reference, Model model,
+                               @CurrentUser User user,
+                               @PathVariable Long refId) {
+        log.info("Получен запрос на добавление записи ссылки: \n userId - {}, \n refDescriptionUid - {} ", user.getUid(), refId);
+        referenceService.copyReference(refId, user, reference, model);
         return "redirect:/userHome";
     }
 

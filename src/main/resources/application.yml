@@ -9,6 +9,7 @@ upload:
 spring:
   freemarker:
     expose-request-attributes: true
+    cache: false
   datasource:
     url: jdbc:postgresql://localhost:5432/reference-storage
     username: postgres

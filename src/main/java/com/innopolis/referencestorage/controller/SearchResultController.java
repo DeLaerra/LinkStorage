@@ -72,10 +72,10 @@ public class SearchResultController {
         List<ReferenceDescription> references;
 
         if (area != null && area.equals("all")) {
-            references = referenceSearchService.fullTextSearchPublicReferencesOnly(q, pageable, user);
+            references = referenceSearchService.fullTextSearchPublicReferencesOnly(q, user);
             log.info("Выполнен поиск по всем публичным ссылкам сайта по запросу пользователя с uid {} с текстом {}", user.getUid(), q);
         } else {
-            references = referenceSearchService.fullTextSearchReferencesByUserUid(q, user, pageable);
+            references = referenceSearchService.fullTextSearchReferencesByUserUid(q, user);
             log.info("Выполнен поиск по личным ссылкам пользователя с uid {} с текстом {}", user.getUid(), q);
         }
 
