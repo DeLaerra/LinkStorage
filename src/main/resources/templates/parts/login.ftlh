@@ -4,7 +4,7 @@
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">Логин:</label>
             <div class="col-sm-6">
-                <input required type="text" minlength="3" maxlength="15" name="username" value="<#if user??>${user.username}</#if>"
+                <input required type="text" minlength="3" maxlength="30" name="username" value="<#if user??>${user.username}</#if>"
                        class="form-control ${(usernameError??)?string('is-invalid', '')}"
                        placeholder="Никнейм"/>
                 <#if usernameError??>

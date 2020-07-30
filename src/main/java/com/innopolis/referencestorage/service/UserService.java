@@ -51,6 +51,10 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+    public boolean checkUserExists(String username) {
+        return (userRepo.findByUsername(username) != null);
+    }
+
     public boolean saveUser(User user) {
         if (userRepo.findByEmail(user.getEmail()) != null || userRepo.findByUsername(user.getUsername()) != null) {
             return false;

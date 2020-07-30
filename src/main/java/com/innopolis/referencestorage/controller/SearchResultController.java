@@ -1,7 +1,7 @@
 package com.innopolis.referencestorage.controller;
 
 import com.innopolis.referencestorage.config.CurrentUser;
-import com.innopolis.referencestorage.domain.Reference;
+import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.service.ReferenceSearchService;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +46,7 @@ public class SearchResultController {
                                @RequestParam(name = "load", required = false) String load,
                                @RequestParam(name = "search", required = false) String q,
                                @RequestParam(name = "area", required = false) String area) {
-        Page<Reference> page;
+        Page<ReferenceDescription> page;
         if (q != null && !q.equals("")) {
             model.addAttribute("searchText", q);
         }
@@ -64,12 +64,12 @@ public class SearchResultController {
         return "searchResult";
     }
 
-    private Page<Reference> getSearchResultReferencesPage(@CurrentUser User user, Model model, Pageable pageable,
+    private Page<ReferenceDescription> getSearchResultReferencesPage(@CurrentUser User user, Model model, Pageable pageable,
                                                           String sortBy,
                                                           String load,
                                                           String q,
                                                           String area) {
-        List<Reference> references;
+        List<ReferenceDescription> references;
 
         if (area != null && area.equals("all")) {
             references = referenceSearchService.fullTextSearchPublicReferencesOnly(q, pageable, user);
@@ -79,7 +79,7 @@ public class SearchResultController {
             log.info("Выполнен поиск по личным ссылкам пользователя с uid {} с текстом {}", user.getUid(), q);
         }
 
-        Page<Reference> page = new PageImpl<>(references, pageable, references.size());
+        Page<ReferenceDescription> page = new PageImpl<>(references, pageable, references.size());
 
         if (load != null && load.equals("all")) {
             page = new PageImpl<>(references, pageable, references.size());
@@ -91,38 +91,41 @@ public class SearchResultController {
         return page;
     }
 
-    private Page<Reference> getSortedReferences(@CurrentUser User user, Pageable pageable, List<Reference> references,
+    private Page<ReferenceDescription> getSortedReferences(@CurrentUser User user, Pageable pageable, List<ReferenceDescription> references,
                                                 @RequestParam(name = "sortBy", required = false) String sortBy) {
-        Page<Reference> page;
+        Page<ReferenceDescription> page = null;
         switch (sortBy) {
             case "nameDesc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по имени, по-убыванию", user.getUid());
-                references.sort(Comparator.comparing(Reference::getName).reversed());
+                references.sort(Comparator.comparing(ReferenceDescription::getName).reversed());
                 page = new PageImpl<>(references, pageable, references.size());
                 break;
             case "nameAsc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по имени, по-возрастанию", user.getUid());
-                references.sort(Comparator.comparing(Reference::getName));
+                references.sort(Comparator.comparing(ReferenceDescription::getName));
                 page = new PageImpl<>(references, pageable, references.size());
                 break;
             case "sourceDesc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по источнику, по-убыванию", user.getUid());
-                references.sort(Comparator.comparing(Reference::getSource).reversed());
+                references.sort(Comparator.comparing(ReferenceDescription::getSource).reversed());
                 page = new PageImpl<>(references, pageable, references.size());
                 break;
             case "sourceAsc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по источнику, по-возрастанию", user.getUid());
-                references.sort(Comparator.comparing(Reference::getSource));
+                references.sort(Comparator.comparing(ReferenceDescription::getSource));
                 page = new PageImpl<>(references, pageable, references.size());
                 break;
             case "ratingDesc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по рейтингу, по-убыванию", user.getUid());
-                references.sort(Comparator.comparing(Reference::getRating).reversed());
+                references.sort(Comparator
+                        .comparing((ReferenceDescription referenceDescription) -> referenceDescription.getReference().getRating())
+                        .reversed());
                 page = new PageImpl<>(references, pageable, references.size());
                 break;
             case "ratingAsc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по рейтингу, по-возрастанию", user.getUid());
-                references.sort(Comparator.comparing(Reference::getRating));
+                references.sort(Comparator
+                        .comparing((ReferenceDescription referenceDescription) -> referenceDescription.getReference().getRating()));
                 page = new PageImpl<>(references, pageable, references.size());
                 break;
             default:
