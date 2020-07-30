@@ -27,6 +27,11 @@
                     Добавить
                     ссылку
                 </button>
+                <#if refAddError??>
+                    <div class="invalid-feedback">
+                        ${refAddError}
+                    </div>
+                </#if>
                 <!-- Modal Add-->
                 <div class="modal fade" id="add_user_form" tabindex="-1" role="dialog"
                      aria-labelledby="add_Label" aria-hidden="true">
@@ -48,7 +53,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="add_urlInput">Ссылка:</label>
-                                        <input type="url" name="url" class="form-control" id="add_urlInput"
+                                        <input type="url" name="url" required class="form-control" id="add_urlInput"
                                                placeholder="Ссылка">
                                     </div>
                                     <div class="form-group">
@@ -232,13 +237,13 @@
                                                         <a href="${userRef.reference.url}">${userRef.reference.url}</a><br>
                                                         <div class="form-group">
                                                             <label for="${userRef.uid}nameInput">Название:</label>
-                                                            <input type="text" name="name" class="form-control"
+                                                            <input type="text" name="name" required class="form-control"
                                                                    id="${userRef.uid}nameInput" placeholder="Название"
                                                                    value="<#if userRef.name??>${userRef.name}</#if>">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="${userRef.uid}urlInput">Ссылка:</label>
-                                                            <input type="text" name="url" class="form-control"
+                                                            <input type="text" name="url" required class="form-control"
                                                                    id="${userRef.uid}urlInput" placeholder="Ссылка"
                                                                    value="<#if userRef.reference.url??>${userRef.reference.url}</#if>">
                                                         </div>

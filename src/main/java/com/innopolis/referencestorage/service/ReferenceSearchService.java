@@ -8,7 +8,6 @@ import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +44,7 @@ public class ReferenceSearchService {
     }
 
     @Transactional
-    public List<ReferenceDescription> fullTextSearchAllReferences(String searchTerm, Pageable pageable) {
+    public List<ReferenceDescription> fullTextSearchAllReferences(String searchTerm, User currentUser) {
         List<ReferenceDescription> searchResults = new ArrayList<>();
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(centityManager);
         QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(ReferenceDescription.class).get();
@@ -63,15 +62,16 @@ public class ReferenceSearchService {
         }
 
         javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, ReferenceDescription.class);
-        return executeJpaQuery(jpaQuery, pageable);
+        return executeJpaQuery(jpaQuery, currentUser);
     }
 
-    public List<ReferenceDescription> fullTextSearchReferencesByUserUid(String searchTerm, User user, Pageable pageable) {
+    @Transactional
+    public List<ReferenceDescription> fullTextSearchReferencesByUserUid(String searchTerm, User user) {
         List<ReferenceDescription> searchResults = new ArrayList<>();
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(centityManager);
         QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(ReferenceDescription.class).get();
 
-        Query luceneQuery = null;
+        Query luceneQuery;
         try {
             luceneQuery = qb
                     .bool()
@@ -95,14 +95,15 @@ public class ReferenceSearchService {
 
         javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, ReferenceDescription.class);
         log.info("Запрос {} от пользователя с uid {}", jpaQuery, user.getUid());
-        return executeJpaQuery(jpaQuery, pageable);
+        return executeJpaQuery(jpaQuery, user);
     }
 
-    public List<ReferenceDescription> fullTextSearchPublicReferencesOnly(String searchTerm, Pageable pageable, User user) {
+    @Transactional
+    public List<ReferenceDescription> fullTextSearchPublicReferencesOnly(String searchTerm, User user) {
         List<ReferenceDescription> searchResults = new ArrayList<>();
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(centityManager);
         QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(ReferenceDescription.class).get();
-        Query luceneQuery = null;
+        Query luceneQuery;
         try {
             luceneQuery = qb
                     .bool()
@@ -126,10 +127,10 @@ public class ReferenceSearchService {
 
         javax.persistence.Query jpaQuery = fullTextEntityManager.createFullTextQuery(luceneQuery, ReferenceDescription.class);
         log.info("Запрос {} от пользователя с uid {}", jpaQuery, user.getUid());
-        return executeJpaQuery(jpaQuery, pageable);
+        return executeJpaQuery(jpaQuery, user);
     }
 
-    private List<ReferenceDescription> executeJpaQuery(javax.persistence.Query jpaQuery, Pageable pageable) {
+    private List<ReferenceDescription> executeJpaQuery(javax.persistence.Query jpaQuery, User user) {
         List<ReferenceDescription> refs = new ArrayList<>();
         try {
             refs = jpaQuery.getResultList();
@@ -137,7 +138,7 @@ public class ReferenceSearchService {
             log.error("Ничего не найдено по запросу " + jpaQuery, nre);
         }
         try {
-            refs = filterDuplicateReferenceDescriptions(refs);
+            refs = filterDuplicateReferenceDescriptions(refs, user);
         } catch (NullPointerException e) {
             log.error("Ничего не найдено.", e);
         }
@@ -145,12 +146,12 @@ public class ReferenceSearchService {
         return refs;
     }
 
-    private List<ReferenceDescription> filterDuplicateReferenceDescriptions(List<ReferenceDescription> sourceRefs) {
+    private List<ReferenceDescription> filterDuplicateReferenceDescriptions(List<ReferenceDescription> sourceRefs, User user) {
         return sourceRefs.stream()
                 .collect(Collectors
                         .groupingBy((ReferenceDescription referenceDescription) -> referenceDescription.getReference().getUid(),
-                                Collectors
-                                        .minBy(Comparator.comparing(ReferenceDescription::getAdditionDate))))
+                                Collectors.minBy(Comparator
+                                                .comparing(ReferenceDescription::getAdditionDate))))
                 .values()
                 .stream()
                 .filter(Optional::isPresent)
