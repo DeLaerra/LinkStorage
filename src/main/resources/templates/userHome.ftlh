@@ -5,28 +5,67 @@
 <@c.page>
     <div class="container">
         <div class="row">
-            <div class="col">
-                <h5 xmlns="http://www.w3.org/1999/html">Друзья</h5>
-
-                <#list userFriends.friends as friend>
-                    <div class="modal-content">
-                        <table>
-                            <tr>
-                                <td>
-                                    <#if friend.userInfo.avatar??>
-                                        <img alt="My image" src="${friend.userInfo.getAvatarBase64()}"
-                                             style="width: 50px; height: 50px; display: block; margin: auto; border-radius: 100px;"/>
-                                    </#if>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="center">
-                                    ${friend.username}
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </#list>
+            <div class="col" align="left">
+                <form name="searchFriends" action="/userHome" method="get">
+                    <table>
+                        <tr>
+                            <td>
+                                <input class="form-control" type="text" name="searchFriends" id="searchFriends"
+                                       placeholder="Поиск">
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-primary">Найти</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+                <#if searchFriends??>
+                    <#list searchFriends as searchFriend>
+                        <a href="../friend?idFriend=${searchFriend.uid}">
+                            <div class="modal-content">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <#if searchFriend.userInfo.avatar??>
+                                                <img alt="My image" src="${searchFriend.userInfo.getAvatarBase64()}"
+                                                     style="width: 50px; height: 50px; display: block; margin: auto; border-radius: 100px;"/>
+                                            </#if>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">
+                                            ${searchFriend.username}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </a>
+                    </#list>
+                </#if>
+                <h5 xmlns="http://www.w3.org/1999/html" align="center">Друзья</h5>
+                <#if userFriends??>
+                    <#list userFriends.friends as friend>
+                        <a href="../friend?idFriend=${friend.uid}">
+                            <div class="modal-content">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <#if friend.userInfo.avatar??>
+                                                <img alt="My image" src="${friend.userInfo.getAvatarBase64()}"
+                                                     style="width: 50px; height: 50px; display: block; margin: auto; border-radius: 100px;"/>
+                                            </#if>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">
+                                            ${friend.username}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </a>
+                    </#list>
+                </#if>
             </div>
 
             <div class="col-10">

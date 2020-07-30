@@ -33,9 +33,9 @@ spring:
       protocol: smtp
     from:
       email: roman.oilman@yandex.ru
-      username: roman.oilman@yandex.ru
-      password: rkuoutquvqpgysko
-      host: smtp.yandex.ru
+    username: roman.oilman@yandex.ru
+    password: rkuoutquvqpgysko
+    host: smtp.yandex.ru
     port: 587
     properties:
       mail:

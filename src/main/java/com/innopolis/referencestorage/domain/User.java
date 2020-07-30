@@ -57,7 +57,7 @@ public class User implements UserDetails {
     @Setter
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToOne(optional = false, mappedBy = "user")
+    @OneToOne(optional = false, mappedBy = "user", cascade = CascadeType.ALL)
     private UserInfo userInfo;
 
     @Getter

@@ -34,12 +34,16 @@ public class UserHomeController {
                                      @RequestParam(name = "sortBy", required = false) String sortBy,
                                      @RequestParam(name = "load", required = false) String load,
                                      @RequestParam(name = "search", required = false) String q,
-                                     @RequestParam(name = "area", required = false) String area) {
+                                     @RequestParam(name = "area", required = false) String area,
+                                     @RequestParam(name = "searchFriends", required = false) String searchFriends) {
         log.info("Получен запрос об отображении ссылок пользователя с uid - {}", user.getUid());
         Page<Reference> page = getReferencesPage(user, pageable, sortBy, load);
         model.addAttribute("page", page);
         model.addAttribute("url", "/userHome");
         model.addAttribute("userFriends", userService.loadUserByUsername(user.getUsername()));
+        model.addAttribute("searchFriends", searchFriends != null && !"".equals(searchFriends) ?
+                userService.findUsers(searchFriends)
+                : null);
         return "userHome";
     }
 

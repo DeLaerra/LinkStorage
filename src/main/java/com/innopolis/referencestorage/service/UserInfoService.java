@@ -10,8 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Base64;
@@ -24,25 +22,6 @@ public class UserInfoService {
     @Autowired
     public UserInfoService(UserInfoRepo userInfoRepo) {
         this.userInfoRepo = userInfoRepo;
-    }
-
-    public void createUserDetails(Long userUId) {
-        log.info("Получен запрос на создание новой сущности UserInfo userUId - {}", userUId);
-        UserInfo userInfo = new UserInfo();
-        User user = new User();
-        user.setUid(userUId);
-        userInfo.setUser(user);
-        userInfo.setName("Name");
-        userInfo.setSurname("Surname");
-        userInfo.setAge(0);
-        userInfo.setSex(0);
-        userInfo.setBirthDate(LocalDate.now());
-        try {
-            userInfo.setAvatar(Files.readAllBytes(Paths.get("src\\resources\\otherFiles\\defaultAvatar.png")));
-        } catch (IOException e) {
-            log.error("Нет файла defaultAvatar.png");
-        }
-        userInfoRepo.save(userInfo);
     }
 
     public UserInfo getUserInfoWithUserUID(User user) {
