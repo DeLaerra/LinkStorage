@@ -4,6 +4,231 @@
 
 <@c.page>
     <div class="container">
+        <div class="row">
+            <div class="col" align="left">
+                <form name="searchFriends" action="/userHome" method="get">
+                    <table>
+                        <tr>
+                            <td>
+                                <input class="form-control" type="text" name="searchFriends" id="searchFriends"
+                                       placeholder="Поиск">
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-primary">Найти</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+                <#if searchFriends??>
+                    <#list searchFriends as searchFriend>
+                        <a href="../friend?idFriend=${searchFriend.uid}">
+                            <div class="modal-content">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <#if searchFriend.userInfo.avatar??>
+                                                <img alt="My image" src="${searchFriend.userInfo.getAvatarBase64()}"
+                                                     style="width: 50px; height: 50px; display: block; margin: auto; border-radius: 100px;"/>
+                                            </#if>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">
+                                            ${searchFriend.username}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </a>
+                    </#list>
+                </#if>
+                <h5 xmlns="http://www.w3.org/1999/html" align="center">Друзья</h5>
+                <#if userFriends??>
+                    <#list userFriends.friends as friend>
+                        <a href="../friend?idFriend=${friend.uid}">
+                            <div class="modal-content">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <#if friend.userInfo.avatar??>
+                                                <img alt="My image" src="${friend.userInfo.getAvatarBase64()}"
+                                                     style="width: 50px; height: 50px; display: block; margin: auto; border-radius: 100px;"/>
+                                            </#if>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center">
+                                            ${friend.username}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </a>
+                    </#list>
+                </#if>
+            </div>
+
+            <div class="col-10">
+                <form name="search" action="/searchResult" method="GET">
+                    <div class="row">
+                        <div class="col-sm">
+                            <input class="form-control" type="text" name="search" id="search"
+                                   placeholder="Поиск ссылок">
+                            <div class="form-group form-check">
+                                <input type="checkbox" class="form-check-input" id="area" name="area" value="all">
+                                <label class="form-check-label" for="area">искать по ссылкам всех пользователей</label>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <button type="submit" class="btn btn-primary">Найти</button>
+                        </div>
+                        <div class="col-sm">
+                        </div>
+                    </div>
+                </form>
+                <div class="row">
+                    <div class="col-sm">
+                        <!-- Button trigger modal Add Добавить...-->
+                        <button type="button" class="btn btn-success btn-sm" data-toggle="modal"
+                                data-target="#add_user_form">
+                            Добавить
+                            ссылку
+                        </button>
+                        <!-- Modal Add-->
+                        <div class="modal fade" id="add_user_form" tabindex="-1" role="dialog"
+                             aria-labelledby="add_Label" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <b>Добавление ссылки</b>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="post" name="userRef" action="reference/add/${user.uid}">
+                                            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+                                            <div class="form-group">
+                                                <label for="add_nameInput">Название:</label>
+                                                <input type="text" name="name" class="form-control" id="add_nameInput"
+                                                       placeholder="Название">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="add_urlInput">Ссылка:</label>
+                                                <input type="url" name="url" class="form-control" id="add_urlInput"
+                                                       placeholder="Ссылка">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="add_descriptionInput">Описание:</label>
+                                                <input type="text" name="description" class="form-control"
+                                                       id="add_descriptionInput"
+                                                       placeholder="Описание">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="add_refTypeInput">Тип:</label>
+                                                <select class="form-control" name="uidReferenceType"
+                                                        id="add_refTypeInput">
+                                                    <option value="0" selected>текст</option>
+                                                    <option value="1">видео</option>
+                                                    <option value="2">файл</option>
+                                                    <option value="3">картинка</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="add_tagInput">Теги:</label>
+                                                <input type="text" name="tag" class="form-control" id="add_tagInput"
+                                                       placeholder="Тэг">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="add_accessLevelInput">Уровень доступа:</label>
+                                                <select class="form-control" name="uidAccessLevel"
+                                                        id="add_accessLevelInput">
+                                                    <option value="0" selected>публичная</option>
+                                                    <option value="1">личная</option>
+                                                </select>
+                                            </div>
+                                            <input type="submit" class="btn btn-success btn-sm" value="Добавить">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-sm">
+                        </div>
+                        <div class="col-sm">
+                        </div>
+                    </div>
+                </div>
+                <#if page??>
+                    <div class="container">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <#--                Шапка таблицы-->
+                                <div class="row">
+                                    <form name="sorting" action="/userHome" method="GET">
+                                        <div class="col-sm">
+                                            <th scope="col">
+                                                <button class="btn btn-light btn-sm" type="submit" name="sortBy"
+                                                        value="nameDesc">
+                                                    <span class="iconify" data-icon="gg:sort-az"
+                                                          data-inline="false"></span>
+                                                </button>
+                                                <button class="btn btn-light btn-sm" type="submit" name="sortBy"
+                                                        value="nameAsc">
+                                                    <span class="iconify" data-icon="gg:sort-za"
+                                                          data-inline="false"></span>
+                                                </button>
+                                                Имя
+                                            </th>
+                                        </div>
+                                        <div class="col-sm">
+                                            <th scope="col">
+                                                <button class="btn btn-light btn-sm" type="submit" name="sortBy"
+                                                        value="sourceDesc">
+                                                    <span class="iconify" data-icon="gg:sort-az"
+                                                          data-inline="false"></span>
+                                                </button>
+                                                <button class="btn btn-light btn-sm" type="submit" name="sortBy"
+                                                        value="sourceAsc">
+                                                    <span class="iconify" data-icon="gg:sort-za"
+                                                          data-inline="false"></span>
+                                                </button>
+                                                Источник
+                                            </th>
+                                        </div>
+                                        <div class="col-sm">
+                                            <th scope="col">
+                                                <button class="btn btn-light btn-sm" type="submit" name="sortBy"
+                                                        value="ratingDesc">
+                                                    <span class="iconify" data-icon="gg:sort-az"
+                                                          data-inline="false"></span>
+                                                </button>
+                                                <button class="btn btn-light btn-sm" type="submit" name="sortBy"
+                                                        value="ratingAsc">
+                                                    <span class="iconify" data-icon="gg:sort-za"
+                                                          data-inline="false"></span>
+                                                </button>
+                                                Рейтинг
+                                            </th>
+                                        </div>
+                                    </form>
+                                </div>
+                            </tr>
+                            </thead>
+                            <#list page.content as userRef>
+                                <tr>
+                                    <#--                            Строки таблицы-->
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            <td> <#if userRef.name??><a
+                                                    href="${userRef.reference.url}">${userRef.name}</a><br><#else><a
+                                                    href="${userRef.reference.url}">${userRef.reference.url}<br>
+                                                    </a></#if>
+                                                <#if userRef.tag??>Теги: ${userRef.tag}<br></#if>
         <form name="search" action="/searchResult" method="GET">
             <div class="row">
                 <div class="col-sm">

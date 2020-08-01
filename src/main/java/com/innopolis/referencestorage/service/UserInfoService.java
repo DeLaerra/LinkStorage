@@ -8,9 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Base64;
@@ -27,32 +26,15 @@ public class UserInfoService {
         this.userInfoRepo = userInfoRepo;
     }
 
-    public void createUserDetails(Long userUId) {
-        log.info("Получен запрос на создание новой сущности UserInfo userUId - {}", userUId);
-        UserInfo userInfo = new UserInfo();
-        userInfo.setUidUser(userUId);
-        userInfo.setName("Name");
-        userInfo.setSurname("Surname");
-        userInfo.setAge(0);
-        userInfo.setSex(0);
-        userInfo.setBirthDate(LocalDate.now());
-        try {
-            userInfo.setAvatar(Files.readAllBytes(Paths.get("src\\resources\\otherFiles\\defaultAvatar.png")));
-        } catch (IOException e) {
-            log.error("Нет файла defaultAvatar.png");
-        }
-        userInfoRepo.save(userInfo);
-    }
-
     public UserInfo getUserInfoWithUserUID(User user) {
         log.info("Получен запрос на получение данных пользователя с userUId - {}", user.getUid());
         long uid = user.getUid();
-        UserInfo userInfo = userInfoRepo.findByUidUser(uid);
+        UserInfo userInfo = userInfoRepo.findByUser(user);
         return userInfo;
     }
 
     public void saveUserInfo(UserInfo userInfo) {
-        log.info("Получен запрос на сохранение данных пользователя с userUId {} \n userUId - {}", userInfo.getUidUser(), userInfo);
+        log.info("Получен запрос на сохранение данных пользователя с userUId {} \n userUId - {}", userInfo.getUser().getUid(), userInfo);
         userInfoRepo.save(userInfo);
     }
 
@@ -60,7 +42,7 @@ public class UserInfoService {
         log.info("Получен запрос на проверку и добавление данных к сущности UserInfo от пользователя с uid {}: \n userInfo - {}, \n birthDate - {} ", user.getUid(), userInfo, birthDate);
         UserInfo originalUserInfo = getUserInfoWithUserUID(user);
         userInfo.setUid(originalUserInfo.getUid());
-        userInfo.setUidUser(originalUserInfo.getUidUser());
+        userInfo.setUser(originalUserInfo.getUser());
         String newName = userInfo.getName();
         if (!isText(newName)) {
             log.info(NAME_SURNAME_WARNING);
