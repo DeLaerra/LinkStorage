@@ -26,6 +26,7 @@ spring:
           default:
             directory__provider: filesystem
             indexBase: /data/index
+          analyzer: org.apache.lucene.analysis.standard.StandardAnalyzer
   mvc:
     static-path-pattern: /static/**
 

@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -65,6 +64,7 @@ public class ReferenceService {
         try {
             url = new URL(urlText);
         } catch (MalformedURLException e) {
+            //TODO кастомное исключение!
             log.error("В тексте {} нет ссылки!", urlText, e);
         }
 
@@ -103,7 +103,6 @@ public class ReferenceService {
         log.info("Получена ссылка на обновление\n refId - {}, \n Ссылка - {}", referenceDescription.getUid(), referenceDescription.toString());
 
         ReferenceDescription item = checkIfReferenceExists(refId);
-
         assertNotNull(url, "Отсутствует url ссылки");
 
         Reference reference = referenceRepo.findByUrl(url);
@@ -150,7 +149,7 @@ public class ReferenceService {
         return item;
     }
 
-    public ReferenceDescription copyReference(Long refDescriptionUid, User user, ReferenceDescription referenceDescription, Model model) {
+    public void copyReference(Long refDescriptionUid, User user, ReferenceDescription referenceDescription) {
         log.info("Получен запрос от пользователя с uid {} на копирование ссылки\n refId- {}", user.getUid(), refDescriptionUid);
 
         ReferenceDescription sourceRef = checkIfReferenceExists(refDescriptionUid);
@@ -158,8 +157,8 @@ public class ReferenceService {
 
         if (referenceDescriptionRepo.findAnyByUidUserAndReference(user.getUid(), reference) != null) {
             log.error("Описание для ссылки уже существует в Home пользователя с uid " + user.getUid());
-            model.addAttribute("refAddError", "Эта ссылка уже добавлена в Home!");
-            return sourceRef;
+            //TODO сменить на кастомное
+            throw new IllegalArgumentException("Описание для ссылки уже существует в Home пользователя с uid " + user.getUid());
         }
 
         reference.setRating(reference.getRating() + 1);
@@ -173,9 +172,9 @@ public class ReferenceService {
         referenceDescription.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         referenceDescription.setSource(sourceRef.getSource());
         referenceDescription.setUidAdditionMethod(uidAdditionMethod);
-        referenceDescription.setUidAccessLevel(sourceRef.getUidAccessLevel());
+        referenceDescription.setUidAccessLevel(0);
 
-        return referenceDescriptionRepo.save(referenceDescription);
+        referenceDescriptionRepo.save(referenceDescription);
     }
 
 
