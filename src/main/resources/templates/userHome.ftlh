@@ -67,7 +67,6 @@
                     </#list>
                 </#if>
             </div>
-
             <div class="col-10">
                 <form name="search" action="/searchResult" method="GET">
                     <div class="row">
@@ -94,6 +93,11 @@
                             Добавить
                             ссылку
                         </button>
+                        <#if refAddError??>
+                            <div class="invalid-feedback">
+                                ${refAddError}
+                            </div>
+                        </#if>
                         <!-- Modal Add-->
                         <div class="modal fade" id="add_user_form" tabindex="-1" role="dialog"
                              aria-labelledby="add_Label" aria-hidden="true">
@@ -115,7 +119,8 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="add_urlInput">Ссылка:</label>
-                                                <input type="url" name="url" class="form-control" id="add_urlInput"
+                                                <input type="url" name="url" required class="form-control"
+                                                       id="add_urlInput"
                                                        placeholder="Ссылка">
                                             </div>
                                             <div class="form-group">
@@ -154,12 +159,9 @@
                             </div>
                         </div>
                     </div>
-                    </form>
-                    <div class="row">
-                        <div class="col-sm">
-                        </div>
-                        <div class="col-sm">
-                        </div>
+                    <div class="col-sm">
+                    </div>
+                    <div class="col-sm">
                     </div>
                 </div>
                 <#if page??>
@@ -225,7 +227,8 @@
                                     <div class="row">
                                         <div class="col-sm">
                                             <td> <#if userRef.name??><a
-                                                    href="${userRef.reference.url}">${userRef.name}</a><br><#else><a
+                                                    href="${userRef.reference.url}">${userRef.name}</a>
+                                                    <br><#else><a
                                                     href="${userRef.reference.url}">${userRef.reference.url}<br>
                                                     </a></#if>
                                                 <#if userRef.tag??>Теги: ${userRef.tag}<br></#if>
@@ -328,7 +331,7 @@
                                                                     <a href="${userRef.reference.url}">${userRef.reference.url}</a><br>
                                                                     <div class="form-group">
                                                                         <label for="${userRef.uid}nameInput">Название:</label>
-                                                                        <input type="text" name="name"
+                                                                        <input type="text" name="name" required
                                                                                class="form-control"
                                                                                id="${userRef.uid}nameInput"
                                                                                placeholder="Название"
@@ -336,7 +339,7 @@
                                                                     </div>
                                                                     <div class="form-group">
                                                                         <label for="${userRef.uid}urlInput">Ссылка:</label>
-                                                                        <input type="text" name="url"
+                                                                        <input type="text" name="url" required
                                                                                class="form-control"
                                                                                id="${userRef.uid}urlInput"
                                                                                placeholder="Ссылка"
