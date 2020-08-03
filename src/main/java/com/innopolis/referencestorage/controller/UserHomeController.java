@@ -16,6 +16,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Slf4j
 @Controller
 public class UserHomeController {
@@ -31,6 +33,7 @@ public class UserHomeController {
 
     @GetMapping("/userHome")
     public String showUserReferences(@CurrentUser User user, Model model, Pageable pageable,
+                                     HttpServletRequest request,
                                      @RequestParam(name = "sortBy", required = false) String sortBy,
                                      @RequestParam(name = "load", required = false) String load,
                                      @RequestParam(name = "search", required = false) String q,
@@ -44,6 +47,15 @@ public class UserHomeController {
         model.addAttribute("searchFriends", searchFriends != null && !"".equals(searchFriends) ?
                 userService.findUsers(searchFriends)
                 : null);
+
+        if (request.getParameter("pmDuplicateError")!=null) {
+            model.addAttribute("pmDuplicateError", true);
+        }
+
+        if (request.getParameter("copyRefError")!=null) {
+            model.addAttribute("copyRefError", true);
+        }
+
         return "userHome";
     }
 

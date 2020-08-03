@@ -61,7 +61,6 @@ public class ReferenceSearchService {
                     //                .andField("tag")
                     .matching(searchTerm).createQuery();
         } catch (Exception e) {
-            //TODO кастомное исключение
             log.error("Ошибка при попытке создания поискового запроса по терминам \"{}\"", searchTerm, e);
             return searchResults;
         }

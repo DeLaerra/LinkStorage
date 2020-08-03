@@ -1,6 +1,6 @@
 <#import "parts/common.ftlh" as c>
 
 <@c.page>
-    <div>Error page</div>
+    <div>К сожалению, что-то пошло не так...</div>
 
 </@c.page>

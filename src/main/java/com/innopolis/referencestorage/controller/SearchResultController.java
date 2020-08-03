@@ -4,6 +4,7 @@ import com.innopolis.referencestorage.config.CurrentUser;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.service.ReferenceSearchService;
+import com.innopolis.referencestorage.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,10 +25,12 @@ import java.util.List;
 @Controller
 public class SearchResultController {
     private ReferenceSearchService referenceSearchService;
+    private UserService userService;
 
     @Autowired
-    public SearchResultController(ReferenceSearchService referenceSearchService) {
+    public SearchResultController(ReferenceSearchService referenceSearchService, UserService userService) {
         this.referenceSearchService = referenceSearchService;
+        this.userService = userService;
     }
 
     @ModelAttribute("searchText")
@@ -45,7 +48,8 @@ public class SearchResultController {
                                @RequestParam(name = "sortBy", required = false) String sortBy,
                                @RequestParam(name = "load", required = false) String load,
                                @RequestParam(name = "search", required = false) String q,
-                               @RequestParam(name = "area", required = false) String area) {
+                               @RequestParam(name = "area", required = false) String area,
+                               @RequestParam(name = "searchFriends", required = false) String searchFriends) {
         Page<ReferenceDescription> page;
         if (q != null && !q.equals("")) {
             model.addAttribute("searchText", q);
@@ -61,14 +65,18 @@ public class SearchResultController {
 
         model.addAttribute("page", page);
         model.addAttribute("url", "/searchResult");
+        model.addAttribute("userFriends", userService.loadUserByUsername(user.getUsername()));
+        model.addAttribute("searchFriends", searchFriends != null && !"".equals(searchFriends) ?
+                userService.findUsers(searchFriends)
+                : null);
         return "searchResult";
     }
 
     private Page<ReferenceDescription> getSearchResultReferencesPage(@CurrentUser User user, Model model, Pageable pageable,
-                                                          String sortBy,
-                                                          String load,
-                                                          String q,
-                                                          String area) {
+                                                                     String sortBy,
+                                                                     String load,
+                                                                     String q,
+                                                                     String area) {
         List<ReferenceDescription> references;
 
         if (area != null && area.equals("all")) {
@@ -92,7 +100,7 @@ public class SearchResultController {
     }
 
     private Page<ReferenceDescription> getSortedReferences(@CurrentUser User user, Pageable pageable, List<ReferenceDescription> references,
-                                                @RequestParam(name = "sortBy", required = false) String sortBy) {
+                                                           @RequestParam(name = "sortBy", required = false) String sortBy) {
         Page<ReferenceDescription> page = null;
         switch (sortBy) {
             case "nameDesc":

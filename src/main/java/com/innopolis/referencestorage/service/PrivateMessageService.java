@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,12 +47,14 @@ public class PrivateMessageService {
     }
 
     public PrivateMessage sendReferenceToFriend(PrivateMessage privateMessage, Long refId,
-                                                User user, String friendUsername, String text) {
+                                                User user, String friendUsername, String text, Model model){
 
         log.info("Получен запрос на отправку записи ссылки: \n username - {}, \n refDescriptionUid - {}, \n friendUsername - {} ", user.getUsername(), refId, friendUsername);
 
         User friend = userRepo.findByUsername(friendUsername);
-        ReferenceDescription sourceRef = checkDuplicateMessage(refId, user, friend);
+        ReferenceDescription sourceRef = checkDuplicateMessage(refId, user, friend, model);
+
+        if (model.getAttribute("pmDuplicateError") != null) return null;
 
         if (referenceDescriptionRepo.findAnyByUidUserAndReference(friend.getUid(), sourceRef.getReference()) != null) {
             log.info("Описание для ссылки уже существует в Home пользователя с uid " + friend.getUid());
@@ -69,14 +72,14 @@ public class PrivateMessageService {
         return privateMessageRepo.save(privateMessage);
     }
 
-    public PrivateMessage acceptRequestFromMessage(Long pmUid, User user, ReferenceDescription referenceDescription) {
+    public PrivateMessage acceptRequestFromMessage(Long pmUid, User user, ReferenceDescription referenceDescription, Model model) {
         PrivateMessage privateMessage = privateMessageRepo.findByUid(pmUid);
         privateMessage.setAcceptionStatus(AcceptionStatus.ACCEPTED.getStatusUid());
 
         privateMessageRepo.saveAndFlush(privateMessage);
         log.info("Сообщению с uid {} присвоен статус Одобрено", pmUid);
 
-        referenceService.copyReference(privateMessage.getReferenceDescription().getUid(), user, referenceDescription);
+        referenceService.copyReference(privateMessage.getReferenceDescription().getUid(), user, referenceDescription, model);
         log.info("Ссылка из приватного сообщения добавлена, pmId- {}", pmUid);
 
         return privateMessage;
@@ -100,16 +103,15 @@ public class PrivateMessageService {
         log.info("Удаление приватного сообщения, pmId- {}", pmUid);
     }
 
-    private ReferenceDescription checkDuplicateMessage(Long refId, User sender, User recipient) throws IllegalArgumentException {
+    private ReferenceDescription checkDuplicateMessage(Long refId, User sender, User recipient, Model model)  {
         ReferenceDescription data = referenceDescriptionRepo.findByUid(refId);
-        //TODO еще одно кастомное исключение?
         assertNotNull(data, String.format("Указана несуществующая ссылка, refId - %s", refId));
 
-        if (privateMessageRepo.existsBySenderAndRecipientAndReferenceDescription(sender, recipient, data)) {
-            log.error("Ссылка с uid {} уже отправлена пользователем {} адресату {}", refId, sender.getUsername(), recipient.getUsername());
-            //TODO сменить тип исключения на кастомный
-            throw new IllegalArgumentException("Ссылка с uid " + data.getUid() + " уже отправлена пользователем с uid "
-                    + sender.getUid() + " другу с uid " + recipient.getUid());
+        if (privateMessageRepo.existsBySenderAndRecipientAndReferenceDescriptionAndAcceptionStatusEquals(sender,
+                recipient, data, 0) || privateMessageRepo.existsBySenderAndRecipientAndReferenceDescriptionAndAcceptionStatusEquals(sender,
+                recipient, data, 3)) {
+            log.error("Отправка сообщения c повторной ссылкой тому же адресату");
+            model.addAttribute("pmDuplicateError", "Отправка сообщения c повторной ссылкой тому же адресату!");
         }
         return data;
     }

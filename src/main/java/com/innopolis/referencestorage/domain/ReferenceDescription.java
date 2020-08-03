@@ -10,6 +10,8 @@ import org.hibernate.search.annotations.NumericField;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @ToString
 @Entity
@@ -62,4 +64,7 @@ public class ReferenceDescription {
     @Getter
     @Setter
     private Long uidParentRef;
+
+    @OneToMany(mappedBy="referenceDescription", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PrivateMessage> privateMessages = new ArrayList<>();
 }

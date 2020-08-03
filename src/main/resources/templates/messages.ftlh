@@ -62,11 +62,11 @@
                                         <div class="btn-toolbar mr-4" role="toolbar"
                                              aria-label="Toolbar with button groups">
 
-                                            <#if pm.acceptionStatus == 3><#else >
+                                            <#if pm.acceptionStatus == 0>
                                                 <!-- Button Get Reference Добавить ссылку...-->
                                                 <div class="btn-group mr-2" role="group" aria-label="Share">
-                                                    <form method="post" name="userRefAddToHome"
-                                                          action="reference/copy/${pm.referenceDescription.uid}">
+                                                    <form method="get" name="userRefAddToHome"
+                                                          action="messages/accept/${pm.uid}">
                                                         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
                                                         <button type="submit" class="btn btn-success btn-sm"
                                                                 title="Добавить ссылку">

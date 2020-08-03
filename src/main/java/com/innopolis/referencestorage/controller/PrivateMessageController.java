@@ -61,10 +61,10 @@ public class PrivateMessageController {
     }
 
     @GetMapping("/messages/accept/{pmId}")
-    public String acceptMessageAddition(ReferenceDescription referenceDescription,
+    public String acceptMessageAddition(ReferenceDescription referenceDescription, Model model,
                                         @CurrentUser User user, @PathVariable Long pmId) {
         log.info("Получен запрос на добавление ссылки из приватного сообщения c pmId- {}", pmId);
-        privateMessageService.acceptRequestFromMessage(pmId, user, referenceDescription);
+        privateMessageService.acceptRequestFromMessage(pmId, user, referenceDescription, model);
 
         return "redirect:/messages";
     }

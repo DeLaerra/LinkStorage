@@ -18,5 +18,7 @@ public interface PrivateMessageRepo extends JpaRepository<PrivateMessage, Long> 
 
     List<PrivateMessage> findByRecipient(User recipient, Pageable page);
 
-    boolean existsBySenderAndRecipientAndReferenceDescription (User sender, User recipient, ReferenceDescription referenceDescription);
+    boolean existsBySenderAndRecipientAndReferenceDescriptionAndAcceptionStatusEquals (User sender, User recipient,
+                                                                                         ReferenceDescription referenceDescription,
+                                                                                         Integer acceptionStatusUid);
 }
