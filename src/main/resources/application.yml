@@ -11,7 +11,7 @@ spring:
     expose-request-attributes: true
     cache: false
   datasource:
-    url: jdbc:postgresql://localhost:5432/reference-storage
+    url: jdbc:postgresql://localhost:5432/reference-storage1
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
