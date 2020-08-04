@@ -29,4 +29,8 @@ public class Friends {
         this.owner = owner;
         this.friend = friend;
     }
+
+    public Friends() {
+
+    }
 }

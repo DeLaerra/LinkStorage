@@ -5,6 +5,8 @@ import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.repos.FriendsRepo;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service("friendsService")
 public class FriendsService {
 
@@ -19,6 +21,14 @@ public class FriendsService {
 
     public User findUserByUid(Long uid) {
         return userService.findUserByUid(uid);
+    }
+
+    public List<Friends> findAllByFriend(long friend) {
+        return friendsRepo.findAllByFriend(friend);
+    }
+
+    public List<Friends> findAllByOwner(long owner) {
+        return friendsRepo.findAllByOwner(owner);
     }
 
     public Friends addFriends(Long ownerUid, Long friendUid) {

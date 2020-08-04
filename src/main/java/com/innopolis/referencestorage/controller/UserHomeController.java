@@ -1,8 +1,10 @@
 package com.innopolis.referencestorage.controller;
 
 import com.innopolis.referencestorage.config.CurrentUser;
+import com.innopolis.referencestorage.domain.Friends;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
+import com.innopolis.referencestorage.service.FriendsService;
 import com.innopolis.referencestorage.service.ReferenceService;
 import com.innopolis.referencestorage.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -24,11 +28,13 @@ public class UserHomeController {
     private ReferenceService referenceService;
 
     private UserService userService;
+    private FriendsService friendsService;
 
     @Autowired
-    public UserHomeController(ReferenceService referenceService, UserService userService) {
+    public UserHomeController(ReferenceService referenceService, UserService userService, FriendsService friendsService) {
         this.referenceService = referenceService;
         this.userService = userService;
+        this.friendsService = friendsService;
     }
 
     @GetMapping("/userHome")
@@ -44,15 +50,22 @@ public class UserHomeController {
         model.addAttribute("page", page);
         model.addAttribute("url", "/userHome");
         model.addAttribute("userFriends", userService.loadUserByUsername(user.getUsername()));
+
+        List<Friends> friends = friendsService.findAllByOwner(user.getUid());
+        List<User> ufriends = new ArrayList<>();
+        for (Friends fr : friends) {
+            ufriends.add(userService.findUserByUid(fr.getFriend()));
+        }
+        model.addAttribute("listFriends", ufriends);
         model.addAttribute("searchFriends", searchFriends != null && !"".equals(searchFriends) ?
                 userService.findUsers(searchFriends)
                 : null);
 
-        if (request.getParameter("pmDuplicateError")!=null) {
+        if (request.getParameter("pmDuplicateError") != null) {
             model.addAttribute("pmDuplicateError", true);
         }
 
-        if (request.getParameter("copyRefError")!=null) {
+        if (request.getParameter("copyRefError") != null) {
             model.addAttribute("copyRefError", true);
         }
 
@@ -60,8 +73,8 @@ public class UserHomeController {
     }
 
     private Page<ReferenceDescription> getReferencesPage(@CurrentUser User user, Pageable pageable,
-                                              @RequestParam(name = "sortBy", required = false) String sortBy,
-                                              @RequestParam(name = "load", required = false) String load) {
+                                                         @RequestParam(name = "sortBy", required = false) String sortBy,
+                                                         @RequestParam(name = "load", required = false) String load) {
         Page<ReferenceDescription> page = referenceService.loadRefsByUserUid(user, pageable);
 
         if (load != null && load.equals("all")) {
@@ -76,7 +89,7 @@ public class UserHomeController {
     }
 
     private Page<ReferenceDescription> getSortedReferences(@CurrentUser User user, Pageable pageable,
-                                                @RequestParam(name = "sortBy", required = false) String sortBy) {
+                                                           @RequestParam(name = "sortBy", required = false) String sortBy) {
         Page<ReferenceDescription> page;
         switch (sortBy) {
             case "nameDesc":

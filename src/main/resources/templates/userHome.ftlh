@@ -41,8 +41,9 @@
                         </a>
                     </#list>
                 </#if>
-                <#if userFriends??>
-                    <#list userFriends.friends as friend>
+                <#if listFriends??>
+                    <h5 xmlns="http://www.w3.org/1999/html" align="center">Друзья</h5>
+                    <#list listFriends as friend>
                         <a href="../friend?idFriend=${friend.uid}">
                             <div class="modal-content">
                                 <table>
