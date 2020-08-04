@@ -32,7 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/registration").not().fullyAuthenticated()
-                .antMatchers("/userHome", "/messages").hasRole("USER")
+                .antMatchers("/userHome", "/messages", "/friend").hasRole("USER")
                 .antMatchers("/swagger-ui.html", "/", "/index", "/login", "/passwordChange", "/static/**", "/resetPassword", "/confirm-reset", "/error", "/successForgotPass","/successResetPassword").permitAll()
                 .anyRequest().authenticated()
                 .and()
