@@ -3,6 +3,9 @@ package com.innopolis.referencestorage.service;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
@@ -52,8 +55,9 @@ public class ReferenceSearchService {
         try {
             luceneQuery = qb.keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1)
                     .onFields("name")
-                    .andField("reference.url")
                     .andField("description")
+                    .andField("source")
+                    .andField("reference.url")
                     //                .andField("tag")
                     .matching(searchTerm).createQuery();
         } catch (Exception e) {
@@ -71,7 +75,15 @@ public class ReferenceSearchService {
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(centityManager);
         QueryBuilder qb = fullTextEntityManager.getSearchFactory().buildQueryBuilder().forEntity(ReferenceDescription.class).get();
 
+
+        QueryParser parser = new QueryParser("", new StandardAnalyzer());
         Query luceneQuery;
+        try {
+            luceneQuery = parser.parse(searchTerm);
+        } catch (ParseException e) {
+            log.error("Невозможно распарсить запрос " + searchTerm, e);
+        }
+
         try {
             luceneQuery = qb
                     .bool()
@@ -85,6 +97,7 @@ public class ReferenceSearchService {
                             .onFields("name")
                             .andField("reference.url")
                             .andField("description")
+                            .andField("source")
                             //                        .andField("tag")
                             .matching(searchTerm).createQuery())
                     .createQuery();
@@ -114,9 +127,10 @@ public class ReferenceSearchService {
                             .createQuery())
                     .must(qb
                             .keyword().fuzzy().withEditDistanceUpTo(1).withPrefixLength(1)
-                            .onFields("name")
+                            .onFields("name").boostedTo(2)
                             .andField("reference.url")
                             .andField("description")
+                            .andField("source")
                             //                        .andField("tag")
                             .matching(searchTerm).createQuery())
                     .createQuery();

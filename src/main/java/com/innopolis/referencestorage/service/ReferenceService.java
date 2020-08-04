@@ -55,7 +55,7 @@ public class ReferenceService {
      * @param referenceDescription - reference
      * @return reference
      */
-    public ReferenceDescription addReference(Long userId, ReferenceDescription referenceDescription, String urlText) {
+    public void addReference(Long userId, ReferenceDescription referenceDescription, String urlText, Model model) {
         log.info("Получена ссылка на добавление\n userId- {}, \n reference - {}", userId, referenceDescription.toString());
         User user = checkIfUserExists(userId);
 
@@ -79,8 +79,11 @@ public class ReferenceService {
         }
 
         ReferenceDescription existingReference = referenceDescriptionRepo.findAnyByUidUserAndReference(userId, reference);
-        if (existingReference != null)
-            assertNotNull(null, "Описание для ссылки уже существует");
+        if (existingReference != null) {
+            log.error("Описание для ссылки уже существует в Home пользователя с uid " + user.getUid());
+            model.addAttribute("copyRefError", "Эта ссылка уже есть в Home пользователя!");
+            return;
+        }
 
         referenceDescription.setReference(reference);
         referenceDescription.setUidUser(userId);
@@ -91,7 +94,7 @@ public class ReferenceService {
         if (referenceDescription.getName() == null || referenceDescription.getName().equals(""))
             referenceDescription.setName(url.toString());
 
-        return referenceDescriptionRepo.save(referenceDescription);
+        referenceDescriptionRepo.save(referenceDescription);
     }
 
     /**
@@ -103,7 +106,6 @@ public class ReferenceService {
         log.info("Получена ссылка на обновление\n refId - {}, \n Ссылка - {}", referenceDescription.getUid(), referenceDescription.toString());
 
         ReferenceDescription item = checkIfReferenceExists(refId);
-
         assertNotNull(url, "Отсутствует url ссылки");
 
         Reference reference = referenceRepo.findByUrl(url);
@@ -150,7 +152,7 @@ public class ReferenceService {
         return item;
     }
 
-    public ReferenceDescription copyReference(Long refDescriptionUid, User user, ReferenceDescription referenceDescription, Model model) {
+    public void copyReference(Long refDescriptionUid, User user, ReferenceDescription referenceDescription, Model model) {
         log.info("Получен запрос от пользователя с uid {} на копирование ссылки\n refId- {}", user.getUid(), refDescriptionUid);
 
         ReferenceDescription sourceRef = checkIfReferenceExists(refDescriptionUid);
@@ -158,8 +160,8 @@ public class ReferenceService {
 
         if (referenceDescriptionRepo.findAnyByUidUserAndReference(user.getUid(), reference) != null) {
             log.error("Описание для ссылки уже существует в Home пользователя с uid " + user.getUid());
-            model.addAttribute("refAddError", "Эта ссылка уже добавлена в Home!");
-            return sourceRef;
+            model.addAttribute("copyRefError", "Эта ссылка уже есть в Home пользователя!");
+            return;
         }
 
         reference.setRating(reference.getRating() + 1);
@@ -173,9 +175,9 @@ public class ReferenceService {
         referenceDescription.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         referenceDescription.setSource(sourceRef.getSource());
         referenceDescription.setUidAdditionMethod(uidAdditionMethod);
-        referenceDescription.setUidAccessLevel(sourceRef.getUidAccessLevel());
+        referenceDescription.setUidAccessLevel(0);
 
-        return referenceDescriptionRepo.save(referenceDescription);
+        referenceDescriptionRepo.save(referenceDescription);
     }
 
 
@@ -194,5 +196,4 @@ public class ReferenceService {
 
         return data;
     }
-
 }

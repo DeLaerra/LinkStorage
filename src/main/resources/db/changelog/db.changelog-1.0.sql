@@ -110,6 +110,37 @@ CREATE TABLE confirmation_token
       OIDS=FALSE
       );
 
+--changeset m.larionova:20200802-insert-tables runOnChange:true context:test
+CREATE TABLE private_messages
+(
+    uid bigint NOT NULL
+        constraint private_messages_pk
+        primary key,
+    text varchar(2000),
+    ref_description_uid bigint
+        constraint private_messages_ref_description_uid_fk
+        references ref_description,
+    sender_uid bigint
+        constraint private_messages_usercreds_uid_fk
+        references usercreds,
+    recipient_uid bigint
+        constraint private_messages_usercreds_uid_fk_2
+        references usercreds,
+    sending_time timestamp with time zone NOT NULL,
+    acception_status integer default 0,
+    adding_method_uid integer NOT NULL
+        constraint private_messages_adding_method_uid_fk
+        references adding_method
+);
+
+alter table private_messages owner to postgres;
+
+create unique index private_messages_uid_uindex
+	on private_messages (uid);
+
+
+
+
 --changeset p.gaiduk:20200726-insert-tags-refs runOnChange:true context:test
 CREATE TABLE "refs" (
                         "uid" serial NOT NULL,

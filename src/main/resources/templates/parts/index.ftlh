@@ -31,6 +31,9 @@
                      <li class="nav-item">
                          <a class="nav-link" href="/userHome">Home</a>
                      </li>
+                     <li class="nav-item">
+                         <a class="nav-link" href="/myAccount">Личный кабинет</a>
+                     </li>
                  </#if>
             </ul>
             <div class="navbar-text mr-3">

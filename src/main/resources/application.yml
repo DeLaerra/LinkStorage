@@ -1,6 +1,5 @@
 server:
   port: 8081
-
 logging:
   level:
     liquibase: INFO
@@ -11,7 +10,7 @@ spring:
     expose-request-attributes: true
     cache: false
   datasource:
-    url: jdbc:postgresql://localhost:5432/reference-storage1
+    url: jdbc:postgresql://localhost:5432/reference-storage
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -26,6 +25,7 @@ spring:
           default:
             directory__provider: filesystem
             indexBase: /data/index
+          analyzer: org.apache.lucene.analysis.standard.StandardAnalyzer
   mvc:
     static-path-pattern: /static/**
 
