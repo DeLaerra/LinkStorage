@@ -16,12 +16,7 @@
                     <th scope="col">
                         <button type="submit" class="btn btn-success btn-sm">
                             <span class="iconify" data-icon="mdi:account-plus" data-inline="false"></span></button>
-                        ${friend.getUsername()}</th>
-                </div>
-                <div class="col-sm">
-                    <th scope="col">
-                        ${notAddedFriend}
-                    </th>
+                        </th>
                 </div>
             </div>
             <#--        <a href="/friendHome">FriendHome</a>-->
