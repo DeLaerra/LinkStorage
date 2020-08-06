@@ -54,15 +54,22 @@ public class FriendsController {
         userFriend = friendsService.findUserByUid(friendUid);
 
         List<Friends> friends = friendsService.findAllByFriend(friendUid);
+        List<Friends> users = friendsService.findAllByOwner(friendUid);
         int a = 0;
         for (Friends fr : friends) {
             if (user.getUid() == fr.getOwner()) {
                 a = 1;
             }
         }
+        for (Friends us : users) {
+            if (user.getUid() == us.getFriend()) {
+                a = 1;
+            }
+        }
         if (a == 0) {
             model.addAttribute("notAddedFriend", "Пользователь у Вас не в друзьях");
         }
+        model.addAttribute("friend", friendsService.findUserByUid(friendUid));
         model.addAttribute("friendName", userFriend.getUsername());
         log.info("Получен запрос об отображении ссылок пользователя с uid - {}", userFriend);
         Page<ReferenceDescription> page = getReferencesPage(userFriend, pageable, sortBy, load);

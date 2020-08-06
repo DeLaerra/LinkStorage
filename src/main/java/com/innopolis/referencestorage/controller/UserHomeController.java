@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Controller
@@ -52,9 +54,13 @@ public class UserHomeController {
         model.addAttribute("userFriends", userService.loadUserByUsername(user.getUsername()));
 
         List<Friends> friends = friendsService.findAllByOwner(user.getUid());
-        List<User> ufriends = new ArrayList<>();
+        List<Friends> users = friendsService.findAllByFriend(user.getUid());
+        Set<User> ufriends = new HashSet<>();
         for (Friends fr : friends) {
             ufriends.add(userService.findUserByUid(fr.getFriend()));
+        }
+        for (Friends us : users) {
+            ufriends.add(userService.findUserByUid(us.getOwner()));
         }
         model.addAttribute("listFriends", ufriends);
         model.addAttribute("searchFriends", searchFriends != null && !"".equals(searchFriends) ?
