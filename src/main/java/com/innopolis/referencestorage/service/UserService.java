@@ -70,6 +70,7 @@ public class UserService implements UserDetailsService {
         userInfo.setSurname("Surname");
         userInfo.setAge(0);
         userInfo.setSex(0);
+        userInfo.setChatId(0L);
         userInfo.setBirthDate(LocalDate.now());
         user.setUserInfo(userInfo);
         try {
@@ -92,5 +93,9 @@ public class UserService implements UserDetailsService {
 
     public User findUserByUid(Long uid) {
         return userRepo.findByUid(uid);
+    }
+
+    public User findUserByUsername(String username) {
+        return userRepo.findByUsername(username);
     }
 }

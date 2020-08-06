@@ -1,7 +1,6 @@
 package com.innopolis.referencestorage.controller;
 
 import com.innopolis.referencestorage.config.CurrentUser;
-import com.innopolis.referencestorage.domain.Friends;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.service.FriendsService;
@@ -19,8 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Controller
@@ -49,14 +46,7 @@ public class UserHomeController {
         Page<ReferenceDescription> page = getReferencesPage(user, pageable, sortBy, load);
         model.addAttribute("page", page);
         model.addAttribute("url", "/userHome");
-        model.addAttribute("userFriends", userService.loadUserByUsername(user.getUsername()));
-
-        List<Friends> friends = friendsService.findAllByOwner(user.getUid());
-        List<User> ufriends = new ArrayList<>();
-        for (Friends fr : friends) {
-            ufriends.add(userService.findUserByUid(fr.getFriend()));
-        }
-        model.addAttribute("listFriends", ufriends);
+        model.addAttribute("listFriends", friendsService.showAllFriends(user));
         model.addAttribute("searchFriends", searchFriends != null && !"".equals(searchFriends) ?
                 userService.findUsers(searchFriends)
                 : null);

@@ -9,5 +9,8 @@ import java.util.List;
 @Repository
 public interface FriendsRepo extends JpaRepository<Friends, Long> {
     List<Friends> findAllByFriend(long friend);
+
     List<Friends> findAllByOwner(long owner);
+
+    boolean existsByOwnerAndFriendEquals(Long ownerUid, Long friendUid);
 }

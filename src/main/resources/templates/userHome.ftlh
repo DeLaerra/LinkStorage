@@ -187,8 +187,8 @@
                                                 <select class="form-control"
                                                         name="receiver"
                                                         id="${user.uid}receiver">
-                                                    <#if userFriends??>
-                                                        <#list userFriends.friends as friend>
+                                                    <#if listFriends??>
+                                                        <#list listFriends as friend>
                                                             <option value="${friend.username}"
                                                             <a href="../friend?idFriend=${friend.uid}">
                                                                 ${friend.username}
@@ -555,8 +555,8 @@
                                                                     <select class="form-control"
                                                                             name="receiver"
                                                                             id="${userRef.uid}receiver">
-                                                                        <#if userFriends??>
-                                                                            <#list userFriends.friends as friend>
+                                                                        <#if listFriends??>
+                                                                            <#list listFriends as friend>
                                                                                 <option value="${friend.username}"
                                                                                 <a href="../friend?idFriend=${friend.uid}">
                                                                                     ${friend.username}

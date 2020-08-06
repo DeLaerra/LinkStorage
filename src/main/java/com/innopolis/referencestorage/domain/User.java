@@ -1,8 +1,7 @@
 package com.innopolis.referencestorage.domain;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,45 +22,28 @@ import java.util.Set;
 @Table(name = "usercreds")
 @ToString
 @EqualsAndHashCode
+@Data
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter
-    @Setter
     private Long uid;
-    @Getter
-    @Setter
     private String username;
-    @Getter
-    @Setter
     private String password;
-    @Getter
-    @Setter
+
     @Transient
     private String passwordConfirmation;
-    @Getter
-    @Setter
     private boolean active;
-    @Getter
-    @Setter
     private String email;
+
     @Column(name = "date_registration")
-    @Getter
-    @Setter
     private LocalDate registrationDate;
-    @Getter
-    @Setter
     private int roleUid;
 
-    @Getter
-    @Setter
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @OneToOne(optional = false, mappedBy = "user", cascade = CascadeType.ALL)
     private UserInfo userInfo;
 
-    @Getter
-    @Setter
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToMany(cascade = CascadeType.ALL)

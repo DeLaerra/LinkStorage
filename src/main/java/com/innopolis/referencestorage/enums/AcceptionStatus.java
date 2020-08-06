@@ -1,4 +1,4 @@
-package com.innopolis.referencestorage.domain;
+package com.innopolis.referencestorage.enums;
 
 import lombok.Getter;
 

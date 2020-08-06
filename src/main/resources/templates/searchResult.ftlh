@@ -41,8 +41,8 @@
                     </a>
                 </#list>
             </#if>
-            <#if userFriends??>
-                <#list userFriends.friends as friend>
+            <#if listFriends??>
+                <#list listFriends.friends as friend>
                     <a href="../friend?idFriend=${friend.uid}">
                         <div class="modal-content">
                             <table>
@@ -185,8 +185,8 @@
                                             <select class="form-control"
                                                     name="receiver"
                                                     id="${user.uid}receiver">
-                                                <#if userFriends??>
-                                                    <#list userFriends.friends as friend>
+                                                <#if listFriends??>
+                                                    <#list listFriends.friends as friend>
                                                         <option value="${friend.username}"
                                                         <a href="../friend?idFriend=${friend.uid}">
                                                             ${friend.username}

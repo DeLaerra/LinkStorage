@@ -38,8 +38,16 @@
             </ul>
             <div class="navbar-text mr-3">
                 ${name}</div>
-            <#if name == "Анонимус"><a href="/login" class="btn btn-primary"
-                                       target="_blank">Вход</a><#else><@l.logout /></#if>
+            <#if name == "Анонимус">
+                <a href="/login" class="btn btn-sm btn-primary mr-2" target="_blank">Вход</a>
+                <a href="/registration" class="btn btn-sm btn-primary" target="_blank">Регистрация</a>
+            <#else>
+                <a href="/messages" class="nav-link" title="Сообщения">
+                    <span class="iconify" data-icon="mdi:email-outline" data-inline="false"
+                          data-height="30"></span>
+                </a>
+                <@l.logout />
+            </#if>
         </div>
     </nav>
 

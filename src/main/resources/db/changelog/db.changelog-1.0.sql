@@ -186,6 +186,7 @@ ALTER TABLE "ref_description" ADD CONSTRAINT "ref_description_fk5" FOREIGN KEY (
 
 ALTER TABLE "user_info" ADD CONSTRAINT "user_info_fk0" FOREIGN KEY ("uid_user") REFERENCES "usercreds"("uid");
 
+
 ALTER TABLE "tags_refs" ADD CONSTRAINT "tags_refs_fk0" FOREIGN KEY ("uid_ref_description") REFERENCES "ref_description"("uid");
 ALTER TABLE "tags_refs" ADD CONSTRAINT "tags_refs_fk1" FOREIGN KEY ("uid_tag") REFERENCES "tags"("uid");
 
@@ -222,3 +223,6 @@ INSERT INTO "reference_type" ("uid", "type")
 VALUES (3, 'PIC');
 
 
+
+--changeset m.larionova:20200805-insert-field runOnChange:true context:test
+ALTER TABLE "user_info" ADD chat_id int;

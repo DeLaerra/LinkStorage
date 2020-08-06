@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Base64;
@@ -43,6 +43,7 @@ public class UserInfoService {
         UserInfo originalUserInfo = getUserInfoWithUserUID(user);
         userInfo.setUid(originalUserInfo.getUid());
         userInfo.setUser(originalUserInfo.getUser());
+
         String newName = userInfo.getName();
         if (!isText(newName)) {
             log.info(NAME_SURNAME_WARNING);
@@ -69,6 +70,7 @@ public class UserInfoService {
             userInfo.setAge(originalUserInfo.getAge());
             model.addAttribute("userInfoAgeError", "Попытка поставить возраст меньше нуля");
         }
+
         try {
             log.info("Попытка пропарсить birthDate {}", birthDate);
             LocalDate newDate = LocalDate.parse(birthDate);
@@ -106,7 +108,12 @@ public class UserInfoService {
         return "";
     }
 
-    public boolean isText(String string) {
+    public Long getUserUidByChatId(Long chatId) {
+        UserInfo userInfo = userInfoRepo.findByChatId(chatId);
+        return userInfo.getUser().getUid();
+    }
+
+    private boolean isText(String string) {
         return string.matches("[a-zA-Zа-яА-Я]+");
     }
 }
