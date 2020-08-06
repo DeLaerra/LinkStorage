@@ -86,6 +86,17 @@
                         </div>
                     </div>
                 </form>
+                <#if myTags??>
+                    <div class="row">
+                        <div class="col-12">
+                            <#list myTags as myTag>
+                                <a href="../searchResult?search=${myTag}" class="btn btn-sm btn-link"
+                                   target="_blank">${myTag}</a>
+                            </#list>
+                        </div>
+                    </div>
+                </#if>
+                <p></p>
                 <div class="row">
                     <div class="col-sm">
                         <!-- Button trigger modal Add Добавить...-->
@@ -142,7 +153,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="add_tagInput">Теги:</label>
-                                                <input type="text" name="tag" class="form-control" id="add_tagInput"
+                                                <input type="text" name="tagsFromUser" class="form-control" id="add_tagInput"
                                                        placeholder="Тэг">
                                             </div>
                                             <div class="form-group">
@@ -229,7 +240,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="add_tagInput">Теги:</label>
-                                                <input type="text" name="tag" class="form-control"
+                                                <input type="text" name="tagsFromUser" class="form-control"
                                                        id="add_tagInput"
                                                        placeholder="Тэг">
                                             </div>
@@ -326,7 +337,9 @@
                                                 <br><#else><a
                                                 href="${userRef.reference.url}">${userRef.reference.url}<br>
                                                 </a></#if>
-                                            <#if userRef.tag??>Теги: ${userRef.tag}<br></#if>
+                                            <#if userRef.tag??>
+                                                Теги: ${userRef.tags}<br>
+                                            </#if>
 
                                             <div class="btn-toolbar mr-4" role="toolbar"
                                                  aria-label="Toolbar with button groups">
@@ -387,7 +400,7 @@
                                                 <div class="card card-body">
                                                     <div class="body">
                                                         <a href="${userRef.reference.url}">${userRef.reference.url}</a><br>
-                                                        <#if userRef.tag??><b>Теги</b>: ${userRef.tag}<br></#if>
+                                                        <#if userRef.tags??><b>Теги</b>: ${userRef.tags}<br></#if>
                                                         <#if userRef.source??><b>Источник</b>: <a
                                                                 href="${userRef.source}">${userRef.source}</a>
                                                             <br></#if>
@@ -489,14 +502,24 @@
                                                                         </option>
                                                                     </select>
                                                                 </div>
-                                                                <#if userRef.tag??>
+                                                                <#--<#if userRef.tags??>
                                                                     <div class="form-group">
                                                                         <label for="${userRef.uid}tagInput">Теги:</label>
                                                                         <input type="text" name="tag"
                                                                                class="form-control"
                                                                                id="${userRef.uid}tagInput"
                                                                                placeholder="Тэг"
-                                                                               value="<#if userRef.tag??>${userRef.tag}</#if>">
+                                                                               value="<#if userRef.tags??>${userRef.tags}</#if>">
+                                                                    </div>
+                                                                </#if>-->
+                                                                <#if userRef.tag??>
+                                                                    <div class="form-group">
+                                                                        <label for="${userRef.uid}tagInput">Теги:</label>
+                                                                        <input type="text" name="tags"
+                                                                               class="form-control"
+                                                                               id="${userRef.uid}tagInput"
+                                                                               placeholder="Тэг"
+                                                                               value="${userRef.tags}">
                                                                     </div>
                                                                 </#if>
                                                                 <div class="form-group">
@@ -602,13 +625,13 @@
                                                                                         <#elseif userRef.uidReferenceType == 2>файл
                                                                                         <#elseif userRef.uidReferenceType == 3>картинка</#if>">
                                                                 </div>
-                                                                <#if userRef.tag??>
+                                                                <#if userRef.tags??>
                                                                     <div class="form-group">
                                                                         <label for="${userRef.uid}tagInput">Теги:</label>
                                                                         <input readonly type="text" name="tag"
                                                                                class="form-control"
                                                                                id="${userRef.uid}tagInput"
-                                                                               value="<#if userRef.tag??>${userRef.tag}</#if>">
+                                                                               value="<#if userRef.tags??>${userRef.tags}</#if>">
                                                                     </div>
                                                                 </#if>
                                                                 <div class="form-group">

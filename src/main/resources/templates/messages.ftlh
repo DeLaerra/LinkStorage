@@ -118,7 +118,7 @@
                                                 <div class="body">
                                                     <a href="${pm.referenceDescription.reference.url}">${pm.referenceDescription.reference.url}</a><br>
                                                     <#if pm.referenceDescription.tag??>
-                                                        <b>Теги</b>: ${pm.referenceDescription.tag}<br></#if>
+                                                        <b>Теги</b>: ${pm.referenceDescription.tags}<br></#if>
                                                     <#if pm.referenceDescription.source??><b>Источник</b>: <a
                                                             href="${pm.referenceDescription.source}">${pm.referenceDescription.source}</a>
                                                         <br></#if>
@@ -247,7 +247,7 @@
                                                 <div class="body">
                                                     <a href="${pm.referenceDescription.reference.url}">${pm.referenceDescription.reference.url}</a><br>
                                                     <#if pm.referenceDescription.tag??>
-                                                        <b>Теги</b>: ${pm.referenceDescription.tag}<br></#if>
+                                                        <b>Теги</b>: ${pm.referenceDescription.tags}<br></#if>
                                                     <#if pm.referenceDescription.source??><b>Источник</b>: <a
                                                             href="${pm.referenceDescription.source}">${pm.referenceDescription.source}</a>
                                                         <br></#if>

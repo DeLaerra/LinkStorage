@@ -33,9 +33,15 @@ public class PrivateMessageController {
         log.info("Получен запрос на отображение страницы сообщений от пользователя с uid - {}", user.getUid());
 
         List<PrivateMessage> pmInbox = privateMessageService.getInbox(user, pageable);
+        for (PrivateMessage privateMessage : pmInbox) {
+            privateMessage.getReferenceDescription().setTags();
+        }
         pmInbox.sort(Comparator.comparing(PrivateMessage::getSendingTime).reversed());
 
         List<PrivateMessage> pmSent = privateMessageService.getSent(user, pageable);
+        for (PrivateMessage privateMessage : pmSent) {
+            privateMessage.getReferenceDescription().setTags();
+        }
         pmSent.sort(Comparator.comparing(PrivateMessage::getSendingTime).reversed());
 
         model.addAttribute("pmInbox", pmInbox);
