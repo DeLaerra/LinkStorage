@@ -114,8 +114,8 @@
                 <div class="col-sm-6">
                     <input type="number" min="1" minlength="1" maxlength="14" name="chatId"
                            class="form-control"
-                           value="${(userInfo.chatId)!}"
-                           placeholder="${(userInfo.chatId)!}"/>
+                           value="${(userInfo.chatId)!''}"
+                           placeholder="${(userInfo.chatId)!''}"/>
                 </div>
             </div>
             <div class="form-actions">

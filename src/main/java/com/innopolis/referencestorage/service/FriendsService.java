@@ -47,6 +47,8 @@ public class FriendsService {
     }
 
     public boolean checkFriendship(User user, User friend) {
+        boolean y = friendsRepo.existsByOwnerAndFriendEquals(user.getUid(), friend.getUid());
+        boolean y2 = friendsRepo.existsByOwnerAndFriendEquals(friend.getUid(), user.getUid());
         return (friendsRepo.existsByOwnerAndFriendEquals(user.getUid(), friend.getUid()))
                 || (friendsRepo.existsByOwnerAndFriendEquals(friend.getUid(), user.getUid()));
     }

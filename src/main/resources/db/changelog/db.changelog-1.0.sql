@@ -222,7 +222,23 @@ VALUES (2, 'FILE');
 INSERT INTO "reference_type" ("uid", "type")
 VALUES (3, 'PIC');
 
-
-
 --changeset m.larionova:20200805-insert-field runOnChange:true context:test
 ALTER TABLE "user_info" ADD chat_id int;
+
+--changeset m.larionova:20200807-insert-tables runOnChange:true context:test
+CREATE TABLE friendship_request
+(
+    uid bigserial NOT NULL,
+    sender_uid bigint
+        constraint friendship_request_usercreds_uid_fk
+        references usercreds,
+    recipient_uid bigint
+        constraint friendship_request_usercreds_uid_fk_2
+        references usercreds,
+    text varchar(2000),
+    sending_time timestamp with time zone,
+    acception_status int default 0
+);
+
+CREATE unique index friendship_request_uid_uindex
+	on friendship_request (uid);

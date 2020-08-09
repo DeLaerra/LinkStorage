@@ -8,25 +8,20 @@
     </div>
     </#if>
 
-<#--    <#if notAddedFriend??>-->
-<#--        <form name="addFriend" action="/addFriend" method="get">-->
-<#--            <input class="form-control" type="hidden" name="addFriend" id="addFriend" value="${friend.uid}">-->
-<#--            <div class="row">-->
-<#--                <div class="col-sm">-->
-<#--                    <th scope="col">-->
-<#--                        <button type="submit" class="btn btn-success btn-sm">-->
-<#--                            <span class="iconify" data-icon="mdi:account-plus" data-inline="false"></span></button>-->
-<#--                        ${friend.getUsername()}</th>-->
-<#--                </div>-->
-<#--                <div class="col-sm">-->
-<#--                    <th scope="col">-->
-<#--                        ${notAddedFriend}-->
-<#--                    </th>-->
-<#--                </div>-->
-<#--            </div>-->
-<#--            &lt;#&ndash;        <a href="/friendHome">FriendHome</a>&ndash;&gt;-->
-<#--        </form>-->
-<#--    </#if>-->
+    <#if notAddedFriend??>
+        <form name="addFriend" action="/addFriend" method="get">
+            <input class="form-control" type="hidden" name="addFriend" id="addFriend" value="${friend.uid}">
+            <div class="row">
+                <div class="col-sm">
+                    <th scope="col">
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <span class="iconify" data-icon="mdi:account-plus" data-inline="false"></span></button>
+                        </th>
+                </div>
+            </div>
+            <#--        <a href="/friendHome">FriendHome</a>-->
+        </form>
+    </#if>
 
     <div class="container">
         <div class="row">

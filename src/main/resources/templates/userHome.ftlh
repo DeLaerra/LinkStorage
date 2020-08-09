@@ -419,7 +419,7 @@
                                                  aria-labelledby="${userRef.uid}Label" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
+                                                        <div class="modal-header text-truncate">
                                                             <h5 class="modal-title"
                                                                 id="${userRef.uid}Label"><#if userRef.name??><a
                                                                     href="${userRef.reference.url}">${userRef.name}</a>
@@ -432,7 +432,7 @@
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
-                                                        <div class="modal-body">
+                                                        <div class="modal-body text-truncate">
                                                             <form method="post" name="userRef"
                                                                   action="reference/update/${userRef.uid}">
                                                                 <input type="hidden" name="_csrf"
@@ -499,14 +499,6 @@
                                                                                value="<#if userRef.tag??>${userRef.tag}</#if>">
                                                                     </div>
                                                                 </#if>
-                                                                <div class="form-group">
-                                                                    <label for="${userRef.uid}sourceInput">Источник:</label>
-                                                                    <input type="text" name="source"
-                                                                           class="form-control"
-                                                                           id="${userRef.uid}sourceInput"
-                                                                           placeholder="Источник"
-                                                                           value="<#if userRef.source??>${userRef.source}</#if>">
-                                                                </div>
                                                                 <div class="form-group">
                                                                     <label for="${userRef.uid}accessLevelInput">Уровень
                                                                         доступа:</label>

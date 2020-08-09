@@ -72,7 +72,7 @@ public class ReferenceService {
         Reference reference = checkIfReferenceExists(urlText);
 
         ReferenceDescription existingReference = referenceDescriptionRepo.findAnyByUidUserAndReference(userId, reference);
-        if (existingReference != null) {
+        if ((existingReference != null) && userId != 0) {
             log.error("Описание для ссылки уже существует в Home пользователя с uid " + user.getUid());
             Optional.ofNullable(model).ifPresent(m -> m.addAttribute("copyRefError", "Эта ссылка уже есть в Home пользователя!"));
             return;

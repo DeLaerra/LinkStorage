@@ -42,7 +42,7 @@
                 </#list>
             </#if>
             <#if listFriends??>
-                <#list listFriends.friends as friend>
+                <#list listFriends as friend>
                     <a href="../friend?idFriend=${friend.uid}">
                         <div class="modal-content">
                             <table>
@@ -186,7 +186,7 @@
                                                     name="receiver"
                                                     id="${user.uid}receiver">
                                                 <#if listFriends??>
-                                                    <#list listFriends.friends as friend>
+                                                    <#list listFriends as friend>
                                                         <option value="${friend.username}"
                                                         <a href="../friend?idFriend=${friend.uid}">
                                                             ${friend.username}
@@ -330,10 +330,9 @@
                                                     <form method="post" name="userRefAddToHome"
                                                           action="reference/copy/${userRef.uid}">
                                                         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-                                                        <button type="submit" class="btn btn-info btn-sm"><span
-                                                                    class="iconify"
-                                                                    data-icon="el:download"
-                                                                    data-inline="false"></span>
+                                                        <button type="submit" class="btn btn-info btn-sm">
+                                                            <span class="iconify" data-icon="mdi:plus"
+                                                                  data-inline="false"></span>
                                                         </button>
                                                         <#if refAddError??>
                                                             <div class="invalid-feedback">
@@ -387,7 +386,7 @@
                                              aria-labelledby="${userRef.uid}Label" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
-                                                    <div class="modal-header">
+                                                    <div class="modal-header text-truncate">
                                                         <h5 class="modal-title"
                                                             id="${userRef.uid}Label"><#if userRef.name??><a
                                                                 href="${userRef.reference.url}">${userRef.name}</a>
@@ -400,7 +399,7 @@
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
-                                                    <div class="modal-body">
+                                                    <div class="modal-body text-truncate">
                                                         <form method="post" name="userRef"
                                                               action="reference/update/${userRef.uid}">
                                                             <input type="hidden" name="_csrf" value="${_csrf.token}"/>
@@ -462,13 +461,6 @@
                                                                            value="<#if userRef.tag??>${userRef.tag}</#if>">
                                                                 </div>
                                                             </#if>
-                                                            <div class="form-group">
-                                                                <label for="${userRef.uid}sourceInput">Источник:</label>
-                                                                <input type="text" name="source" class="form-control"
-                                                                       id="${userRef.uid}sourceInput"
-                                                                       placeholder="Источник"
-                                                                       value="<#if userRef.source??>${userRef.source}</#if>">
-                                                            </div>
                                                             <div class="form-group">
                                                                 <label for="${userRef.uid}accessLevelInput">Уровень
                                                                     доступа:</label>

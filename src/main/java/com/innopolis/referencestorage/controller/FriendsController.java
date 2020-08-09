@@ -46,11 +46,14 @@ public class FriendsController {
                                      @RequestParam(name = "search", required = false) String q,
                                      @RequestParam(name = "area", required = false) String area,
                                      @RequestParam(name = "idFriend", required = false) String idFriend) {
-        userFriend = friendsService.findUserByUid(Long.parseLong(idFriend));
+
+        Long friendUid = Long.parseLong(idFriend);
+        userFriend = friendsService.findUserByUid(friendUid);
 
         if (!(friendsService.checkFriendship(user, userFriend))) {
             model.addAttribute("notAddedFriend", "Пользователь у Вас не в друзьях");
         }
+        model.addAttribute("friend", friendsService.findUserByUid(friendUid));
         model.addAttribute("friendName", userFriend.getUsername());
         log.info("Получен запрос об отображении ссылок пользователя с uid - {}", userFriend);
         Page<ReferenceDescription> page = getReferencesPage(userFriend, pageable, sortBy, load);

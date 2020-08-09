@@ -59,20 +59,20 @@ public class PrivateMessageService {
 
         if (model.getAttribute("pmDuplicateError") != null) return null;
 
-        if (referenceDescriptionRepo.findAnyByUidUserAndReference(friend.getUid(), sourceRef.getReference()) != null) {
-            log.info("Описание для ссылки уже существует в Home пользователя с uid " + friend.getUid());
-            privateMessage.setAcceptionStatus(AcceptionStatus.DUPLICATE.getStatusUid());
-            log.info("Сообщению с uid {} присвоен статус Дубликат", privateMessage.getUid());
-        }
-
         privateMessage = PrivateMessage.builder()
                 .text(text)
                 .referenceDescription(sourceRef)
                 .sender(user)
                 .recipient(friend)
                 .sendingTime(LocalDateTime.now())
-                .addingMethodUid(sourceRef.getUidAdditionMethod()).build();
+                .addingMethodUid(sourceRef.getUidAdditionMethod())
+                .acceptionStatus(AcceptionStatus.NOT_DEFINED.getStatusUid()).build();
 
+        if (referenceDescriptionRepo.findAnyByUidUserAndReference(friend.getUid(), sourceRef.getReference()) != null) {
+            log.info("Описание для ссылки уже существует в Home пользователя с uid " + friend.getUid());
+            privateMessage.setAcceptionStatus(AcceptionStatus.DUPLICATE.getStatusUid());
+            log.info("Сообщению с uid {} присвоен статус Дубликат", privateMessage.getUid());
+        }
         return privateMessageRepo.save(privateMessage);
     }
 
