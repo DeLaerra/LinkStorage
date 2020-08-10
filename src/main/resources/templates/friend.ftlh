@@ -27,8 +27,6 @@
         <div class="row">
 
             <div class="col-10">
-
-
                 <#if page??>
                     <div class="container">
                         <table class="table table-striped">

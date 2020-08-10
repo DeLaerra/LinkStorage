@@ -5,50 +5,41 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
 import java.time.LocalDate;
 import java.util.Base64;
 
 @ToString
+@Getter
+@Setter
 @Entity
 @Table(name = "user_info")
 public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter
-    @Setter
     @ToString.Exclude
     private Long uid;
 
-    @Getter
-    @Setter
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(optional = false)
     @JoinColumn(name = "uid_user")
     @ToString.Exclude
     private User user;
 
-    @Getter
-    @Setter
     private String name;
 
-    @Getter
-    @Setter
     private String surname;
 
-    @Getter
-    @Setter
     private int age;
 
-    @Getter
-    @Setter
     private int sex;
 
+    @Digits(integer = 14, fraction = 0)
+    private Long chatId;
+
     @Column(name = "birth_date")
-    @Getter
-    @Setter
     @ToString.Exclude
     private LocalDate birthDate;
-    @Getter
-    @Setter
+
     @ToString.Exclude
     private byte[] avatar;
 

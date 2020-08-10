@@ -1,8 +1,9 @@
 package com.innopolis.referencestorage.domain;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
@@ -13,57 +14,50 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@ToString
+
 @Entity
 @Table(name = "ref_description")
+@Data
 @Indexed
+@AllArgsConstructor
+@RequiredArgsConstructor
+@Builder
 public class ReferenceDescription {
     @Id
-    @Getter
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long uid;
-    @Getter
-    @Setter
+
     @Field
     @NumericField
     private Long uidUser;
-    @Getter
-    @Setter
+
+    @Field
+    private String name;
+
+    @Field
+    private String description;
+
+    private Short uidReferenceType;
+
+    @Column(name = "adding_date")
+    private LocalDate additionDate;
+
+    @Field
+    private String source;
+
+    @Column(name = "uid_adding_method")
+    private Short uidAdditionMethod;
+
+    @Field
+    @NumericField
+    private int uidAccessLevel;
+
+    private Long uidParentRef;
+
     @IndexedEmbedded(depth = 1)
     @ManyToOne
     @JoinColumn (name="uid_reference", nullable = false)
     private Reference reference;
-    @Getter
-    @Setter
-    @Field
-    private String name;
-    @Getter
-    @Setter
-    @Field
-    private String description;
-    @Getter
-    @Setter
-    private Short uidReferenceType;
-    @Getter
-    @Setter
-    @Column(name = "adding_date")
-    private LocalDate additionDate;
-    @Getter
-    @Setter
-    @Field
-    private String source;
-    @Getter
-    @Setter
-    @Column(name = "uid_adding_method")
-    private Short uidAdditionMethod;
-    @Getter
-    @Setter
-    @Field
-    @NumericField
-    private int uidAccessLevel;
-    @Getter
-    @Setter
-    private Long uidParentRef;
 
     @OneToMany(mappedBy="referenceDescription", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PrivateMessage> privateMessages = new ArrayList<>();

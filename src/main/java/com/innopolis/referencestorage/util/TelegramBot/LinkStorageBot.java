@@ -1,6 +1,8 @@
 //package com.innopolis.referencestorage.util.TelegramBot;
 //
-//import com.innopolis.referencestorage.service.UserService;
+//import com.innopolis.referencestorage.domain.ReferenceDescription;
+//import com.innopolis.referencestorage.domain.User;
+//import com.innopolis.referencestorage.service.*;
 //import lombok.extern.slf4j.Slf4j;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +30,11 @@
 //    }
 //
 //    private UserService userService;
-//    private Map<Long, String> users = new HashMap<>();
+//    private UserInfoService userInfoService;
+//    private PrivateMessageService privateMessageService;
+//    private ReferenceService referenceService;
+//    private FriendsService friendsService;
+//    private Map<Long, String> recipients = new HashMap<>();
 //
 //
 //    @Value("1382682447:AAF5lYS10l43ZNgrXuEwm2qCnArQpEfAy_M")
@@ -39,8 +45,14 @@
 //
 //
 //    @Autowired
-//    public LinkStorageBot(UserService userService) {
+//    public LinkStorageBot(UserService userService, UserInfoService userInfoService,
+//                          PrivateMessageService privateMessageService, ReferenceService referenceService,
+//                          FriendsService friendsService) {
 //        this.userService = userService;
+//        this.userInfoService = userInfoService;
+//        this.privateMessageService = privateMessageService;
+//        this.referenceService = referenceService;
+//        this.friendsService = friendsService;
 //    }
 //
 //    @Override
@@ -55,13 +67,13 @@
 //
 //    @Override
 //    public void onUpdateReceived(Update update) {
-//        log.debug("New update received. UpdateID: " + update.getUpdateId());
+//        log.debug("Новый апдейт получен. UpdateID: " + update.getUpdateId());
 //        SendMessage response = null;
 //        SendMessage badResponse = getBadResponseMessage(update.getMessage().getChatId());
 //
 //        if (update.hasMessage()) {
 //            Message message = update.getMessage();
-//            log.info("Received message \"{}\" from {}", update.getMessage().getText(), update.getMessage().getChatId());
+//            log.info("Получено \"{}\" от {}", update.getMessage().getText(), update.getMessage().getChatId());
 //            response = parseCommands(message, badResponse);
 //        } else {
 //            response = badResponse;
@@ -69,9 +81,9 @@
 //
 //        try {
 //            execute(response);
-//            log.info("Sent message \"{}\" to {}", response.getText(), response.getChatId());
+//            log.info("Отправлено \"{}\" пользователю {}", response.getText(), response.getChatId());
 //        } catch (TelegramApiException e) {
-//            log.error("Failed to send message \"{}\" to {} due to error: {}",
+//            log.error("Сообщение \"{}\" пользователю {} не отправлено из-за ошибки: {}",
 //                    response.getText(), response.getChatId(), e.getMessage());
 //        }
 //    }
@@ -84,23 +96,26 @@
 //
 //
 //    private SendMessage parseCommands(Message message, SendMessage badResponse) {
-//        SendMessage response = null;
+//        SendMessage response;
 //        Long chatId = message.getChatId();
 //        String messageText = message.getText();
-//        String username = users.get(chatId);
+//        String username = recipients.get(chatId);
 //
 //        if (message.hasText()) {
 //            if (messageText.equals("/start")) {
 //                response = new SendMessage()
 //                        .setChatId(chatId)
-//                        .setText("Здравствуйте! Пожалуйста, укажите никнейм пользователя, которому вы хотите отправлять ссылки");
+//                        .setText("Здравствуйте! Ваш chatId:" + "\n"
+//                                + chatId + "\n"
+//                                + "chatID необходимо сохранить в Личном кабинете." + "\n"
+//                                + "Пожалуйста, укажите никнейм пользователя, которому вы хотите отправлять ссылки");
 //            } else if (messageText.startsWith("/to")) {
 //                String nickname = messageText.replace("/to ", "");
 //                response = getUserNicknameMessage(chatId, nickname);
 //            } else if (messageText.startsWith("/help")) {
 //                response = new SendMessage()
 //                        .setChatId(chatId)
-//                        .setText("Перед отправкой ссылок необходимо указать адресата: отправьте сообщение с нужным ником." + "\n" +
+//                        .setText("Перед отправкой ссылок необходимо сохранить свой chatId в Личном кабинете, а также отправить боту сообщение с ником адресата." + "\n" +
 //                                "Для смены адресата отправьте команду /to и никнейм нового адресата. Например, /to admin");
 //            } else {
 //                response = getURLFromMessage(message, badResponse, username);
@@ -135,6 +150,7 @@
 //        Long chatId = message.getChatId();
 //        String messageText = message.getText();
 //
+//
 //        if (username != null) {
 //            response = badResponse;
 //
@@ -144,6 +160,22 @@
 //                try {
 //                    url = new URL(word);
 //                    log.info("Обнаружена ссылка: " + url);
+//
+//                    Long senderUid = userInfoService.getUserUidByChatId(chatId);
+//                    if (senderUid == null) {
+//                        log.error("Пользователь с chatId {} не найден", chatId);
+//                        return new SendMessage()
+//                                .setChatId(chatId)
+//                                .setText("Пользователь с chatId " + chatId + " не найден на сайте! " +
+//                                        "Пожалуйста, укажите свой chatId в Личном кабинете.");
+//                    }
+//
+//                    User sender = userService.findUserByUid(senderUid);
+//                    User recipient = userService.findUserByUsername(username);
+//
+//                    ReferenceDescription referenceDescription = referenceService.addReferenceFromTelegram(url);
+//                    privateMessageService.sendReferenceToFriendFromTelegram(referenceDescription.getUid(), sender,
+//                            recipient.getUsername());
 //
 //                    response = new SendMessage()
 //                            .setChatId(chatId)
@@ -158,17 +190,28 @@
 //        return response;
 //    }
 //
-//    private SendMessage getUserNicknameMessage(Long chatId, String messageText) {
+//    private SendMessage getUserNicknameMessage(Long chatId, String username) {
 //        SendMessage response;
-//        if (userService.checkUserExists(messageText)) {
-//            users.put(chatId, messageText);
+//        if (userService.checkUserExists(username)) {
+//            Long senderUid = userInfoService.getUserUidByChatId(chatId);
+//            User sender = userService.findUserByUid(senderUid);
+//            User recipient = userService.findUserByUsername(username);
+//
+//            if ((!friendsService.checkFriendship(sender, recipient)) && (!sender.equals(recipient))) {
+//                log.error("Пользователь {} не является другом пользователя {}", recipient.getUsername(), sender.getUsername());
+//                response = new SendMessage()
+//                        .setChatId(chatId)
+//                        .setText("Пользователь " + recipient.getUsername() + " отсутствует в вашем списке друзей! " +
+//                                "Вы можете отправлять ссылки либо себе, либо друзьям.");
+//            } else {
+//            recipients.put(chatId, username);
 //            response = new SendMessage()
 //                    .setChatId(chatId)
-//                    .setText("Никнейм адресата установлен: " + messageText);
+//                    .setText("Никнейм адресата установлен: " + username);}
 //        } else {
 //            response = new SendMessage()
 //                    .setChatId(chatId)
-//                    .setText("Никнейм адресата не указан. Пожалуйста, отправьте никнейм!");
+//                    .setText("Никнейм адресата не указан или не найден на сайте. Пожалуйста, отправьте никнейм!");
 //        }
 //        return response;
 //    }

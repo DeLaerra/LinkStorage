@@ -4,6 +4,9 @@ import com.innopolis.referencestorage.commons.utils.PropertyChecker;
 import com.innopolis.referencestorage.domain.Reference;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
+import com.innopolis.referencestorage.enums.AccessLevel;
+import com.innopolis.referencestorage.enums.AdditionMethod;
+import com.innopolis.referencestorage.enums.ReferenceType;
 import com.innopolis.referencestorage.repos.ReferenceDescriptionRepo;
 import com.innopolis.referencestorage.repos.ReferenceRepo;
 import com.innopolis.referencestorage.repos.UserRepo;
@@ -32,8 +35,6 @@ public class ReferenceService {
     private ReferenceDescriptionRepo referenceDescriptionRepo;
     private ReferenceRepo referenceRepo;
     private UserRepo userRepo;
-
-    private final Short uidAdditionMethod = 0;
 
     @Autowired
     public ReferenceService(ReferenceRepo referenceRepo, UserRepo userRepo, ReferenceDescriptionRepo referenceDescriptionRepo) {
@@ -68,26 +69,18 @@ public class ReferenceService {
             log.error("В тексте {} нет ссылки!", urlText, e);
         }
 
-        Reference reference = referenceRepo.findByUrl(urlText);
-        if (reference == null) {
-            reference = new Reference(urlText, 1);
-
-            reference = referenceRepo.saveAndFlush(reference);
-        } else {
-            reference.setRating(reference.getRating() + 1);
-            referenceRepo.saveAndFlush(reference);
-        }
+        Reference reference = checkIfReferenceExists(urlText);
 
         ReferenceDescription existingReference = referenceDescriptionRepo.findAnyByUidUserAndReference(userId, reference);
-        if (existingReference != null) {
+        if ((existingReference != null) && userId != 0) {
             log.error("Описание для ссылки уже существует в Home пользователя с uid " + user.getUid());
-            model.addAttribute("copyRefError", "Эта ссылка уже есть в Home пользователя!");
+            Optional.ofNullable(model).ifPresent(m -> m.addAttribute("copyRefError", "Эта ссылка уже есть в Home пользователя!"));
             return;
         }
 
         referenceDescription.setReference(reference);
         referenceDescription.setUidUser(userId);
-        referenceDescription.setUidAdditionMethod(uidAdditionMethod);
+        referenceDescription.setUidAdditionMethod(AdditionMethod.SITE.getAdditionMethodUid());
         referenceDescription.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         Optional.ofNullable(url.getHost()).ifPresent(referenceDescription::setSource);
 
@@ -174,12 +167,46 @@ public class ReferenceService {
         referenceDescription.setUidReferenceType(sourceRef.getUidReferenceType());
         referenceDescription.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         referenceDescription.setSource(sourceRef.getSource());
-        referenceDescription.setUidAdditionMethod(uidAdditionMethod);
-        referenceDescription.setUidAccessLevel(0);
+        referenceDescription.setUidAdditionMethod(AdditionMethod.SITE.getAdditionMethodUid());
+        referenceDescription.setUidAccessLevel(AccessLevel.PUBLIC.getAccessLevelUid());
 
         referenceDescriptionRepo.save(referenceDescription);
     }
 
+    public ReferenceDescription addReferenceFromTelegram(URL url) {
+        log.info("Получена ссылка из Telegram на добавление: \n reference - {}", url.toString());
+
+        Long userId = 0L;
+        User user = checkIfUserExists(userId);
+        Reference reference = checkIfReferenceExists(url.toString());
+
+        ReferenceDescription referenceDescription = ReferenceDescription.builder()
+                .reference(reference)
+                .uidUser(userId)
+                .uidAdditionMethod(AdditionMethod.TELEGRAM.getAdditionMethodUid())
+                .additionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+                .source(url.getHost())
+                .name(url.toString())
+                .uidAccessLevel(AccessLevel.PUBLIC.getAccessLevelUid())
+                .uidReferenceType(ReferenceType.TEXT.getRefTypeUid())
+                .build();
+
+        referenceDescriptionRepo.save(referenceDescription);
+        return referenceDescription;
+    }
+
+    private Reference checkIfReferenceExists(String urlText) {
+        Reference reference = referenceRepo.findByUrl(urlText);
+        if (reference == null) {
+            reference = new Reference(urlText, 1);
+
+            reference = referenceRepo.saveAndFlush(reference);
+        } else {
+            reference.setRating(reference.getRating() + 1);
+            referenceRepo.saveAndFlush(reference);
+        }
+        return reference;
+    }
 
     /**
      * Проверяем, существует-ли запрашиваемый пользователь

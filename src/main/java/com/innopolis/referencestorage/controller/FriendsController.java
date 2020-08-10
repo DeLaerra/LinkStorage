@@ -1,7 +1,6 @@
 package com.innopolis.referencestorage.controller;
 
 import com.innopolis.referencestorage.config.CurrentUser;
-import com.innopolis.referencestorage.domain.Friends;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.service.FriendsService;
@@ -16,8 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Slf4j
 @Controller
@@ -53,20 +50,7 @@ public class FriendsController {
         Long friendUid = Long.parseLong(idFriend);
         userFriend = friendsService.findUserByUid(friendUid);
 
-        List<Friends> friends = friendsService.findAllByFriend(friendUid);
-        List<Friends> users = friendsService.findAllByOwner(friendUid);
-        int a = 0;
-        for (Friends fr : friends) {
-            if (user.getUid() == fr.getOwner()) {
-                a = 1;
-            }
-        }
-        for (Friends us : users) {
-            if (user.getUid() == us.getFriend()) {
-                a = 1;
-            }
-        }
-        if (a == 0) {
+        if (!(friendsService.checkFriendship(user, userFriend))) {
             model.addAttribute("notAddedFriend", "Пользователь у Вас не в друзьях");
         }
         model.addAttribute("friend", friendsService.findUserByUid(friendUid));

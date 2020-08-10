@@ -58,18 +58,18 @@
         <input type="hidden" name="_csrf" value="${_csrf.token}" />
         <#if !isRegisterForm>
             <a href="/passwordChange">Забыли пароль?</a><br>
-            <br>
-            <div class="d-flex justify-content-start social_icon">
-            <span class="iconify" data-icon="entypo-social:vk-with-circle" data-inline="false"
-                  style="font-size: 40px"></span>
-                <span class="iconify" data-icon="ant-design:google-circle-filled" data-inline="false"
-                      style="font-size: 40px"></span>
-            </div>
+<#--            <br>-->
+<#--            <div class="d-flex justify-content-start social_icon">-->
+<#--            <span class="iconify" data-icon="entypo-social:vk-with-circle" data-inline="false"-->
+<#--                  style="font-size: 40px"></span>-->
+<#--                <span class="iconify" data-icon="ant-design:google-circle-filled" data-inline="false"-->
+<#--                      style="font-size: 40px"></span>-->
+<#--            </div>-->
             <br>
         </#if>
-        <button class="btn btn-primary" type="submit"><#if isRegisterForm>Регистрация<#else>Вход</#if></button>
+        <button class="btn btn-sm btn-primary" type="submit"><#if isRegisterForm>Регистрация<#else>Вход</#if></button>
         <#if !isRegisterForm>
-            <a href="/registration" class="btn btn-primary" target="_blank">Регистрация</a>
+            <a href="/registration" class="btn btn-sm btn-primary" target="_blank">Регистрация</a>
         </#if>
     </form>
 </#macro>
@@ -77,7 +77,7 @@
 <#macro logout>
     <form action="/logout" method="post">
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <button class="btn btn-primary" type="submit">Выход</button>
+        <button class="btn btn-sm btn-primary" type="submit">Выход</button>
     </form>
 </#macro>
 

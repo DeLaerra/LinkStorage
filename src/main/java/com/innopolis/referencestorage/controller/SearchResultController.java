@@ -3,6 +3,7 @@ package com.innopolis.referencestorage.controller;
 import com.innopolis.referencestorage.config.CurrentUser;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
+import com.innopolis.referencestorage.service.FriendsService;
 import com.innopolis.referencestorage.service.ReferenceSearchService;
 import com.innopolis.referencestorage.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,11 +27,14 @@ import java.util.List;
 public class SearchResultController {
     private ReferenceSearchService referenceSearchService;
     private UserService userService;
+    private FriendsService friendsService;
 
     @Autowired
-    public SearchResultController(ReferenceSearchService referenceSearchService, UserService userService) {
+    public SearchResultController(ReferenceSearchService referenceSearchService, UserService userService,
+                                  FriendsService friendsService) {
         this.referenceSearchService = referenceSearchService;
         this.userService = userService;
+        this.friendsService = friendsService;
     }
 
     @ModelAttribute("searchText")
@@ -65,7 +69,7 @@ public class SearchResultController {
 
         model.addAttribute("page", page);
         model.addAttribute("url", "/searchResult");
-        model.addAttribute("userFriends", userService.loadUserByUsername(user.getUsername()));
+        model.addAttribute("listFriends", friendsService.showAllFriends(user));
         model.addAttribute("searchFriends", searchFriends != null && !"".equals(searchFriends) ?
                 userService.findUsers(searchFriends)
                 : null);

@@ -1,7 +1,11 @@
 package com.innopolis.referencestorage.domain;
 
+import com.innopolis.referencestorage.enums.AcceptionStatus;
 import jdk.jfr.Timestamp;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,6 +15,9 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "private_messages")
+@AllArgsConstructor
+@RequiredArgsConstructor
+@Builder
 public class PrivateMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,7 +43,7 @@ public class PrivateMessage {
     private LocalDateTime sendingTime;
 
     @NotNull
-    private Integer addingMethodUid;
+    private Short addingMethodUid;
 
     @NotNull
     private Integer acceptionStatus = AcceptionStatus.NOT_DEFINED.getStatusUid();

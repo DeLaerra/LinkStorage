@@ -109,6 +109,15 @@
                     </#if>
                 </div>
             </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Telegram chatID:</label>
+                <div class="col-sm-6">
+                    <input type="number" min="1" minlength="1" maxlength="14" name="chatId"
+                           class="form-control"
+                           value="${(userInfo.chatId)!''}"
+                           placeholder="${(userInfo.chatId)!''}"/>
+                </div>
+            </div>
             <div class="form-actions">
                 <input type="hidden" name="_csrf" value="${_csrf.token}"/>
                 <button class="btn btn-primary btn-sm mb-2" type="submit" name="Edit"
