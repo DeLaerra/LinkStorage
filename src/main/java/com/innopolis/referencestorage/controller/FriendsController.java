@@ -57,6 +57,7 @@ public class FriendsController {
         model.addAttribute("friendName", userFriend.getUsername());
         log.info("Получен запрос об отображении ссылок пользователя с uid - {}", userFriend);
         Page<ReferenceDescription> page = getReferencesPage(userFriend, pageable, sortBy, load);
+        page.forEach(ReferenceDescription::setTags); // создание строки для отображения всех тегов
         model.addAttribute("page", page);
         model.addAttribute("url", "/friend");
 

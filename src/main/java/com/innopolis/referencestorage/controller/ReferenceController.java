@@ -39,9 +39,10 @@ public class ReferenceController {
     public String addReference(ReferenceDescription reference, Model model, BindingResult mapping1BindingResult,
                                RedirectAttributes redirectAttributes,
                                @PathVariable Long userId,
-                               @RequestParam(name = "url", required = false) String url) {
+                               @RequestParam(name = "url", required = false) String url,
+                               @RequestParam(name = "tagsFromUser", required = false) String tags) {
         log.info("Получен запрос на добавление новой записи ссылки: \n userId - {}, \n reference - {} ", userId, url);
-        referenceService.addReference(userId, reference, url, model);
+        referenceService.addReference(userId, reference, url, tags, model);
 
         if (model.getAttribute("copyRefError") != null) {
             redirectAttributes.addAttribute("copyRefError", true);
@@ -113,12 +114,13 @@ public class ReferenceController {
                                            @CurrentUser User user,
                                            @RequestParam(name = "url", required = false) String url,
                                            @RequestParam(name = "receiver", required = false) String friendUsername,
-                                           @RequestParam(name = "text", required = false) String text) {
+                                           @RequestParam(name = "text", required = false) String text,
+                                           @RequestParam(name = "tagsFromUser", required = false) String tags) {
         log.info("Получен запрос на отправку новой ссылки: \n username - {}, \n friendUsername - {} ",
                 user.getUsername(), friendUsername);
         model.addAttribute("userFriends", userService.loadUserByUsername(user.getUsername()));
 
-        referenceService.addReference(0L, referenceDescription, url, model);
+        referenceService.addReference(0L, referenceDescription, url, tags, model);
         privateMessageService.sendReferenceToFriend(privateMessage, referenceDescription.getUid(), user, friendUsername, text, model);
 
         if (model.getAttribute("pmDuplicateError") != null) {

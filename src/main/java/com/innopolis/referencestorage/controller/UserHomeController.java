@@ -2,6 +2,7 @@ package com.innopolis.referencestorage.controller;
 
 import com.innopolis.referencestorage.config.CurrentUser;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
+import com.innopolis.referencestorage.domain.Tags;
 import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.service.FriendsService;
 import com.innopolis.referencestorage.service.ReferenceService;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
+import java.util.Set;
 
 @Slf4j
 @Controller
@@ -50,6 +53,7 @@ public class UserHomeController {
         model.addAttribute("searchFriends", searchFriends != null && !"".equals(searchFriends) ?
                 userService.findUsers(searchFriends)
                 : null);
+        model.addAttribute("myTags", getUserTags(page));
 
         if (request.getParameter("pmDuplicateError") != null) {
             model.addAttribute("pmDuplicateError", true);
@@ -66,7 +70,7 @@ public class UserHomeController {
                                                          @RequestParam(name = "sortBy", required = false) String sortBy,
                                                          @RequestParam(name = "load", required = false) String load) {
         Page<ReferenceDescription> page = referenceService.loadRefsByUserUid(user, pageable);
-
+        page.forEach(ReferenceDescription::setTags); // создание строки для отображения всех тегов
         if (load != null && load.equals("all")) {
             log.info("Получен запрос на отображение всех ссылок пользователя с uid - {}", user.getUid());
             page = referenceService.loadRefsByUserUid(user,
@@ -117,5 +121,20 @@ public class UserHomeController {
                 throw new IllegalStateException("Неверный аргумент sortBy");
         }
         return page;
+    }
+
+    private Set<String> getUserTags(Page<ReferenceDescription> page) {
+        Set<String > userTags = new HashSet<>();
+        if (!page.isEmpty()) {
+            for (ReferenceDescription refDesc : page) {
+                Set<Tags> refDescTags = refDesc.getTag();
+                if (!refDescTags.isEmpty()) {
+                    for (Tags tags : refDescTags) {
+                        userTags.add(tags.getName());
+                    }
+                }
+            }
+        }
+        return userTags;
     }
 }

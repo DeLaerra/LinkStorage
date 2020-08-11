@@ -1,6 +1,8 @@
 package com.innopolis.referencestorage.service;
 
 import com.innopolis.referencestorage.commons.utils.PropertyChecker;
+import com.innopolis.referencestorage.domain.*;
+import com.innopolis.referencestorage.repos.*;
 import com.innopolis.referencestorage.domain.Reference;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
@@ -22,9 +24,7 @@ import org.springframework.ui.Model;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
@@ -35,12 +35,17 @@ public class ReferenceService {
     private ReferenceDescriptionRepo referenceDescriptionRepo;
     private ReferenceRepo referenceRepo;
     private UserRepo userRepo;
+    private TagsRepo tagsRepo;
+    private TagsRefsRepo tagsRefsRepo;
 
     @Autowired
-    public ReferenceService(ReferenceRepo referenceRepo, UserRepo userRepo, ReferenceDescriptionRepo referenceDescriptionRepo) {
+    public ReferenceService(ReferenceRepo referenceRepo, UserRepo userRepo, ReferenceDescriptionRepo referenceDescriptionRepo,
+                            TagsRepo tagsRepo, TagsRefsRepo tagsRefsRepo) {
         this.referenceRepo = referenceRepo;
         this.userRepo = userRepo;
         this.referenceDescriptionRepo = referenceDescriptionRepo;
+        this.tagsRepo = tagsRepo;
+        this.tagsRefsRepo = tagsRefsRepo;
     }
 
     public List<ReferenceDescription> loadAllUserRefs(User author) {
@@ -56,7 +61,7 @@ public class ReferenceService {
      * @param referenceDescription - reference
      * @return reference
      */
-    public void addReference(Long userId, ReferenceDescription referenceDescription, String urlText, Model model) {
+    public void addReference(Long userId, ReferenceDescription referenceDescription, String urlText, String tags, Model model) {
         log.info("Получена ссылка на добавление\n userId- {}, \n reference - {}", userId, referenceDescription.toString());
         User user = checkIfUserExists(userId);
 
@@ -70,6 +75,11 @@ public class ReferenceService {
         }
 
         Reference reference = checkIfReferenceExists(urlText);
+
+        Set<String> allTags = processUserTags(tags);
+        allTags.addAll(processReferenceTags(referenceDescription.getName(), url));
+        // сохраняем теги итерацией по сету - надо сохранить в две таблицы tags (только name, uid автоматически)
+        // и tagsRefs (зависимость от tags и ref_description)
 
         ReferenceDescription existingReference = referenceDescriptionRepo.findAnyByUidUserAndReference(userId, reference);
         if ((existingReference != null) && userId != 0) {
@@ -88,6 +98,79 @@ public class ReferenceService {
             referenceDescription.setName(url.toString());
 
         referenceDescriptionRepo.save(referenceDescription);
+
+        for (String tag : allTags) {
+            Tags tagsToSave = new Tags();
+            tagsToSave.setName(tag);
+            tagsRepo.save(tagsToSave);
+            TagsRefs tagsRefsToSave = new TagsRefs();
+            tagsRefsToSave.setUidRefDescription(referenceDescription.getUid());
+            tagsRefsToSave.setUidTag(tagsToSave.getUid());
+            tagsRefsRepo.save(tagsRefsToSave);
+        }
+    }
+
+    private Set<String> processReferenceTags(String name, URL url) {
+        Set<String> processedTags = new HashSet<>();
+        // анализ поля "название"
+        if (!name.isEmpty()) {
+            name = name.replaceAll("[^a-zA-Zа-яА-Я0-9 ]", ""); // оставляем только нужные символы
+            name = " " + name;
+            while (name.contains(" ")) {
+                name = name.substring(name.indexOf(" ") + 1); // отрезаем часть с передним словом
+                String word = name.replaceAll("\\ .*","");
+                if (!word.equals("")) {
+                    processedTags.add("#" + word);
+                }
+                if (name.contains(" ")) { // нужно на случай если у нас последний цикл и уже нет #
+                    name = name.substring(name.indexOf(" ")); // отрезаем название переднего слова (оставшееся пойдет в след круг цикла)
+                } else {
+                    break;
+                }
+            }
+        }
+        // анализ поля "ссылка"
+        String authority = url.getAuthority().replaceFirst("www.", ""); // добавляем название сайта, например youtube
+        if (authority.contains(".")) {
+            processedTags.add("#" + authority.substring(0, authority.lastIndexOf(".")));
+        } else {
+            processedTags.add("#" + authority);
+        }
+        String path = url.getPath();
+        path = path.replaceAll("[^a-zA-Zа-яА-Я0-9/ ]", "");
+        while (path.contains("/")) {
+            path = path.substring(path.indexOf("/") + 1); // отрезаем часть с передним словом
+            // вытаскивание слова перед следующем слэше в пути запроса
+            String pathTag = path.replaceAll("\\/.*","");
+            if (pathTag.length() > 3 && pathTag.length() <= 20) {
+                processedTags.add("#" + pathTag);
+            }
+            if (path.contains("/")) { // нужно на случай если последний цикл и уже нет слэша
+                path = path.substring(path.indexOf("/")); // убираем переднее слово (оставшееся пойдет в след круг цикла)
+            } else {
+                break;
+            }
+        }
+        return processedTags;
+    }
+
+    private Set<String> processUserTags(String tags) {
+        Set<String> processedTags = new HashSet<>();
+        tags = tags.replaceAll("[^a-zA-Zа-яА-Я0-9#]", ""); // оставляем только нужные символы
+        if (tags.endsWith("#")) { // если последний тег был пустой
+            tags = tags.substring(0, tags.length() - 1);
+        }
+        while (tags.contains("#")) {
+            tags = tags.substring(tags.indexOf("#") + 1); // отрезаем часть с передним тегом
+            String tagName = tags.replaceAll("\\#.*","");
+            if (!tagName.equals("")) {
+                processedTags.add("#" + tagName);
+            }
+            if (tags.contains("#")) { // нужно на случай если у нас последний цикл и уже нет #
+                tags = tags.substring(tags.indexOf("#")); // убираем передний тег (оставшееся пойдет в след круг цикла)
+            }
+        }
+        return processedTags;
     }
 
     /**
@@ -121,8 +204,51 @@ public class ReferenceService {
         );
         item.setReference(reference);
         referenceDescriptionRepo.save(item);
-
+        // обработка тегов - удаляем те, которых больше нет, прибавляем те, что появились, не трогаем те, что есть и там и там
+        Set<Tags> originalTags = item.getTag();
+        Set<String> originalTagsString = new HashSet<>();
+        for (Tags tag : originalTags) {
+            originalTagsString.add(tag.getName());
+        }
+        Set<String> userInputTags = processUserTags(referenceDescription.getTags());
+        if (!originalTagsString.equals(userInputTags)) {
+            // обработка тегов
+            Set<String> tagsToDelete = elementsThatAreInTheFirstHashSetAndNotInTheSecond(originalTagsString, userInputTags);
+            Set<String> tagsToAdd = elementsThatAreInTheFirstHashSetAndNotInTheSecond(userInputTags, originalTagsString);
+            System.out.println("fuck off");
+            for (String tag : tagsToDelete) {
+                Tags tagToDelete = originalTags
+                        .stream()
+                        .filter(tags -> tags.getName().equals(tag))
+                        .findFirst()
+                        .get();
+                TagsRefs tagsRefToDelete = tagsRefsRepo.findFirstByUidRefDescriptionAndUidTag(item.getUid(), tagToDelete.getUid());
+                tagsRefsRepo.deleteByUid(tagsRefToDelete.getUid());
+                tagsRepo.deleteByUid(tagToDelete.getUid()); // похоже из за очередности исполнения операций не удаляется
+                // TODO нужно позже исправить! чтобы не было засорения таблицы refs (repo.delete не помогает)
+                // при этом там где происходит удаление ссылки, проблемы нет
+            }
+            for (String tag : tagsToAdd) {
+                Tags tagsToSave = new Tags();
+                tagsToSave.setName(tag);
+                tagsRepo.save(tagsToSave);
+                TagsRefs tagsRefsToSave = new TagsRefs();
+                tagsRefsToSave.setUidRefDescription(item.getUid());
+                tagsRefsToSave.setUidTag(tagsToSave.getUid());
+                tagsRefsRepo.save(tagsRefsToSave);
+            }
+        }
         return item;
+    }
+
+    private Set<String> elementsThatAreInTheFirstHashSetAndNotInTheSecond(Set<String> firstHashSet, Set<String> secondHashSet) {
+        Set<String> result = new HashSet<>();
+        for (String element : firstHashSet) {
+            if (!secondHashSet.contains(element)) {
+                result.add(element);
+            }
+        }
+        return result;
     }
 
     public ReferenceDescription deleteReference(Long refId) {
@@ -134,6 +260,17 @@ public class ReferenceService {
         assertNotNull(reference, "Отсутствует ссылка");
 
         reference.setRating(reference.getRating() - 1);
+
+        // найти все связанные с этим referenceDescription теги в двух таблицах и удалить
+        Set<TagsRefs> tagsRefsToDelete = tagsRefsRepo.findAllByUidRefDescription(item.getUid());
+        Set<Tags> tagsToDelete = new HashSet<>();
+        for (TagsRefs tagsRefs : tagsRefsToDelete) {
+            tagsToDelete.add(tagsRepo.findByUid(tagsRefs.getUidTag()));
+        }
+        tagsRefsRepo.deleteAllByUidRefDescription(item.getUid());
+        for (Tags tags : tagsToDelete) {
+            tagsRepo.delete(tags);
+        }
 
         referenceRepo.saveAndFlush(reference);
         referenceDescriptionRepo.delete(item);
@@ -171,6 +308,21 @@ public class ReferenceService {
         referenceDescription.setUidAccessLevel(AccessLevel.PUBLIC.getAccessLevelUid());
 
         referenceDescriptionRepo.save(referenceDescription);
+
+        // копирование тегов
+        Set<TagsRefs> sourceTagsRefs = tagsRefsRepo.findAllByUidRefDescription(sourceRef.getUid());
+        if (!sourceTagsRefs.isEmpty()) {
+            for (TagsRefs tagsRefs : sourceTagsRefs) {
+                String tagNameToCopy = tagsRepo.findByUid(tagsRefs.getUidTag()).getName();
+                Tags tagsToCopy = new Tags();
+                tagsToCopy.setName(tagNameToCopy);
+                tagsRepo.save(tagsToCopy);
+                TagsRefs tagsRefsToCopy = new TagsRefs();
+                tagsRefsToCopy.setUidRefDescription(referenceDescription.getUid());
+                tagsRefsToCopy.setUidTag(tagsToCopy.getUid());
+                tagsRefsRepo.save(tagsRefsToCopy);
+            }
+        }
     }
 
     public ReferenceDescription addReferenceFromTelegram(URL url) {
