@@ -20,7 +20,7 @@
                 </form>
                 <#if searchFriends??>
                     <#list searchFriends as searchFriend>
-                        <a href="../friend?idFriend=${searchFriend.uid}">
+                        <a href="../friend/${searchFriend.uid}">
                             <div class="modal-content">
                                 <table>
                                     <tr>
@@ -31,6 +31,13 @@
                                             </#if>
                                         </td>
                                     </tr>
+                                    <#if searchFriend.userInfo.getName() != "Name">
+                                    <tr>
+                                        <td align="center">
+                                            ${searchFriend.userInfo.getName()} ${searchFriend.userInfo.getSurname()}
+                                        </td>
+                                    </tr>
+                                    </#if>
                                     <tr>
                                         <td align="center">
                                             ${searchFriend.username}
@@ -44,7 +51,7 @@
                 <#if listFriends??>
                     <h5 xmlns="http://www.w3.org/1999/html" align="center">Друзья</h5>
                     <#list listFriends as friend>
-                        <a href="../friend?idFriend=${friend.uid}">
+                        <a href="../friend/${friend.uid}">
                             <div class="modal-content">
                                 <table>
                                     <tr>
@@ -55,6 +62,13 @@
                                             </#if>
                                         </td>
                                     </tr>
+                                    <#if friend.userInfo.getName() != "Name">
+                                    <tr>
+                                        <td align="center">
+                                            ${friend.userInfo.getName()} ${friend.userInfo.getSurname()}
+                                        </td>
+                                    </tr>
+                                    </#if>
                                     <tr>
                                         <td align="center">
                                             ${friend.username}

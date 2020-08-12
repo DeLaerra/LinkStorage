@@ -4,9 +4,8 @@ import com.innopolis.referencestorage.config.CurrentUser;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.Tags;
 import com.innopolis.referencestorage.domain.User;
-import com.innopolis.referencestorage.service.FriendsService;
-import com.innopolis.referencestorage.service.ReferenceService;
-import com.innopolis.referencestorage.service.UserService;
+import com.innopolis.referencestorage.domain.UserInfo;
+import com.innopolis.referencestorage.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,15 +25,17 @@ import java.util.Set;
 @Controller
 public class UserHomeController {
     private ReferenceService referenceService;
-
     private UserService userService;
     private FriendsService friendsService;
+    private FriendshipRequestService friendshipRequestService;
 
     @Autowired
-    public UserHomeController(ReferenceService referenceService, UserService userService, FriendsService friendsService) {
+    public UserHomeController(ReferenceService referenceService, UserService userService, FriendsService friendsService,
+                              FriendshipRequestService friendshipRequestService, UserInfoService userInfoService) {
         this.referenceService = referenceService;
         this.userService = userService;
         this.friendsService = friendsService;
+        this.friendshipRequestService = friendshipRequestService;
     }
 
     @GetMapping("/userHome")
@@ -54,11 +55,12 @@ public class UserHomeController {
                 userService.findUsers(searchFriends)
                 : null);
         model.addAttribute("myTags", getUserTags(page));
-
+        if (!friendshipRequestService.isEmptyInbox(user)) {
+            model.addAttribute("notEmptyInbox", true);
+        }
         if (request.getParameter("pmDuplicateError") != null) {
             model.addAttribute("pmDuplicateError", true);
         }
-
         if (request.getParameter("copyRefError") != null) {
             model.addAttribute("copyRefError", true);
         }
@@ -124,7 +126,7 @@ public class UserHomeController {
     }
 
     private Set<String> getUserTags(Page<ReferenceDescription> page) {
-        Set<String > userTags = new HashSet<>();
+        Set<String> userTags = new HashSet<>();
         if (!page.isEmpty()) {
             for (ReferenceDescription refDesc : page) {
                 Set<Tags> refDescTags = refDesc.getTag();

@@ -31,6 +31,21 @@
                     <span class="iconify" data-icon="mdi:email-outline" data-inline="false"
                           data-height="30"></span>
             </a>
+        <form name="requests" action="/userHome" method="get">
+
+            <#if notEmptyInbox??>
+            <a href="/requests" class="nav-link" title="Заявки в друзья">
+                <span class="iconify" data-icon="codicon:bell-dot" data-inline="false"
+                      data-height="30"></span>
+            </a>
+                <#else>
+                    <a href="/requests" class="nav-link" title="Заявки в друзья">
+                <span class="iconify" data-icon="bytesize:bell" data-inline="false"
+                      data-height="30"></span>
+                    </a>
+             </#if>
+        </form>
+
             <@l.logout />
         </#if>
     </div>
