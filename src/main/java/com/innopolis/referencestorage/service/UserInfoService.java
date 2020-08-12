@@ -84,6 +84,7 @@ public class UserInfoService {
         if (!(file.getOriginalFilename().equals(""))) {
             if ((!file.getOriginalFilename().toUpperCase().endsWith(".JPG"))
                     && (!file.getOriginalFilename().toUpperCase().endsWith(".PNG"))
+                    && (!file.getOriginalFilename().toUpperCase().endsWith(".JPEG"))
                     && (!file.getOriginalFilename().toUpperCase().endsWith(".BMP"))) {
                 log.info("Был загружен файл, который не является картинкой, не меняется.");
                 model.addAttribute("userInfoAvatarError", "Неправильный формат, нужно JPG, PNG или BMP");

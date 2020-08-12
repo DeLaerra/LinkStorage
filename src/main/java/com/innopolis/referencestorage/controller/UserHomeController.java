@@ -54,7 +54,13 @@ public class UserHomeController {
         model.addAttribute("searchFriends", searchFriends != null && !"".equals(searchFriends) ?
                 userService.findUsers(searchFriends)
                 : null);
-        model.addAttribute("myTags", getUserTags(page));
+        Set<String> myTags = getUserTags(page);
+        Set<String> mySearchTags = new HashSet<>();
+        for (String tag : myTags) {
+            mySearchTags.add(tag.replaceFirst("#", ""));
+        }
+        model.addAttribute("myTags", myTags);
+        model.addAttribute("mySearchTags", mySearchTags);
         if (!friendshipRequestService.isEmptyInbox(user)) {
             model.addAttribute("notEmptyInbox", true);
         }

@@ -1,7 +1,12 @@
 package com.innopolis.referencestorage.service;
 
 import com.innopolis.referencestorage.domain.ReferenceDescription;
+import com.innopolis.referencestorage.domain.Tags;
+import com.innopolis.referencestorage.domain.TagsRefs;
 import com.innopolis.referencestorage.domain.User;
+import com.innopolis.referencestorage.repos.ReferenceDescriptionRepo;
+import com.innopolis.referencestorage.repos.TagsRefsRepo;
+import com.innopolis.referencestorage.repos.TagsRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -18,10 +23,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -29,11 +31,18 @@ import java.util.stream.Collectors;
 @Service
 public class ReferenceSearchService {
     private final EntityManager centityManager;
+    private TagsRepo tagsRepo;
+    private TagsRefsRepo tagsRefsRepo;
+    private ReferenceDescriptionRepo referenceDescriptionRepo;
 
     @Autowired
-    public ReferenceSearchService(final EntityManagerFactory entityManagerFactory) {
+    public ReferenceSearchService(final EntityManagerFactory entityManagerFactory, ReferenceDescriptionRepo referenceDescriptionRepo,
+                                  TagsRepo tagsRepo, TagsRefsRepo tagsRefsRepo) {
         super();
         this.centityManager = entityManagerFactory.createEntityManager();
+        this.referenceDescriptionRepo = referenceDescriptionRepo;
+        this.tagsRepo = tagsRepo;
+        this.tagsRefsRepo = tagsRefsRepo;
     }
 
     @PostConstruct
@@ -171,5 +180,32 @@ public class ReferenceSearchService {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
+    }
+
+    public List<ReferenceDescription> fullTagSearchPublicReferencesOnly(String q, User user) {
+        Set<ReferenceDescription> result = new HashSet<>();
+        List<Tags> foundTags = tagsRepo.findAllByName(q);
+        List<TagsRefs> foundTagsRefs = new ArrayList<>();
+        for (Tags tags : foundTags) {
+            foundTagsRefs.add(tagsRefsRepo.findByUidTag(tags.getUid()));
+        }
+        for (TagsRefs tagsRefs : foundTagsRefs) {
+            result.add(referenceDescriptionRepo.findByUid(tagsRefs.getUidRefDescription()));
+        }
+        result.removeIf(referenceDescription -> referenceDescription.getUidAccessLevel() == 1);
+        return new ArrayList<>(result);
+    }
+
+    public List<ReferenceDescription> fullTagSearchReferencesByUserUid(String q, User user) {
+        Set<ReferenceDescription> result = new HashSet<>();
+        List<Tags> foundTags = tagsRepo.findAllByName(q);
+        List<TagsRefs> foundTagsRefs = new ArrayList<>();
+        for (Tags tags : foundTags) {
+            foundTagsRefs.add(tagsRefsRepo.findByUidTag(tags.getUid()));
+        }
+        for (TagsRefs tagsRefs : foundTagsRefs) {
+            result.add(referenceDescriptionRepo.findByUidAndUidUser(tagsRefs.getUidRefDescription(), user.getUid()));
+        }
+        return new ArrayList<>(result);
     }
 }

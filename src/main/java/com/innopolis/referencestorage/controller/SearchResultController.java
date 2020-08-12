@@ -66,7 +66,7 @@ public class SearchResultController {
         page = getSearchResultReferencesPage(user, model, pageable, sortBy, load,
                 (String) model.getAttribute("searchText"),
                 (String) model.getAttribute("areaText"));
-
+        page.forEach(ReferenceDescription::setTags);
         model.addAttribute("page", page);
         model.addAttribute("url", "/searchResult");
         model.addAttribute("listFriends", friendsService.showAllFriends(user));
@@ -83,14 +83,23 @@ public class SearchResultController {
                                                                      String area) {
         List<ReferenceDescription> references;
 
-        if (area != null && area.equals("all")) {
-            references = referenceSearchService.fullTextSearchPublicReferencesOnly(q, user);
-            log.info("Выполнен поиск по всем публичным ссылкам сайта по запросу пользователя с uid {} с текстом {}", user.getUid(), q);
+        if (q.startsWith("#")) {
+            if (area != null && area.equals("all")) {
+                references = referenceSearchService.fullTagSearchPublicReferencesOnly(q, user);
+                log.info("Выполнен поиск по всем публичным ссылкам сайта по запросу пользователя с uid {} с текстом {}", user.getUid(), q);
+            } else {
+                references = referenceSearchService.fullTagSearchReferencesByUserUid(q, user);
+                log.info("Выполнен поиск по личным ссылкам пользователя с uid {} с текстом {}", user.getUid(), q);
+            }
         } else {
-            references = referenceSearchService.fullTextSearchReferencesByUserUid(q, user);
-            log.info("Выполнен поиск по личным ссылкам пользователя с uid {} с текстом {}", user.getUid(), q);
+            if (area != null && area.equals("all")) {
+                references = referenceSearchService.fullTextSearchPublicReferencesOnly(q, user);
+                log.info("Выполнен поиск по всем публичным ссылкам сайта по запросу пользователя с uid {} с текстом {}", user.getUid(), q);
+            } else {
+                references = referenceSearchService.fullTextSearchReferencesByUserUid(q, user);
+                log.info("Выполнен поиск по личным ссылкам пользователя с uid {} с текстом {}", user.getUid(), q);
+            }
         }
-
         Page<ReferenceDescription> page = new PageImpl<>(references, pageable, references.size());
 
         if (load != null && load.equals("all")) {

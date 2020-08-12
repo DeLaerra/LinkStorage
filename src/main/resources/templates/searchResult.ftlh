@@ -298,7 +298,7 @@
                                     <td> <#if userRef.name??><a href="${userRef.reference.url}">${userRef.name}</a>
                                             <br><#else><a
                                             href="${userRef.reference.url}">${userRef.reference.url}<br></a></#if>
-                                        <#if userRef.tag??>Теги: ${userRef.tag}<br></#if>
+                                        <#if userRef.tag??>Теги: ${userRef.tags}<br></#if>
 
                                         <div class="btn-toolbar mr-4" role="toolbar"
                                              aria-label="Toolbar with button groups">
@@ -358,7 +358,7 @@
                                             <div class="card card-body">
                                                 <div class="body">
                                                     <a href="${userRef.reference.url}">${userRef.reference.url}</a><br>
-                                                    <#if userRef.tag??><b>Теги</b>: ${userRef.tag}<br></#if>
+                                                    <#if userRef.tag??><b>Теги</b>: ${userRef.tags}<br></#if>
                                                     <#if userRef.source??><b>Источник</b>: <a
                                                             href="${userRef.source}">${userRef.source}</a><br></#if>
                                                     <#if userRef.additionDate??><b>Дата
@@ -458,7 +458,7 @@
                                                                     <label for="${userRef.uid}tagInput">Теги:</label>
                                                                     <input type="text" name="tag" class="form-control"
                                                                            id="${userRef.uid}tagInput" placeholder="Тэг"
-                                                                           value="<#if userRef.tag??>${userRef.tag}</#if>">
+                                                                           value="<#if userRef.tag??>${userRef.tags}</#if>">
                                                                 </div>
                                                             </#if>
                                                             <div class="form-group">
