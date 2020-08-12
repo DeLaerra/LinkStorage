@@ -2,26 +2,62 @@
 <#import "parts/pager.ftlh" as p>
 
 <@c.page>
+    <div class="container">
     <#if friendName??>
-    <div>
-        <h5 xmlns="http://www.w3.org/1999/html" align="left">${friendName}</h5>
-    </div>
+
+            <div class="row">
+
+        <#if friend.userInfo.avatar??>
+            <div class="col-md-1">
+            <img alt="My image" src="${friend.userInfo.getAvatarBase64()}"
+                 style="width: 50px; height: 50px; display: block; margin: auto; border-radius: 100px;"/>
+            </div>
+        </#if>
+            <div class="col-md-4">
+                <#if friend.userInfo.getName() != "Name">
+                <h5 xmlns="http://www.w3.org/1999/html" align="left">${friend.userInfo.getName()} ${friend.userInfo.getSurname()}</h5>
+                </#if>
+                <h6 xmlns="http://www.w3.org/1999/html" align="left">${friendName}</h6>
+            </div>
+            </div>
+
     </#if>
 
     <#if notAddedFriend??>
-        <form name="addFriend" action="/addFriend" method="get">
+        <#if requestSent??>
+        <form name="addFriend" action="/sendRequest/${friend.uid}" method="get">
+            <#if pmDuplicateError??>${pmDuplicateError} <#else>
             <input class="form-control" type="hidden" name="addFriend" id="addFriend" value="${friend.uid}">
             <div class="row">
                 <div class="col-sm">
                     <th scope="col">
+                        <button type="submit" class="btn btn-success btn-sm" disabled>
+                            <span class="iconify" data-icon="mdi:check-box-outline" data-inline="false"></span></button>
+                            ${requestSent}
+                    </th>
+                </div>
+            </div>
+            <#--        <a href="/friendHome">FriendHome</a>-->
+            </#if>
+
+        </form>
+                            <#else>
+                                <form name="addFriend" action="/sendRequest/${friend.uid}" method="get">
+                                    <input class="form-control" type="hidden" name="addFriend" id="addFriend" value="${friend.uid}">
+                                    <div class="row">
+                                        <div class="col-sm">
+                                <th scope="col">
                         <button type="submit" class="btn btn-success btn-sm">
                             <span class="iconify" data-icon="mdi:account-plus" data-inline="false"></span></button>
+
                         </th>
                 </div>
             </div>
             <#--        <a href="/friendHome">FriendHome</a>-->
         </form>
+        </#if>
     </#if>
+    </div>
 
     <div class="container">
         <div class="row">
@@ -34,7 +70,7 @@
                             <tr>
                                 <#--                Шапка таблицы-->
                                 <div class="row">
-                                    <form name="sorting" action="/friendHome" method="GET">
+                                    <form name="sorting" action="/friend/${friendUid}" method="GET">
                                         <div class="col-sm">
                                             <th scope="col">
                                                 <button class="btn btn-light btn-sm" type="submit" name="sortBy"

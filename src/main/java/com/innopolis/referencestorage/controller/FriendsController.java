@@ -1,9 +1,12 @@
 package com.innopolis.referencestorage.controller;
 
 import com.innopolis.referencestorage.config.CurrentUser;
+import com.innopolis.referencestorage.domain.FriendshipRequest;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
+import com.innopolis.referencestorage.repos.FriendshipRequestRepo;
 import com.innopolis.referencestorage.service.FriendsService;
+import com.innopolis.referencestorage.service.FriendshipRequestService;
 import com.innopolis.referencestorage.service.ReferenceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +17,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -23,11 +29,13 @@ public class FriendsController {
     private User userFriend;
     private ReferenceService referenceService;
     private FriendsService friendsService;
+    private FriendshipRequestRepo friendshipRequestRepo;
 
     @Autowired
-    public FriendsController(FriendsService friendsService, ReferenceService referenceService) {
+    public FriendsController(FriendsService friendsService, ReferenceService referenceService, FriendshipRequestRepo friendshipRequestRepo) {
         this.friendsService = friendsService;
         this.referenceService = referenceService;
+        this.friendshipRequestRepo = friendshipRequestRepo;
     }
 
     @GetMapping("/addFriend")
@@ -39,16 +47,22 @@ public class FriendsController {
         return "redirect:/userHome";
     }
 
-    @GetMapping("/friend")
+    @GetMapping("/friend/{friendUid}")
     public String showUserReferences(@CurrentUser User user, Model model, Pageable pageable,
+                                     @PathVariable Long friendUid,
                                      @RequestParam(name = "sortBy", required = false) String sortBy,
                                      @RequestParam(name = "load", required = false) String load,
                                      @RequestParam(name = "search", required = false) String q,
                                      @RequestParam(name = "area", required = false) String area,
                                      @RequestParam(name = "idFriend", required = false) String idFriend) {
 
-        Long friendUid = Long.parseLong(idFriend);
         userFriend = friendsService.findUserByUid(friendUid);
+        List<FriendshipRequest> frreq = friendshipRequestRepo.findByRecipient(userFriend);
+        for (FriendshipRequest fr : frreq) {
+            if (fr.getSender().getUid().equals(user.getUid()) && fr.getAcceptionStatus() != 2) {
+                model.addAttribute("requestSent", "Заявка отправлена");
+            }
+        }
 
         if (!(friendsService.checkFriendship(user, userFriend))) {
             model.addAttribute("notAddedFriend", "Пользователь у Вас не в друзьях");
