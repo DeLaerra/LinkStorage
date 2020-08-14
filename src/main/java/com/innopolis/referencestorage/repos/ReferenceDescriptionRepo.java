@@ -25,4 +25,6 @@ public interface ReferenceDescriptionRepo extends JpaRepository<ReferenceDescrip
 
     ReferenceDescription findAnyByUidUserAndReference(Long uid, Reference reference);
 
+    ReferenceDescription findByUidAndUidUser(Long uid, Long uidUser);
+
 }

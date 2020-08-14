@@ -18,4 +18,6 @@ public interface TagsRefsRepo extends JpaRepository<TagsRefs, Long> {
 
     @Transactional
     void deleteByUid(Long uid);
+
+    TagsRefs findByUidTag(Long uid);
 }

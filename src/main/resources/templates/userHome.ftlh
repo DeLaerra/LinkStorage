@@ -103,9 +103,9 @@
                 <#if myTags??>
                     <div class="row">
                         <div class="col-12">
-                            <#list myTags as myTag>
-                                <a href="../searchResult?search=${myTag}" class="btn btn-sm btn-link"
-                                   target="_blank">${myTag}</a>
+                            <#list mySearchTags as myTag>
+                                <a href="../searchResult?search=%23${myTag}&area=all" class="btn btn-sm btn-link"
+                                   target="_blank">#${myTag}</a>
                             </#list>
                         </div>
                     </div>
@@ -352,7 +352,7 @@
                                                 href="${userRef.reference.url}">${userRef.reference.url}<br>
                                                 </a></#if>
                                             <#if userRef.tag??>
-                                                Теги: ${userRef.tags}<br>
+                                                Теги: <#list userRef.tag as userRefTag><a class="text-" href="../searchResult?search=${userRefTag.name}">${userRefTag.name} </a></#list><br>
                                             </#if>
 
                                             <div class="btn-toolbar mr-4" role="toolbar"
