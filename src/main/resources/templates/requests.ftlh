@@ -53,12 +53,7 @@
                                 </div>
                                 <div class="col-sm">
                                     <td>
-                                        <#if fr.text??>${fr.text}</#if>
-                                        <#--                                        <#if pm.referenceDescription.name??><a-->
-                                        <#--                                            href="${pm.referenceDescription.reference.url}">${pm.referenceDescription.name}</a>-->
-                                        <#--                                            <br><#else><a-->
-                                        <#--                                            href="${pm.referenceDescription.reference.url}">${pm.referenceDescription.reference.url}-->
-                                        <#--                                            <br></a></#if>-->
+
                                         <div class="btn-toolbar mr-4" role="toolbar"
                                              aria-label="Toolbar with button groups">
 
@@ -88,16 +83,7 @@
                                                 </div>
                                             </#if>
 
-                                            <!-- Button trigger collapse Properties Подробнее...-->
-                                            <div class="btn-group mr-2" role="group" aria-label="Properties">
-                                                <button type="button" class="btn btn-light btn-sm"
-                                                        title="Подробнее"
-                                                        data-toggle="collapse"
-                                                        data-target="#${fr.uid}"><span class="iconify"
-                                                                                       data-icon="ion:ellipsis-horizontal-circle"
-                                                                                       data-inline="false"></span>
-                                                </button>
-                                            </div>
+
 
                                             <!-- Button Delete Удалить...-->
                                             <div class="btn-group mr-2" role="group" aria-label="Delete">
@@ -111,15 +97,7 @@
                                                 </form>
                                             </div>
                                         </div>
-                                        <!-- Collapse Подробнее...-->
-                                        <div class="collapse" id="${fr.uid}" tabindex="-1" role="dialog"
-                                             aria-labelledby="${fr.uid}Label" aria-hidden="true">
-                                            <div class="card card-body">
-                                                <div class="body">
 
-                                                </div>
-                                            </div>
-                                        </div>
                                     </td>
                                 </div>
                                 <div class="col-sm">
@@ -183,19 +161,15 @@
                                 </div>
                                 <div class="col-sm">
                                     <td>
-                                        <#if fr.text??>${fr.text}<#else></#if>
-                                        <#--                                        <#if fr.referenceDescription.name??><a-->
-                                        <#--                                            href="${pm.referenceDescription.reference.url}">${pm.referenceDescription.name}</a>-->
-                                        <#--                                            <br><#else><a-->
-                                        <#--                                            href="${pm.referenceDescription.reference.url}">${pm.referenceDescription.reference.url}-->
-                                        <#--                                            <br></a></#if>-->
+
+
 
                                         <div class="btn-toolbar mr-4" role="toolbar"
                                              aria-label="Toolbar with button groups">
 
                                             <!-- Button Delete Удалить...-->
                                             <div class="btn-group mr-2" role="group" aria-label="Delete">
-                                                <form method="get" action="messages/delete/${fr.uid}">
+                                                <form method="get" action="requests/delete/${fr.uid}">
                                                     <button class="btn btn btn-danger btn-sm" type="submit"
                                                             title="Удалить сообщение">
                                                             <span class="iconify"
@@ -205,26 +179,9 @@
                                                 </form>
                                             </div>
 
-                                            <!-- Button trigger collapse Properties Подробнее...-->
-                                            <div class="btn-group mr-2" role="group" aria-label="Properties">
-                                                <button type="button" class="btn btn-light btn-sm"
-                                                        title="Подробнее"
-                                                        data-toggle="collapse"
-                                                        data-target="#${fr.uid}"><span class="iconify"
-                                                                                       data-icon="ion:ellipsis-horizontal-circle"
-                                                                                       data-inline="false"></span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <!-- Collapse Подробнее...-->
-                                        <div class="collapse" id="${fr.uid}" tabindex="-1" role="dialog"
-                                             aria-labelledby="${fr.uid}Label" aria-hidden="true">
-                                            <div class="card card-body">
-                                                <div class="body">
 
-                                                </div>
-                                            </div>
                                         </div>
+
                                     </td>
                                 </div>
                                 <div class="col-sm">

@@ -375,4 +375,9 @@ public class ReferenceService {
 
         return data;
     }
+    public boolean checkIfReferenceAlreadyExists(Long refDescrId, ReferenceDescription referenceDescription) {
+        if (referenceDescription.getUidUser() == referenceDescriptionRepo.findByUid(refDescrId).getUidUser()) {
+            return true;
+        } else return false;
+    }
 }

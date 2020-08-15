@@ -3,7 +3,7 @@ package com.innopolis.referencestorage.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
+//import lombok.ToString;
 import org.hibernate.search.annotations.ContainedIn;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
@@ -19,7 +19,7 @@ import java.util.Set;
  * @author Roman Khokhlov
  */
 
-@ToString
+//@ToString
 @Entity
 @Table(name = "refs")
 @Indexed

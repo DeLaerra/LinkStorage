@@ -41,15 +41,30 @@ public class FriendsService {
         return friends;
     }
 
-    public Friends addFriends(Long ownerUid, Long friendUid) {
-        Friends friends = new Friends(ownerUid, friendUid);
+    public Friends addFriends(User owner, User friend) {
+        if (!checkFriendship(owner, friend)) {
+        Friends friends = new Friends(owner.getUid(), friend.getUid());
         return friendsRepo.save(friends);
+        }
+        return null;
     }
+    public void deleteFriends(User user, User friend) {
 
-    public boolean checkFriendship(User user, User friend) {
-        boolean y = friendsRepo.existsByOwnerAndFriendEquals(user.getUid(), friend.getUid());
-        boolean y2 = friendsRepo.existsByOwnerAndFriendEquals(friend.getUid(), user.getUid());
-        return (friendsRepo.existsByOwnerAndFriendEquals(user.getUid(), friend.getUid()))
-                || (friendsRepo.existsByOwnerAndFriendEquals(friend.getUid(), user.getUid()));
+        if (friendsRepo.existsByOwnerAndFriendEquals(user.getUid(), friend.getUid())) {
+            Friends friends1 = friendsRepo.findFriendsByOwnerAndFriend(user.getUid(), friend.getUid());
+            friendsRepo.delete(friends1);
+        }
+        if (friendsRepo.existsByOwnerAndFriendEquals(friend.getUid(), user.getUid())) {
+            Friends friends2 = friendsRepo.findFriendsByOwnerAndFriend(friend.getUid(), user.getUid());
+            friendsRepo.delete(friends2);
+        }
+
+
     }
+        public boolean checkFriendship(User user, User friend) {
+            boolean y = friendsRepo.existsByOwnerAndFriendEquals(user.getUid(), friend.getUid());
+            boolean y2 = friendsRepo.existsByOwnerAndFriendEquals(friend.getUid(), user.getUid());
+            return (friendsRepo.existsByOwnerAndFriendEquals(user.getUid(), friend.getUid()))
+                    || (friendsRepo.existsByOwnerAndFriendEquals(friend.getUid(), user.getUid()));
+        }
 }
