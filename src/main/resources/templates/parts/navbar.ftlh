@@ -26,25 +26,34 @@
         </ul>
         <div class="navbar-text mr-3">${name}</div>
         <#if name == "Анонимус"><a href="/login" class="btn btn-sm btn-primary"
-                                   target="_blank">Вход</a><#else>
-            <a href="/messages" class="nav-link" title="Сообщения">
+                                   target="_blank">Вход</a>
+        <#else>
+            <form name="PMrequests" action="/userHome" method="get">
+                <#if notEmptyPMInbox??>
+                    <a href="/messages" class="nav-link" title="Сообщения">
+                        <span class="iconify" data-icon="ic:outline-mark-email-unread" data-inline="false"
+                              data-height="30"></span>
+                    </a>
+                <#else>
+                    <a href="/messages" class="nav-link" title="Сообщения">
                     <span class="iconify" data-icon="mdi:email-outline" data-inline="false"
                           data-height="30"></span>
-            </a>
-        <form name="requests" action="/userHome" method="get">
-
-            <#if notEmptyInbox??>
-            <a href="/requests" class="nav-link" title="Заявки в друзья">
+                    </a>
+                </#if>
+            </form>
+            <form name="requests" action="/userHome" method="get">
+                <#if notEmptyInbox??>
+                    <a href="/requests" class="nav-link" title="Заявки в друзья">
                 <span class="iconify" data-icon="codicon:bell-dot" data-inline="false"
                       data-height="30"></span>
-            </a>
+                    </a>
                 <#else>
                     <a href="/requests" class="nav-link" title="Заявки в друзья">
                 <span class="iconify" data-icon="bytesize:bell" data-inline="false"
                       data-height="30"></span>
                     </a>
-             </#if>
-        </form>
+                </#if>
+            </form>
 
             <@l.logout />
         </#if>

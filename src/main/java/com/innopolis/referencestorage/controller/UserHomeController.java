@@ -4,7 +4,6 @@ import com.innopolis.referencestorage.config.CurrentUser;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.Tags;
 import com.innopolis.referencestorage.domain.User;
-import com.innopolis.referencestorage.domain.UserInfo;
 import com.innopolis.referencestorage.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +27,16 @@ public class UserHomeController {
     private UserService userService;
     private FriendsService friendsService;
     private FriendshipRequestService friendshipRequestService;
+    private PrivateMessageService privateMessageService;
 
     @Autowired
     public UserHomeController(ReferenceService referenceService, UserService userService, FriendsService friendsService,
-                              FriendshipRequestService friendshipRequestService, UserInfoService userInfoService) {
+                              FriendshipRequestService friendshipRequestService, PrivateMessageService privateMessageService) {
         this.referenceService = referenceService;
         this.userService = userService;
         this.friendsService = friendsService;
         this.friendshipRequestService = friendshipRequestService;
+        this.privateMessageService = privateMessageService;
     }
 
     @GetMapping("/userHome")
@@ -64,6 +65,10 @@ public class UserHomeController {
         if (!friendshipRequestService.isEmptyInbox(user)) {
             model.addAttribute("notEmptyInbox", true);
         }
+        if (privateMessageService.isNotEmptyPMInbox(user)) {
+            model.addAttribute("notEmptyPMInbox", true);
+        }
+
         if (request.getParameter("pmDuplicateError") != null) {
             model.addAttribute("pmDuplicateError", true);
         }
@@ -79,21 +84,21 @@ public class UserHomeController {
                                                          @RequestParam(name = "load", required = false) String load) {
         Page<ReferenceDescription> page = referenceService.loadRefsByUserUid(user, pageable);
         page.forEach(ReferenceDescription::setTags); // создание строки для отображения всех тегов
-        if (load != null && load.equals("all")) {
-            log.info("Получен запрос на отображение всех ссылок пользователя с uid - {}", user.getUid());
-            page = referenceService.loadRefsByUserUid(user,
-                    PageRequest.of(0, pageable.getPageSize(), Sort.unsorted()));
-        } else if (sortBy != null) {
-            log.info("Получен запрос на сортировку ссылок пользователя с uid - {}", user.getUid());
-            page = getSortedReferences(user, pageable, sortBy);
-        }
+        log.info("Получен запрос на сортировку ссылок пользователя с uid - {}", user.getUid());
+        page = getSortedReferences(user, pageable, sortBy);
         return page;
     }
 
     private Page<ReferenceDescription> getSortedReferences(@CurrentUser User user, Pageable pageable,
                                                            @RequestParam(name = "sortBy", required = false) String sortBy) {
         Page<ReferenceDescription> page;
+        if (sortBy == null) sortBy = "default";
         switch (sortBy) {
+            case "default":
+                log.info("Сортировка ссылок пользователя с uid {} по дате, по-убыванию", user.getUid());
+                page = referenceService.loadRefsByUserUid(user,
+                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("additionDate").descending()));
+                break;
             case "nameDesc":
                 log.info("Сортировка ссылок пользователя с uid {} по имени, по-убыванию", user.getUid());
                 page = referenceService.loadRefsByUserUid(user,

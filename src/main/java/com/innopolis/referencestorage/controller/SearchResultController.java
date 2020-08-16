@@ -100,22 +100,21 @@ public class SearchResultController {
                 log.info("Выполнен поиск по личным ссылкам пользователя с uid {} с текстом {}", user.getUid(), q);
             }
         }
-        Page<ReferenceDescription> page = new PageImpl<>(references, pageable, references.size());
 
-        if (load != null && load.equals("all")) {
-            page = new PageImpl<>(references, pageable, references.size());
-        }
-
-        if (sortBy != null) {
-            page = getSortedReferences(user, pageable, references, sortBy);
-        }
-        return page;
+        return getSortedReferences(user, pageable, references, sortBy);
     }
 
     private Page<ReferenceDescription> getSortedReferences(@CurrentUser User user, Pageable pageable, List<ReferenceDescription> references,
                                                            @RequestParam(name = "sortBy", required = false) String sortBy) {
         Page<ReferenceDescription> page = null;
+        if (sortBy == null) sortBy = "default";
+
         switch (sortBy) {
+            case "default":
+                log.info("Сортировка результатов поиска пользователя с uid {} по дате, по-убыванию", user.getUid());
+                references.sort(Comparator.comparing(ReferenceDescription::getAdditionDate).reversed());
+                page = new PageImpl<>(references, pageable, references.size());
+                break;
             case "nameDesc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по имени, по-убыванию", user.getUid());
                 references.sort(Comparator.comparing(ReferenceDescription::getName).reversed());
