@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet
+            id="table-data-friends"
+            author="p.gaiduk"
+            logicalFilePath="table-data-friends.xml"
+    >
+        <loadUpdateData catalogName="catalog"
+                        encoding="UTF-8"
+                        file="friends.csv"
+                        relativeToChangelogFile="true"
+                        quotchar="'"
+                        schemaName="public"
+                        separator=";"
+                        tableName="friends"
+                        primaryKey="id">
+
+            <column name="id" type="UUID" />
+            <column name="user_owner" type="NUMERIC"/>
+            <column name="user_friend" type="NUMERIC"/>
+
+        </loadUpdateData>
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet
+            id="table-data-ref-description"
+            author="p.gaiduk"
+            logicalFilePath="table-data-ref-description.xml"
+    >
+        <loadUpdateData catalogName="catalog"
+                        encoding="UTF-8"
+                        file="ref_description.csv"
+                        relativeToChangelogFile="true"
+                        quotchar="'"
+                        schemaName="public"
+                        separator=";"
+                        tableName="ref_description"
+                        primaryKey="uid">
+
+            <column name="uid" type="UUID" />
+            <column name="uid_user" type="NUMERIC"/>
+            <column name="uid_reference" type="NUMERIC"/>
+            <column name="name" type="STRING"/>
+            <column name="description" type="STRING"/>
+            <column name="uid_reference_type" type="NUMERIC"/>
+            <column name="adding_date" type="DATE"/>
+            <column name="source" type="STRING"/>
+            <column name="uid_adding_method" type="NUMERIC"/>
+            <column name="uid_access_level" type="NUMERIC"/>
+            <column name="uid_parent_ref" type="NUMERIC"/>
+
+        </loadUpdateData>
+
+    </changeSet>
+
+</databaseChangeLog>
