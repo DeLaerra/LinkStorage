@@ -4,7 +4,6 @@ import com.innopolis.referencestorage.config.CurrentUser;
 import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.Tags;
 import com.innopolis.referencestorage.domain.User;
-import com.innopolis.referencestorage.domain.UserInfo;
 import com.innopolis.referencestorage.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +14,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
 import java.util.Set;
 
 @Slf4j
+@SessionAttributes({"sortByText"})
 @Controller
 public class UserHomeController {
     private ReferenceService referenceService;
@@ -38,6 +40,11 @@ public class UserHomeController {
         this.friendshipRequestService = friendshipRequestService;
     }
 
+    @ModelAttribute("sortByText")
+    public String populateSortByText() {
+        return "";
+    }
+
     @GetMapping("/userHome")
     public String showUserReferences(@CurrentUser User user, Model model, Pageable pageable,
                                      HttpServletRequest request,
@@ -47,7 +54,12 @@ public class UserHomeController {
                                      @RequestParam(name = "area", required = false) String area,
                                      @RequestParam(name = "searchFriends", required = false) String searchFriends) {
         log.info("Получен запрос об отображении ссылок пользователя с uid - {}", user.getUid());
-        Page<ReferenceDescription> page = getReferencesPage(user, pageable, sortBy, load);
+        if (sortBy != null && !sortBy.equals("")) {
+            model.addAttribute("sortByText", sortBy);
+        }
+
+        Page<ReferenceDescription> page = getReferencesPage(user, pageable, (String) model.getAttribute("sortByText"), load);
+
         model.addAttribute("page", page);
         model.addAttribute("url", "/userHome");
         model.addAttribute("listFriends", friendsService.showAllFriends(user));
@@ -74,8 +86,7 @@ public class UserHomeController {
         return "userHome";
     }
 
-    private Page<ReferenceDescription> getReferencesPage(@CurrentUser User user, Pageable pageable,
-                                                         @RequestParam(name = "sortBy", required = false) String sortBy,
+    private Page<ReferenceDescription> getReferencesPage(@CurrentUser User user, Pageable pageable, String sortBy,
                                                          @RequestParam(name = "load", required = false) String load) {
         Page<ReferenceDescription> page = referenceService.loadRefsByUserUid(user, pageable);
         page.forEach(ReferenceDescription::setTags); // создание строки для отображения всех тегов
@@ -93,7 +104,14 @@ public class UserHomeController {
     private Page<ReferenceDescription> getSortedReferences(@CurrentUser User user, Pageable pageable,
                                                            @RequestParam(name = "sortBy", required = false) String sortBy) {
         Page<ReferenceDescription> page;
+        if (sortBy == null || sortBy.equals("")) sortBy = "default";
         switch (sortBy) {
+            case "default":
+                log.info("Сортировка ссылок пользователя с uid {} по дате, по-убыванию", user.getUid());
+                page = referenceService.loadRefsByUserUid(user,
+                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("additionDate").descending()));
+                break;
+
             case "nameDesc":
                 log.info("Сортировка ссылок пользователя с uid {} по имени, по-убыванию", user.getUid());
                 page = referenceService.loadRefsByUserUid(user,

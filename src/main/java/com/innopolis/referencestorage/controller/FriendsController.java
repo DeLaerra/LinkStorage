@@ -6,7 +6,6 @@ import com.innopolis.referencestorage.domain.ReferenceDescription;
 import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.repos.FriendshipRequestRepo;
 import com.innopolis.referencestorage.service.FriendsService;
-import com.innopolis.referencestorage.service.FriendshipRequestService;
 import com.innopolis.referencestorage.service.ReferenceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +15,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
+@SessionAttributes({"sortByText"})
 @Controller
 public class FriendsController {
 
@@ -36,6 +34,11 @@ public class FriendsController {
         this.friendsService = friendsService;
         this.referenceService = referenceService;
         this.friendshipRequestRepo = friendshipRequestRepo;
+    }
+
+    @ModelAttribute("sortByText")
+    public String populateSortByText() {
+        return "";
     }
 
     @GetMapping("/addFriend")
@@ -52,8 +55,6 @@ public class FriendsController {
                                      @PathVariable Long friendUid,
                                      @RequestParam(name = "sortBy", required = false) String sortBy,
                                      @RequestParam(name = "load", required = false) String load,
-                                     @RequestParam(name = "search", required = false) String q,
-                                     @RequestParam(name = "area", required = false) String area,
                                      @RequestParam(name = "idFriend", required = false) String idFriend) {
 
         userFriend = friendsService.findUserByUid(friendUid);
@@ -64,41 +65,40 @@ public class FriendsController {
             }
         }
 
+        if (sortBy != null && !sortBy.equals("")) {
+            model.addAttribute("sortByText", sortBy);
+        }
+
         if (!(friendsService.checkFriendship(user, userFriend))) {
             model.addAttribute("notAddedFriend", "Пользователь у Вас не в друзьях");
         }
         model.addAttribute("friend", friendsService.findUserByUid(friendUid));
         model.addAttribute("friendName", userFriend.getUsername());
         log.info("Получен запрос об отображении ссылок пользователя с uid - {}", userFriend);
-        Page<ReferenceDescription> page = getReferencesPage(userFriend, pageable, sortBy, load);
+        Page<ReferenceDescription> page = getReferencesPage(userFriend, pageable, (String) model.getAttribute("sortByText"), load);
         page.forEach(ReferenceDescription::setTags); // создание строки для отображения всех тегов
         model.addAttribute("page", page);
-        model.addAttribute("url", "/friend");
+        model.addAttribute("url", "/friend/" + friendUid);
 
 
         return "friend";
     }
 
-    private Page<ReferenceDescription> getReferencesPage(@CurrentUser User user, Pageable pageable,
-                                                         @RequestParam(name = "sortBy", required = false) String sortBy,
-                                                         @RequestParam(name = "load", required = false) String load) {
-        Page<ReferenceDescription> page = referenceService.loadRefsByUserUid(userFriend, pageable);
-
-        if (load != null && load.equals("all")) {
-            log.info("Получен запрос на отображение всех ссылок пользователя с uid - {}", userFriend.getUid());
-            page = referenceService.loadRefsByUserUid(userFriend,
-                    PageRequest.of(0, pageable.getPageSize(), Sort.unsorted()));
-        } else if (sortBy != null) {
-            log.info("Получен запрос на сортировку ссылок пользователя с uid - {}", userFriend.getUid());
-            page = getSortedReferences(userFriend, pageable, sortBy);
-        }
-        return page;
+    private Page<ReferenceDescription> getReferencesPage(@CurrentUser User user, Pageable pageable, String sortBy,
+                                                         String load) {
+        return getSortedReferences(userFriend, pageable, sortBy);
     }
 
-    private Page<ReferenceDescription> getSortedReferences(@CurrentUser User user, Pageable pageable,
-                                                           @RequestParam(name = "sortBy", required = false) String sortBy) {
+    private Page<ReferenceDescription> getSortedReferences(@CurrentUser User user, Pageable pageable, String sortBy) {
         Page<ReferenceDescription> page;
+
+        if (sortBy == null) sortBy = "default";
         switch (sortBy) {
+            case "default":
+                log.info("Сортировка ссылок пользователя с uid {} по дате, по-убыванию", userFriend.getUid());
+                page = referenceService.loadRefsByUserUid(userFriend,
+                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("additionDate").descending()));
+                break;
             case "nameDesc":
                 log.info("Сортировка ссылок пользователя с uid {} по имени, по-убыванию", userFriend.getUid());
                 page = referenceService.loadRefsByUserUid(userFriend,

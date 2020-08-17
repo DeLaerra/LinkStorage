@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
-@SessionAttributes({"searchText", "areaText"})
+@SessionAttributes({"searchText", "areaText", "sortByText"})
 @Controller
 public class SearchResultController {
     private ReferenceSearchService referenceSearchService;
@@ -47,6 +48,11 @@ public class SearchResultController {
         return "";
     }
 
+    @ModelAttribute("sortByText")
+    public String populateSortByText() {
+        return "";
+    }
+
     @GetMapping("/searchResult")
     public String showRefsPage(@CurrentUser User user, Model model, Pageable pageable,
                                @RequestParam(name = "sortBy", required = false) String sortBy,
@@ -62,8 +68,13 @@ public class SearchResultController {
         if (area != null && !area.equals("")) {
             model.addAttribute("areaText", area);
         }
+
+        if (sortBy != null && !sortBy.equals("")) {
+            model.addAttribute("sortByText", sortBy);
+        }
+
         log.info("Получен поисковый запрос от пользователя с uid {} с текстом {}", user.getUid(), q);
-        page = getSearchResultReferencesPage(user, model, pageable, sortBy, load,
+        page = getSearchResultReferencesPage(user, model, pageable, (String) model.getAttribute("sortByText"), load,
                 (String) model.getAttribute("searchText"),
                 (String) model.getAttribute("areaText"));
         page.forEach(ReferenceDescription::setTags);
@@ -107,48 +118,54 @@ public class SearchResultController {
         return page;
     }
 
-    private Page<ReferenceDescription> getSortedReferences(@CurrentUser User user, Pageable pageable, List<ReferenceDescription> references,
-                                                           @RequestParam(name = "sortBy", required = false) String sortBy) {
+    private Page<ReferenceDescription> getSortedReferences(@CurrentUser User user, Pageable pageable,
+                                                           List<ReferenceDescription> references, String sortBy) {
         Page<ReferenceDescription> page = null;
-        if (sortBy == null) sortBy = "default";
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
+        int total = references.size();
+        int start = Math.toIntExact(pageRequest.getOffset());
+        int end = (start + pageRequest.getPageSize()) > references.size() ? references.size() : (start + pageRequest.getPageSize());
+
+        if (sortBy == null || sortBy.equals("")) sortBy = "default";
         switch (sortBy) {
             case "default":
                 log.info("Сортировка результатов поиска пользователя с uid {} по дате, по-убыванию", user.getUid());
                 references.sort(Comparator.comparing(ReferenceDescription::getAdditionDate).reversed());
-                page = new PageImpl<>(references, pageable, references.size());
+                page = new PageImpl<>(references.subList(start, end), pageRequest, total);
                 break;
             case "nameDesc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по имени, по-убыванию", user.getUid());
                 references.sort(Comparator.comparing(ReferenceDescription::getName).reversed());
-                page = new PageImpl<>(references, pageable, references.size());
+                page = new PageImpl<>(references.subList(start, end), pageRequest, total);
                 break;
             case "nameAsc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по имени, по-возрастанию", user.getUid());
                 references.sort(Comparator.comparing(ReferenceDescription::getName));
-                page = new PageImpl<>(references, pageable, references.size());
+                page = new PageImpl<>(references.subList(start, end), pageRequest, total);
                 break;
             case "sourceDesc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по источнику, по-убыванию", user.getUid());
                 references.sort(Comparator.comparing(ReferenceDescription::getSource).reversed());
-                page = new PageImpl<>(references, pageable, references.size());
+                page = new PageImpl<>(references.subList(start, end), pageRequest, total);
                 break;
             case "sourceAsc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по источнику, по-возрастанию", user.getUid());
                 references.sort(Comparator.comparing(ReferenceDescription::getSource));
-                page = new PageImpl<>(references, pageable, references.size());
+                page = new PageImpl<>(references.subList(start, end), pageRequest, total);
                 break;
             case "ratingDesc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по рейтингу, по-убыванию", user.getUid());
                 references.sort(Comparator
                         .comparing((ReferenceDescription referenceDescription) -> referenceDescription.getReference().getRating())
                         .reversed());
-                page = new PageImpl<>(references, pageable, references.size());
+                page = new PageImpl<>(references.subList(start, end), pageRequest, total);
                 break;
             case "ratingAsc":
                 log.info("Сортировка результатов поиска пользователя с uid {} по рейтингу, по-возрастанию", user.getUid());
                 references.sort(Comparator
                         .comparing((ReferenceDescription referenceDescription) -> referenceDescription.getReference().getRating()));
-                page = new PageImpl<>(references, pageable, references.size());
+                page = new PageImpl<>(references.subList(start, end), pageRequest, total);
                 break;
             default:
                 log.warn("Неверный аргумент sortBy от пользователя с uid {} при попытке сортировки результатов поиска", user.getUid());
