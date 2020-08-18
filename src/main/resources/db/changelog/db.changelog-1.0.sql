@@ -242,3 +242,7 @@ CREATE TABLE friendship_request
 
 CREATE unique index friendship_request_uid_uindex
 	on friendship_request (uid);
+
+
+--changeset m.larionova:20200816-alter-table runOnChange:true context:test
+alter table ref_description alter column adding_date type timestamptz using adding_date::timestamptz;

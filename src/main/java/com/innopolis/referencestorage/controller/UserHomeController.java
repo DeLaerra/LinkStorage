@@ -8,9 +8,7 @@ import com.innopolis.referencestorage.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,14 +28,19 @@ public class UserHomeController {
     private UserService userService;
     private FriendsService friendsService;
     private FriendshipRequestService friendshipRequestService;
+    private PrivateMessageService privateMessageService;
+    private ReferenceSortingService referenceSortingService;
 
     @Autowired
     public UserHomeController(ReferenceService referenceService, UserService userService, FriendsService friendsService,
-                              FriendshipRequestService friendshipRequestService, UserInfoService userInfoService) {
+                              FriendshipRequestService friendshipRequestService, PrivateMessageService privateMessageService,
+                              ReferenceSortingService referenceSortingService) {
         this.referenceService = referenceService;
         this.userService = userService;
         this.friendsService = friendsService;
         this.friendshipRequestService = friendshipRequestService;
+        this.privateMessageService = privateMessageService;
+        this.referenceSortingService = referenceSortingService;
     }
 
     @ModelAttribute("sortByText")
@@ -76,6 +79,10 @@ public class UserHomeController {
         if (!friendshipRequestService.isEmptyInbox(user)) {
             model.addAttribute("notEmptyInbox", true);
         }
+        if (privateMessageService.isNotEmptyPMInbox(user)) {
+            model.addAttribute("notEmptyPMInbox", true);
+        }
+
         if (request.getParameter("pmDuplicateError") != null) {
             model.addAttribute("pmDuplicateError", true);
         }
@@ -90,63 +97,7 @@ public class UserHomeController {
                                                          @RequestParam(name = "load", required = false) String load) {
         Page<ReferenceDescription> page = referenceService.loadRefsByUserUid(user, pageable);
         page.forEach(ReferenceDescription::setTags); // создание строки для отображения всех тегов
-        if (load != null && load.equals("all")) {
-            log.info("Получен запрос на отображение всех ссылок пользователя с uid - {}", user.getUid());
-            page = referenceService.loadRefsByUserUid(user,
-                    PageRequest.of(0, pageable.getPageSize(), Sort.unsorted()));
-        } else if (sortBy != null) {
-            log.info("Получен запрос на сортировку ссылок пользователя с uid - {}", user.getUid());
-            page = getSortedReferences(user, pageable, sortBy);
-        }
-        return page;
-    }
-
-    private Page<ReferenceDescription> getSortedReferences(@CurrentUser User user, Pageable pageable,
-                                                           @RequestParam(name = "sortBy", required = false) String sortBy) {
-        Page<ReferenceDescription> page;
-        if (sortBy == null || sortBy.equals("")) sortBy = "default";
-        switch (sortBy) {
-            case "default":
-                log.info("Сортировка ссылок пользователя с uid {} по дате, по-убыванию", user.getUid());
-                page = referenceService.loadRefsByUserUid(user,
-                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("additionDate").descending()));
-                break;
-
-            case "nameDesc":
-                log.info("Сортировка ссылок пользователя с uid {} по имени, по-убыванию", user.getUid());
-                page = referenceService.loadRefsByUserUid(user,
-                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("name").descending()));
-                break;
-            case "nameAsc":
-                log.info("Сортировка ссылок пользователя с uid {} по имени, по-возрастанию", user.getUid());
-                page = referenceService.loadRefsByUserUid(user,
-                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("name").ascending()));
-                break;
-            case "sourceDesc":
-                log.info("Сортировка ссылок пользователя с uid {} по источнику, по-убыванию", user.getUid());
-                page = referenceService.loadRefsByUserUid(user,
-                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("source").descending()));
-                break;
-            case "sourceAsc":
-                log.info("Сортировка ссылок пользователя с uid {} по источнику, по-возрастанию", user.getUid());
-                page = referenceService.loadRefsByUserUid(user,
-                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("source").ascending()));
-                break;
-            case "ratingDesc":
-                log.info("Сортировка ссылок пользователя с uid {} по рейтингу, по-убыванию", user.getUid());
-                page = referenceService.loadRefsByUserUid(user,
-                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("reference.rating").descending()));
-                break;
-            case "ratingAsc":
-                log.info("Сортировка ссылок пользователя с uid {} по рейтингу, по-возрастанию", user.getUid());
-                page = referenceService.loadRefsByUserUid(user,
-                        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("reference.rating").ascending()));
-                break;
-            default:
-                log.warn("Неверный аргумент sortBy от пользователя с uid {} при попытке сортировки ссылок", user.getUid());
-                throw new IllegalStateException("Неверный аргумент sortBy");
-        }
-        return page;
+        return referenceSortingService.getSortedReferences(user, pageable, sortBy, load);
     }
 
     private Set<String> getUserTags(Page<ReferenceDescription> page) {

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,21 +55,47 @@ public class FriendshipRequestService {
         return true;
     }
 
-    public FriendshipRequest sendFriendshipRequestToUser(FriendshipRequest friendshipRequest,
+    public void sendFriendshipRequestToUser(FriendshipRequest friendshipRequest,
                                                          User user, Long recipientUid, String text, Model model) {
         log.info("Получен запрос на добавление в друзья: \n username - {}, \n recipientUsername - {} ", user.getUsername(), userRepo.findByUid(recipientUid).getUsername());
         User friend = userRepo.findByUid(recipientUid);
-        if (friendshipRequestRepo.existsBySenderAndRecipientAndAcceptionStatusEquals(user,
-                userRepo.findByUid(recipientUid), 0) || friendshipRequestRepo.existsBySenderAndRecipientAndAcceptionStatusEquals(user,
-                userRepo.findByUid(recipientUid), 3)) {
-            log.error("Повторная отправка заявки тому же адресату");
-            model.addAttribute("pmDuplicateError", "Отправка сообщения c повторной ссылкой тому же адресату!");
-        }
+
+        if (friendshipRequestRepo.existsBySenderAndRecipientAndAcceptionStatusEquals(userRepo.findByUid(recipientUid),
+                user, 1)) {
+            model.addAttribute("requestAcceptionAllow", "Принять заявку");
+            ArrayList<FriendshipRequest> requests1 = friendshipRequestRepo.findBySenderAndRecipientAndAcceptionStatusEquals(userRepo.findByUid(recipientUid),
+                    user, 1);
+            FriendshipRequest request = requests1.get(requests1.size()-1);
+            acceptRequestFromMessage(request.getUid(), user, model);
+            log.error("Заявка принята");
+            model.addAttribute("requestAccepted", "Заявка принята!");
+        } else
+        if (friendshipRequestRepo.existsBySenderAndRecipientAndAcceptionStatusEquals(userRepo.findByUid(recipientUid),
+                user, 0)) {
+            model.addAttribute("requestAcceptionAllow", "Принять заявку");
+            ArrayList<FriendshipRequest> requests0 = friendshipRequestRepo.findBySenderAndRecipientAndAcceptionStatusEquals(userRepo.findByUid(recipientUid),
+                    user, 0);
+            FriendshipRequest request = requests0.get(requests0.size()-1);
+            acceptRequestFromMessage(request.getUid(), user, model);
+            log.error("Заявка принята");
+            model.addAttribute("requestAccepted", "Заявка принята!");
+        } else
+        if (friendshipRequestRepo.existsBySenderAndRecipientAndAcceptionStatusEquals(userRepo.findByUid(recipientUid),
+                user, 3)) {
+            model.addAttribute("requestAcceptionAllow", "Принять заявку");
+            ArrayList<FriendshipRequest> requests3 = friendshipRequestRepo.findBySenderAndRecipientAndAcceptionStatusEquals(userRepo.findByUid(recipientUid),
+                    user, 3);
+            FriendshipRequest request = requests3.get(requests3.size()-1);
+            acceptRequestFromMessage(request.getUid(), user, model);
+            log.error("Заявка принята");
+            model.addAttribute("requestAccepted", "Заявка принята!");
+
+        } else {
         friendshipRequest.setText(text);
         friendshipRequest.setSender(user);
         friendshipRequest.setRecipient(friend);
         friendshipRequest.setSendingTime(LocalDateTime.now());
-        return friendshipRequestRepo.save(friendshipRequest);
+        friendshipRequestRepo.save(friendshipRequest); }
     }
 
     public FriendshipRequest acceptRequestFromMessage(Long frUid, User user, Model model) {
@@ -77,7 +104,7 @@ public class FriendshipRequestService {
         friendshipRequestRepo.saveAndFlush(friendshipRequest);
         log.info("Сообщению с uid {} присвоен статус Одобрено", frUid);
         User sender = friendshipRequest.getSender();
-        friendsService.addFriends(user.getUid(), sender.getUid());
+        friendsService.addFriends(user, sender);
         log.info("Пользователь добавлен в друзья, frUid- {}", frUid);
         return friendshipRequest;
     }
@@ -96,6 +123,7 @@ public class FriendshipRequestService {
         friendshipRequestRepo.delete(friendshipRequest);
         log.info("Удаление заявки, frId- {}", frUid);
     }
+
 
     private boolean isDuplicateRequest(User sender, User recipient, Model model) {
         if (friendshipRequestRepo.existsBySenderAndRecipientAndAcceptionStatusEquals(sender,

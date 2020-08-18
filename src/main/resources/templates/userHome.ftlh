@@ -7,16 +7,16 @@
         <div class="row">
             <div class="col">
                 <form name="searchFriends" action="/userHome" method="get">
-                                <div class="input-group">
-                                    <input class="form-control" type="search" name="searchFriends" id="searchFriends"
-                                           placeholder="Поиск...">
-                                    <span class="input-group-append">
+                    <div class="input-group">
+                        <input class="form-control" type="search" name="searchFriends" id="searchFriends"
+                               placeholder="Поиск...">
+                        <span class="input-group-append">
                                         <button type="submit" title="Найти друга" class="btn btn-outline-secondary">
                                             <span class="iconify" data-icon="ic:round-person-search"
                                                   data-inline="false"></span>
                                         </button>
                                     </span>
-                                </div>
+                    </div>
                 </form>
                 <#if searchFriends??>
                     <#list searchFriends as searchFriend>
@@ -32,11 +32,11 @@
                                         </td>
                                     </tr>
                                     <#if searchFriend.userInfo.getName() != "Name">
-                                    <tr>
-                                        <td align="center">
-                                            ${searchFriend.userInfo.getName()} ${searchFriend.userInfo.getSurname()}
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td align="center">
+                                                ${searchFriend.userInfo.getName()} ${searchFriend.userInfo.getSurname()}
+                                            </td>
+                                        </tr>
                                     </#if>
                                     <tr>
                                         <td align="center">
@@ -63,11 +63,11 @@
                                         </td>
                                     </tr>
                                     <#if friend.userInfo.getName() != "Name">
-                                    <tr>
-                                        <td align="center">
-                                            ${friend.userInfo.getName()} ${friend.userInfo.getSurname()}
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td align="center">
+                                                ${friend.userInfo.getName()} ${friend.userInfo.getSurname()}
+                                            </td>
+                                        </tr>
                                     </#if>
                                     <tr>
                                         <td align="center">
@@ -167,7 +167,8 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="add_tagInput">Теги:</label>
-                                                <input type="text" name="tagsFromUser" class="form-control" id="add_tagInput"
+                                                <input type="text" name="tagsFromUser" class="form-control"
+                                                       id="add_tagInput"
                                                        placeholder="Тэг">
                                             </div>
                                             <div class="form-group">
@@ -266,18 +267,17 @@
                         </div>
                     </div>
                 </div>
-                                    <#if pmDuplicateError??>
-                                    <br>
-                                        <div class="alert alert-danger">
-                                          <strong>Не отправлено!</strong> Отправка сообщения c повторной ссылкой тому же адресату запрещена!
-                                        </div>
-                                    </#if>
-                                    <#if copyRefError??>
-                                    <br>
-                                         <div class="alert alert-danger">
-                                           <strong>Не добавлено!</strong> Эта ссылка уже есть в Home пользователя!
-                                          </div>
-                                    </#if>
+                <#if pmDuplicateError??>
+                    <div class="alert alert-danger">
+                        <strong>Не отправлено!</strong> Отправка сообщения c повторной ссылкой тому же адресату
+                        запрещена!
+                    </div>
+                </#if>
+                <#if copyRefError??>
+                    <div class="alert alert-danger">
+                        <strong>Не добавлено!</strong> Эта ссылка уже есть в Home пользователя!
+                    </div>
+                </#if>
                 <#if page??>
                 <#--                    <div class="container">-->
                     <table class="table table-striped">
@@ -352,7 +352,9 @@
                                                 href="${userRef.reference.url}">${userRef.reference.url}<br>
                                                 </a></#if>
                                             <#if userRef.tag??>
-                                                Теги: <#list userRef.tag as userRefTag><a class="text-" href="../searchResult?search=${userRefTag.name}">${userRefTag.name} </a></#list><br>
+                                                Теги: <#list userRef.tag as userRefTag><a class="text-"
+                                                                                          href="../searchResult?search=${userRefTag.name}">${userRefTag.name} </a></#list>
+                                                <br>
                                             </#if>
 
                                             <div class="btn-toolbar mr-4" role="toolbar"

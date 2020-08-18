@@ -2,16 +2,10 @@ package com.innopolis.referencestorage.service;
 
 import com.innopolis.referencestorage.commons.utils.PropertyChecker;
 import com.innopolis.referencestorage.domain.*;
-import com.innopolis.referencestorage.repos.*;
-import com.innopolis.referencestorage.domain.Reference;
-import com.innopolis.referencestorage.domain.ReferenceDescription;
-import com.innopolis.referencestorage.domain.User;
 import com.innopolis.referencestorage.enums.AccessLevel;
 import com.innopolis.referencestorage.enums.AdditionMethod;
 import com.innopolis.referencestorage.enums.ReferenceType;
-import com.innopolis.referencestorage.repos.ReferenceDescriptionRepo;
-import com.innopolis.referencestorage.repos.ReferenceRepo;
-import com.innopolis.referencestorage.repos.UserRepo;
+import com.innopolis.referencestorage.repos.*;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -23,8 +17,11 @@ import org.springframework.ui.Model;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.time.ZoneId;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
@@ -91,7 +88,7 @@ public class ReferenceService {
         referenceDescription.setReference(reference);
         referenceDescription.setUidUser(userId);
         referenceDescription.setUidAdditionMethod(AdditionMethod.SITE.getAdditionMethodUid());
-        referenceDescription.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        referenceDescription.setAdditionDate(LocalDateTime.now());
         Optional.ofNullable(url.getHost()).ifPresent(referenceDescription::setSource);
 
         if (referenceDescription.getName() == null || referenceDescription.getName().equals(""))
@@ -302,7 +299,7 @@ public class ReferenceService {
         referenceDescription.setName(sourceRef.getName());
         Optional.ofNullable(sourceRef.getDescription()).ifPresent(referenceDescription::setDescription);
         referenceDescription.setUidReferenceType(sourceRef.getUidReferenceType());
-        referenceDescription.setAdditionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        referenceDescription.setAdditionDate(LocalDateTime.now());
         referenceDescription.setSource(sourceRef.getSource());
         referenceDescription.setUidAdditionMethod(AdditionMethod.SITE.getAdditionMethodUid());
         referenceDescription.setUidAccessLevel(AccessLevel.PUBLIC.getAccessLevelUid());
@@ -336,7 +333,7 @@ public class ReferenceService {
                 .reference(reference)
                 .uidUser(userId)
                 .uidAdditionMethod(AdditionMethod.TELEGRAM.getAdditionMethodUid())
-                .additionDate(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+                .additionDate(LocalDateTime.now())
                 .source(url.getHost())
                 .name(url.toString())
                 .uidAccessLevel(AccessLevel.PUBLIC.getAccessLevelUid())
@@ -374,5 +371,10 @@ public class ReferenceService {
         assertNotNull(data, String.format("Указана несуществующая ссылка, refId - %s", refId));
 
         return data;
+    }
+    public boolean checkIfReferenceAlreadyExists(Long refDescrId, ReferenceDescription referenceDescription) {
+        if (referenceDescription.getUidUser() == referenceDescriptionRepo.findByUid(refDescrId).getUidUser()) {
+            return true;
+        } else return false;
     }
 }

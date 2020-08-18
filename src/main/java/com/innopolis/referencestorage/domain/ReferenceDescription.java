@@ -7,7 +7,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.NumericField;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -38,7 +38,7 @@ public class ReferenceDescription {
     private Short uidReferenceType;
 
     @Column(name = "adding_date")
-    private LocalDate additionDate;
+    private LocalDateTime additionDate;
 
     @Field
     private String source;
@@ -71,6 +71,11 @@ public class ReferenceDescription {
     @Transient
     @Getter
     private String tags = getTagsFromSet(this.tag);
+
+    @Setter
+    @Transient
+    @Getter
+    private int isExistAtFriend = 1;
 
     private String getTagsFromSet(Set<Tags> tag) {
         String result = "";

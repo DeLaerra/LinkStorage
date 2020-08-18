@@ -3,6 +3,8 @@ package com.innopolis.referencestorage.controller;
 import com.innopolis.referencestorage.config.CurrentUser;
 import com.innopolis.referencestorage.domain.FriendshipRequest;
 import com.innopolis.referencestorage.domain.User;
+import com.innopolis.referencestorage.repos.FriendshipRequestRepo;
+import com.innopolis.referencestorage.repos.UserRepo;
 import com.innopolis.referencestorage.service.FriendshipRequestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +30,15 @@ import java.util.List;
 @Controller
 public class FriendshipRequestController {
     private FriendshipRequestService friendshipRequestService;
+    private FriendshipRequestRepo friendshipRequestRepo;
+    private UserRepo userRepo;
 
     @Autowired
-    public FriendshipRequestController(FriendshipRequestService friendshipRequestService) {
+    public FriendshipRequestController(FriendshipRequestService friendshipRequestService, FriendshipRequestRepo friendshipRequestRepo,
+                                       UserRepo userRepo) {
         this.friendshipRequestService = friendshipRequestService;
     }
+
 
     @GetMapping("/sendRequest/{recipientId}")
     public String sendReferenceToFriend(FriendshipRequest friendshipRequest, Model model,
@@ -42,6 +48,7 @@ public class FriendshipRequestController {
                                         @PathVariable Long recipientId,
                                         @RequestParam(name = "receiver", required = false) String friendUsername,
                                         @RequestParam(name = "text", required = false) String text) {
+
 
         friendshipRequestService.sendFriendshipRequestToUser(friendshipRequest, user, recipientId, text, model);
         model.addAttribute("requestSent", "Заявка отправлена");
