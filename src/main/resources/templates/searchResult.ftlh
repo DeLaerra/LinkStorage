@@ -229,16 +229,16 @@
                                                        id="add_urlInput"
                                                        placeholder="Ссылка">
                                             </div>
-                                            <div class="form-group">
-                                                <label for="add_refTypeInput">Тип:</label>
-                                                <select class="form-control" name="uidReferenceType"
-                                                        id="add_refTypeInput">
-                                                    <option value="0" selected>текст</option>
-                                                    <option value="1">видео</option>
-                                                    <option value="2">файл</option>
-                                                    <option value="3">картинка</option>
-                                                </select>
-                                            </div>
+<#--                                            <div class="form-group">-->
+<#--                                                <label for="add_refTypeInput">Тип:</label>-->
+<#--                                                <select class="form-control" name="uidReferenceType"-->
+<#--                                                        id="add_refTypeInput">-->
+<#--                                                    <option value="0" selected>текст</option>-->
+<#--                                                    <option value="1">видео</option>-->
+<#--                                                    <option value="2">файл</option>-->
+<#--                                                    <option value="3">картинка</option>-->
+<#--                                                </select>-->
+<#--                                            </div>-->
                                             <div class="form-group">
                                                 <label for="add_tagInput">Теги:</label>
                                                 <input type="text" name="tag" class="form-control"
@@ -254,6 +254,7 @@
                     </div>
                 </div>
                 <#if page??>
+                <#if page.content?size !=0 >
                 <div class="container">
                     <table class="table table-striped">
                         <thead>
@@ -374,9 +375,9 @@
                                                         <a href="${userRef.reference.url}">${userRef.reference.url}</a><br>
                                                         <#if userRef.tag??><b>Теги</b>: ${userRef.tags}<br></#if>
                                                         <#if userRef.source??><b>Источник</b>: <a
-                                                                href="${userRef.source}">${userRef.source}</a><br></#if>
+                                                                href="http://${userRef.source}">${userRef.source}</a><br></#if>
                                                         <#if userRef.additionDate??><b>Дата
-                                                            добавления</b>: ${userRef.additionDate}
+                                                            добавления</b>: ${(userRef.additionDate).format('yyyy-MM-dd HH:mm:ss')}
                                                             <br></#if>
                                                         <#if userRef.description??>
                                                             <b>Описание: </b>${userRef.description}
@@ -507,7 +508,7 @@
                                     </div>
                                     <div class="col-sm">
                                         <td><#if userRef.source??><a
-                                                href="${userRef.source}">${userRef.source}</a></#if>
+                                                href="http://${userRef.source}">${userRef.source}</a></#if>
                                         </td>
                                     </div>
                                     <div class="col-sm">
@@ -518,6 +519,11 @@
                         </#list>
                     </table>
                     <@p.pager url page />
+                    <#else>
+                        <div class="alert alert-danger">
+                            <strong>Ничего не найдено!</strong> Попробуйте перефразировать запрос!
+                        </div>
+                    </#if>
                     </#if>
                 </div>
             </div>
