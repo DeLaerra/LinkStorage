@@ -268,14 +268,12 @@
                     </div>
                 </div>
                 <#if pmDuplicateError??>
-                    <br>
                     <div class="alert alert-danger">
                         <strong>Не отправлено!</strong> Отправка сообщения c повторной ссылкой тому же адресату
                         запрещена!
                     </div>
                 </#if>
                 <#if copyRefError??>
-                    <br>
                     <div class="alert alert-danger">
                         <strong>Не добавлено!</strong> Эта ссылка уже есть в Home пользователя!
                     </div>
@@ -336,29 +334,29 @@
                                                         value="ratingAsc">
                                                     <span class="iconify" data-icon="gg:sort-za"
                                                           data-inline="false"></span>
-                                                </button>
-                                                Рейтинг
-                                            </th>
-                                        </div>
-                                    </form>
-                                </div>
-                            </tr>
-                            </thead>
-                            <#list page.content as userRef>
-                                <tr>
-                                    <#--                            Строки таблицы-->
-                                    <div class="row">
-                                        <div class="col-sm">
-                                            <td> <#if userRef.name??><a
-                                                    href="${userRef.reference.url}">${userRef.name}</a>
-                                                    <br><#else><a
-                                                    href="${userRef.reference.url}">${userRef.reference.url}<br>
-                                                    </a></#if>
-                                                <#if userRef.tag??>
-                                                    Теги: <#list userRef.tag as userRefTag><a class="text-"
-                                                                                              href="../searchResult?search=${userRefTag.name}">${userRefTag.name} </a></#list>
-                                                    <br>
-                                                </#if>
+                                            </button>
+                                            Рейтинг
+                                        </th>
+                                    </div>
+                                </form>
+                            </div>
+                        </tr>
+                        </thead>
+                        <#list page.content as userRef>
+                            <tr>
+                                <#--                            Строки таблицы-->
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <td> <#if userRef.name??><a
+                                                href="${userRef.reference.url}">${userRef.name}</a>
+                                                <br><#else><a
+                                                href="${userRef.reference.url}">${userRef.reference.url}<br>
+                                                </a></#if>
+                                            <#if userRef.tag??>
+                                                Теги: <#list userRef.tag as userRefTag><a class="text-"
+                                                                                          href="../searchResult?search=${userRefTag.name}">${userRefTag.name} </a></#list>
+                                                <br>
+                                            </#if>
 
                                                 <div class="btn-toolbar mr-4" role="toolbar"
                                                      aria-label="Toolbar with button groups">

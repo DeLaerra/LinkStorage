@@ -134,6 +134,16 @@ public class PrivateMessageService {
         log.info("Удаление приватного сообщения, pmId- {}", pmUid);
     }
 
+    public boolean isNotEmptyPMInbox(User recipient) {
+        List<PrivateMessage> messages = privateMessageRepo.findByRecipient(recipient);
+        for (PrivateMessage message : messages) {
+            if (message != null && message.getAcceptionStatus().equals(AcceptionStatus.NOT_DEFINED.getStatusUid())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private ReferenceDescription checkDuplicateMessage(Long refId, User sender, User recipient, Model model) {
         ReferenceDescription data = referenceDescriptionRepo.findByUid(refId);
         assertNotNull(data, String.format("Указана несуществующая ссылка, refId - %s", refId));
