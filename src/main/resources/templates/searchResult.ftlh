@@ -229,16 +229,16 @@
                                                        id="add_urlInput"
                                                        placeholder="Ссылка">
                                             </div>
-<#--                                            <div class="form-group">-->
-<#--                                                <label for="add_refTypeInput">Тип:</label>-->
-<#--                                                <select class="form-control" name="uidReferenceType"-->
-<#--                                                        id="add_refTypeInput">-->
-<#--                                                    <option value="0" selected>текст</option>-->
-<#--                                                    <option value="1">видео</option>-->
-<#--                                                    <option value="2">файл</option>-->
-<#--                                                    <option value="3">картинка</option>-->
-<#--                                                </select>-->
-<#--                                            </div>-->
+                                            <#--                                            <div class="form-group">-->
+                                            <#--                                                <label for="add_refTypeInput">Тип:</label>-->
+                                            <#--                                                <select class="form-control" name="uidReferenceType"-->
+                                            <#--                                                        id="add_refTypeInput">-->
+                                            <#--                                                    <option value="0" selected>текст</option>-->
+                                            <#--                                                    <option value="1">видео</option>-->
+                                            <#--                                                    <option value="2">файл</option>-->
+                                            <#--                                                    <option value="3">картинка</option>-->
+                                            <#--                                                </select>-->
+                                            <#--                                            </div>-->
                                             <div class="form-group">
                                                 <label for="add_tagInput">Теги:</label>
                                                 <input type="text" name="tag" class="form-control"
@@ -313,7 +313,7 @@
                                         <td> <#if userRef.name??><a href="${userRef.reference.url}">${userRef.name}</a>
                                                 <br><#else><a
                                                 href="${userRef.reference.url}">${userRef.reference.url}<br></a></#if>
-                                            <#if userRef.tag??>Теги: ${userRef.tags}<br></#if>
+                                            <#if userRef.tag??>Теги: <#list userRef.tag as userRefTag><a class="text-"href="../searchResult?search=%23${userRefTag.name}">#${userRefTag.name} </a></#list><br></#if>
 
                                             <div class="btn-toolbar mr-4" role="toolbar"
                                                  aria-label="Toolbar with button groups">

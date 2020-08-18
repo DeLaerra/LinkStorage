@@ -59,9 +59,9 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">Возраст:</label>
                 <div class="col-sm-6">
-                    <input required type="number" minlength="1" maxlength="15" name="age" value="${(userInfo.age)!''}"
-                           class="form-control ${(userInfoAgeError??)?string('is-invalid', '')}"
-                           placeholder="${(userInfo.age)!''}"/>
+                    <input required type="number" name="age" value="${(userInfo.age)!''}"
+                           class="form-control
+                           placeholder="${(userInfo.age)!''}" readonly/>
                     <#if userInfoAgeError??>
                         <div class="invalid-feedback">
                             ${userInfoAgeError}

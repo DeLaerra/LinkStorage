@@ -184,21 +184,26 @@ public class ReferenceSearchService {
 
     public List<ReferenceDescription> fullTagSearchPublicReferencesOnly(String q, User user) {
         Set<ReferenceDescription> result = new HashSet<>();
-        List<Tags> foundTags = tagsRepo.findAllByName(q);
+        List<Tags> foundTags = tagsRepo.findAllByName(q.replaceFirst("#", ""));
         List<TagsRefs> foundTagsRefs = new ArrayList<>();
-        for (Tags tags : foundTags) {
-            foundTagsRefs.add(tagsRefsRepo.findByUidTag(tags.getUid()));
+        if (!foundTags.isEmpty()) {
+            for (Tags tags : foundTags) {
+                foundTagsRefs.add(tagsRefsRepo.findByUidTag(tags.getUid()));
+            }
+            while (foundTagsRefs.remove(null));
+            if (!foundTagsRefs.isEmpty()) {
+                for (TagsRefs tagsRefs : foundTagsRefs) {
+                    result.add(referenceDescriptionRepo.findByUid(tagsRefs.getUidRefDescription()));
+                }
+                result.removeIf(referenceDescription -> referenceDescription.getUidAccessLevel() == 1);
+            }
         }
-        for (TagsRefs tagsRefs : foundTagsRefs) {
-            result.add(referenceDescriptionRepo.findByUid(tagsRefs.getUidRefDescription()));
-        }
-        result.removeIf(referenceDescription -> referenceDescription.getUidAccessLevel() == 1);
         return new ArrayList<>(result);
     }
 
     public List<ReferenceDescription> fullTagSearchReferencesByUserUid(String q, User user) {
         Set<ReferenceDescription> result = new HashSet<>();
-        List<Tags> foundTags = tagsRepo.findAllByName(q);
+        List<Tags> foundTags = tagsRepo.findAllByName(q.replaceFirst("#", ""));
         List<TagsRefs> foundTagsRefs = new ArrayList<>();
         for (Tags tags : foundTags) {
             foundTagsRefs.add(tagsRefsRepo.findByUidTag(tags.getUid()));

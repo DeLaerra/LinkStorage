@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeParseException;
 import java.util.Base64;
 
@@ -60,24 +61,27 @@ public class UserInfoService {
         } else {
             userInfo.setSurname(newSurname.substring(0, 1).toUpperCase() + newSurname.substring(1));
         }
-        int newAge = userInfo.getAge();
-        if (newAge > 150) {
-            log.info("Больше максимального возраста");
-            userInfo.setAge(originalUserInfo.getAge());
-            model.addAttribute("userInfoAgeError", "Максимальный возраст (150) превышен");
-        } else if (newAge < 0) {
-            log.info("Меньше минимального возраста");
-            userInfo.setAge(originalUserInfo.getAge());
-            model.addAttribute("userInfoAgeError", "Попытка поставить возраст меньше нуля");
-        }
-
         try {
             log.info("Попытка пропарсить birthDate {}", birthDate);
-            LocalDate newDate = LocalDate.parse(birthDate);
-            userInfo.setBirthDate(newDate);
+            LocalDate newBirthdayDate = LocalDate.parse(birthDate);
+            LocalDate currentDate = LocalDate.now();
+            Period interval = Period.between(newBirthdayDate, currentDate);
+            int newAge = interval.getYears();
+            if (newAge > 0 && newAge < 100) {
+                log.info("С новой датой рождения возраст равен {}", newAge);
+                userInfo.setBirthDate(newBirthdayDate);
+                userInfo.setAge(newAge);
+            } else {
+                log.info("С новой датой рождения возраст равен {}, невозможное значение, присваиваются оригинальные дата рождения и возраста", birthDate);
+                userInfo.setAge(originalUserInfo.getAge());
+                userInfo.setBirthDate(originalUserInfo.getBirthDate());
+                model.addAttribute("userInfoBirthDateError", "При такой дате невозможный возраст!");
+                model.addAttribute("userInfoAgeError", "Невозможный возраст!");
+            }
         } catch (DateTimeParseException e) {
             log.info("Значение birthDate {} не парсится под LocalDate формат, присваивается оригинальное значение", birthDate);
             userInfo.setBirthDate(originalUserInfo.getBirthDate());
+            userInfo.setAge(originalUserInfo.getAge());
             model.addAttribute("userInfoBirthDateError", "Неправильная дата дня рождения!");
         }
         userInfo.setAvatar(originalUserInfo.getAvatar());

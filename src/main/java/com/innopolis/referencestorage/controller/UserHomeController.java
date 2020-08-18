@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @SessionAttributes({"sortByText"})
@@ -102,13 +101,33 @@ public class UserHomeController {
 
     private Set<String> getUserTags(Page<ReferenceDescription> page) {
         Set<String> userTags = new HashSet<>();
+        Map<String, Integer> tagsMapForFrequency = new HashMap<>();
         if (!page.isEmpty()) {
             for (ReferenceDescription refDesc : page) {
                 Set<Tags> refDescTags = refDesc.getTag();
                 if (!refDescTags.isEmpty()) {
                     for (Tags tags : refDescTags) {
-                        userTags.add(tags.getName());
+                        String tagName = tags.getName();
+                        if (!tagsMapForFrequency.containsKey(tagName)) {
+                            tagsMapForFrequency.put(tagName, 1);
+                        } else {
+                            Integer numberOfTimesTagExistsForUser = tagsMapForFrequency.get(tagName);
+                            tagsMapForFrequency.replace(tagName, numberOfTimesTagExistsForUser + 1);
+                        }
                     }
+                }
+            }
+            // теперь надо находить самые высокие по значениям ключи в мапе и вставлять их в set пока не наберется максимальное кол-во (допустим 20 тегов)
+            // только если значений в мапе больше 20! иначе все ключи из мапы перекладываются в set
+            if (tagsMapForFrequency.size() > 20) {
+                while (userTags.size() < 20 && tagsMapForFrequency.size() > 0) {
+                    String maxValueInMap = Collections.max(tagsMapForFrequency.entrySet(), Map.Entry.comparingByValue()).getKey();
+                    userTags.add(maxValueInMap);
+                    tagsMapForFrequency.remove(maxValueInMap);
+                }
+            } else {
+                for (Map.Entry<String, Integer> entry : tagsMapForFrequency.entrySet()) {
+                    userTags.add(entry.getKey());
                 }
             }
         }
