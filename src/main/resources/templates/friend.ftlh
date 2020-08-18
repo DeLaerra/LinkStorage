@@ -19,14 +19,30 @@
                 </#if>
                 <h6 xmlns="http://www.w3.org/1999/html" align="left">${friendName}</h6>
             </div>
+
             </div>
 
     </#if>
 
     <#if notAddedFriend??>
-        <#if requestSent??>
+        <#if requestAcceptionAllow??>
         <form name="addFriend" action="/sendRequest/${friend.uid}" method="get">
-            <#if pmDuplicateError??>${pmDuplicateError} <#else>
+            <input class="form-control" type="hidden" name="addFriend" id="addFriend" value="${friend.uid}">
+            <div class="row">
+                <div class="col-sm">
+                    <th scope="col">
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <span class="iconify" data-icon="mdi:check-box-outline" data-inline="false"></span></button>
+                            ${requestAcceptionAllow}
+                    </th>
+                </div>
+            </div>
+        </form>
+            <#else>
+        <#if requestSent??>
+
+
+        <form name="addFriend" action="/sendRequest/${friend.uid}" method="get">
             <input class="form-control" type="hidden" name="addFriend" id="addFriend" value="${friend.uid}">
             <div class="row">
                 <div class="col-sm">
@@ -37,10 +53,8 @@
                     </th>
                 </div>
             </div>
-            <#--        <a href="/friendHome">FriendHome</a>-->
-            </#if>
-
         </form>
+
                             <#else>
                                 <form name="addFriend" action="/sendRequest/${friend.uid}" method="get">
                                     <input class="form-control" type="hidden" name="addFriend" id="addFriend" value="${friend.uid}">
@@ -56,6 +70,20 @@
             <#--        <a href="/friendHome">FriendHome</a>-->
         </form>
         </#if>
+        </#if>
+        <#else>
+    <div class="row">
+            <div class="col-md-8">
+                <form name="deleteFriend" action="/deleteFriend/${friend.uid}" method="get">
+                    <th scope="col">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <span class="iconify" data-icon="mdi:account-minus" data-inline="false"></span></button>
+
+
+                    </th>
+                </form>
+            </div>
+    </div>
     </#if>
     </div>
 
@@ -134,9 +162,23 @@
                                                 <div class="btn-toolbar mr-4" role="toolbar"
                                                      aria-label="Toolbar with button groups">
                                                     <div class="btn-group mr-2" role="group" aria-label="Share">
-                                                        <button type="button" class="btn btn-info btn-sm">
-                                                            <span class="iconify" data-icon="mdi:plus" data-inline="false"></span>
-                                                        </button>
+                                                        <form name="addFriendsReference" action="/addFriendsReference/${friend.uid}/${userRef.uid}" method="get">
+
+
+                                                            <#if userRef.isExistAtFriend == 1>
+                                                                <button class="btn btn btn-success btn-sm" type="submit"
+                                                                        title="Добавлено" disabled>
+                                                                    <span class="iconify" data-icon="mdi:check-box-outline" data-inline="false"></span>
+                                                                </button>
+                                                                <#else>
+
+                                                            <button class="btn btn btn-success btn-sm" type="submit"
+                                                                    title="Добавить к себе">
+                                                                <span class="iconify" data-icon="mdi:plus" data-inline="false"></span>
+                                                            </button>
+                                                            </#if>
+                                                        </form>
+
                                                     </div>
                                                     <div class="btn-group mr-2" role="group" aria-label="Properties">
                                                         <!-- Button trigger collapse Properties Подробнее...-->

@@ -5,6 +5,7 @@ import com.innopolis.referencestorage.domain.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +23,13 @@ public interface FriendshipRequestRepo extends JpaRepository<FriendshipRequest, 
 
     List<FriendshipRequest> findByRecipient(User recipient);
 
+    ArrayList<FriendshipRequest> findBySenderAndRecipientAndAcceptionStatusEquals(User sender, User recipient,
+                                                                                  Integer acceptionStatusUid);
+
+
     boolean existsBySenderAndRecipientAndAcceptionStatusEquals(User sender, User recipient,
                                                                Integer acceptionStatusUid);
+    boolean existsFriendshipRequestBySenderAndRecipientAndAcceptionStatusEquals(User sender, User recipient,
+                                                                                Integer acceptionStatusUid);
+
 }

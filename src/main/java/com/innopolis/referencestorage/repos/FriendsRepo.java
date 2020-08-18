@@ -13,4 +13,6 @@ public interface FriendsRepo extends JpaRepository<Friends, Long> {
     List<Friends> findAllByOwner(long owner);
 
     boolean existsByOwnerAndFriendEquals(Long ownerUid, Long friendUid);
+
+    Friends findFriendsByOwnerAndFriend(Long ownerUid, Long friendUid);
 }

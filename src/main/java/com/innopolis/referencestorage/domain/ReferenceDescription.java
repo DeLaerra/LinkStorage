@@ -72,6 +72,11 @@ public class ReferenceDescription {
     @Getter
     private String tags = getTagsFromSet(this.tag);
 
+    @Setter
+    @Transient
+    @Getter
+    private int isExistAtFriend = 1;
+
     private String getTagsFromSet(Set<Tags> tag) {
         String result = "";
         if (!(tag == null)) {

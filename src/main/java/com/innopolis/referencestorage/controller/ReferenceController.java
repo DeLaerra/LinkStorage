@@ -28,6 +28,7 @@ public class ReferenceController {
     private PrivateMessageService privateMessageService;
     private UserService userService;
 
+
     @Autowired
     public ReferenceController(ReferenceService referenceService, PrivateMessageService privateMessageService, UserService userService) {
         this.referenceService = referenceService;
@@ -79,7 +80,9 @@ public class ReferenceController {
     public String deleteReference(@PathVariable Long refId, Model model) {
         log.info("Получен запрос на удаление элемента: \n refId - {}", refId);
         ReferenceDescription refDelete = referenceService.deleteReference(refId);
+        refDelete.setIsExistAtFriend(0);
         model.addAttribute("referenceDelete", refDelete);
+
         return "redirect:/userHome";
     }
 
@@ -95,7 +98,7 @@ public class ReferenceController {
                 user.getUsername(), refId, friendUsername);
 
         model.addAttribute("userFriends", userService.loadUserByUsername(user.getUsername()));
-            privateMessageService.sendReferenceToFriend(privateMessage, refId, user, friendUsername, text, model);
+        privateMessageService.sendReferenceToFriend(privateMessage, refId, user, friendUsername, text, model);
 
         if (model.getAttribute("pmDuplicateError") != null) {
             redirectAttributes.addAttribute("pmDuplicateError", true);
