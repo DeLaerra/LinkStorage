@@ -117,7 +117,7 @@ public class ReferenceService {
                 name = name.substring(name.indexOf(" ") + 1); // отрезаем часть с передним словом
                 String word = name.replaceAll("\\ .*","");
                 if (!word.equals("")) {
-                    processedTags.add("#" + word);
+                    processedTags.add(word);
                 }
                 if (name.contains(" ")) { // нужно на случай если у нас последний цикл и уже нет #
                     name = name.substring(name.indexOf(" ")); // отрезаем название переднего слова (оставшееся пойдет в след круг цикла)
@@ -129,9 +129,9 @@ public class ReferenceService {
         // анализ поля "ссылка"
         String authority = url.getAuthority().replaceFirst("www.", ""); // добавляем название сайта, например youtube
         if (authority.contains(".")) {
-            processedTags.add("#" + authority.substring(0, authority.lastIndexOf(".")));
+            processedTags.add(authority.substring(0, authority.lastIndexOf(".")));
         } else {
-            processedTags.add("#" + authority);
+            processedTags.add(authority);
         }
         String path = url.getPath();
         path = path.replaceAll("[^a-zA-Zа-яА-Я0-9/ ]", "");
@@ -140,7 +140,7 @@ public class ReferenceService {
             // вытаскивание слова перед следующем слэше в пути запроса
             String pathTag = path.replaceAll("\\/.*","");
             if (pathTag.length() > 3 && pathTag.length() <= 20) {
-                processedTags.add("#" + pathTag);
+                processedTags.add(pathTag);
             }
             if (path.contains("/")) { // нужно на случай если последний цикл и уже нет слэша
                 path = path.substring(path.indexOf("/")); // убираем переднее слово (оставшееся пойдет в след круг цикла)
@@ -161,7 +161,7 @@ public class ReferenceService {
             tags = tags.substring(tags.indexOf("#") + 1); // отрезаем часть с передним тегом
             String tagName = tags.replaceAll("\\#.*","");
             if (!tagName.equals("")) {
-                processedTags.add("#" + tagName);
+                processedTags.add(tagName);
             }
             if (tags.contains("#")) { // нужно на случай если у нас последний цикл и уже нет #
                 tags = tags.substring(tags.indexOf("#")); // убираем передний тег (оставшееся пойдет в след круг цикла)
@@ -212,7 +212,6 @@ public class ReferenceService {
             // обработка тегов
             Set<String> tagsToDelete = elementsThatAreInTheFirstHashSetAndNotInTheSecond(originalTagsString, userInputTags);
             Set<String> tagsToAdd = elementsThatAreInTheFirstHashSetAndNotInTheSecond(userInputTags, originalTagsString);
-            System.out.println("fuck off");
             for (String tag : tagsToDelete) {
                 Tags tagToDelete = originalTags
                         .stream()

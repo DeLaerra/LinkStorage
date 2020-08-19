@@ -354,7 +354,7 @@
                                                 </a></#if>
                                             <#if userRef.tag??>
                                                 Теги: <#list userRef.tag as userRefTag><a class="text-"
-                                                                                          href="../searchResult?search=${userRefTag.name}">${userRefTag.name} </a></#list>
+                                                                                          href="../searchResult?search=%23${userRefTag.name}">#${userRefTag.name} </a></#list>
                                                 <br>
                                             </#if>
 

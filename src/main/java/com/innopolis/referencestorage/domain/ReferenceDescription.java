@@ -81,7 +81,7 @@ public class ReferenceDescription {
         String result = "";
         if (!(tag == null)) {
             for (Tags tags : tag) {
-                result = result + tags.getName() + " ";
+                result = result + "#" + tags.getName() + " ";
             }
         }
         return result;
