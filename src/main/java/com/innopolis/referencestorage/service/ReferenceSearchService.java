@@ -205,12 +205,18 @@ public class ReferenceSearchService {
         Set<ReferenceDescription> result = new HashSet<>();
         List<Tags> foundTags = tagsRepo.findAllByName(q.replaceFirst("#", ""));
         List<TagsRefs> foundTagsRefs = new ArrayList<>();
-        for (Tags tags : foundTags) {
-            foundTagsRefs.add(tagsRefsRepo.findByUidTag(tags.getUid()));
+        if (!foundTags.isEmpty()) {
+            for (Tags tags : foundTags) {
+                foundTagsRefs.add(tagsRefsRepo.findByUidTag(tags.getUid()));
+            }
+            while (foundTagsRefs.remove(null));
+            if (!foundTagsRefs.isEmpty()) {
+                for (TagsRefs tagsRefs : foundTagsRefs) {
+                    result.add(referenceDescriptionRepo.findByUidAndUidUser(tagsRefs.getUidRefDescription(), user.getUid()));
+                }
+            }
         }
-        for (TagsRefs tagsRefs : foundTagsRefs) {
-            result.add(referenceDescriptionRepo.findByUidAndUidUser(tagsRefs.getUidRefDescription(), user.getUid()));
-        }
+        while (result.remove(null));
         return new ArrayList<>(result);
     }
 }
