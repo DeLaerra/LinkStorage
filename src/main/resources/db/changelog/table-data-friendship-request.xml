@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet
+            id="table-data-friendship-request"
+            author="p.gaiduk"
+            logicalFilePath="table-data-friendship-request.xml"
+    >
+        <loadUpdateData catalogName="catalog"
+                        encoding="UTF-8"
+                        file="friendship_request.csv"
+                        relativeToChangelogFile="true"
+                        quotchar="'"
+                        schemaName="public"
+                        separator=";"
+                        tableName="friendship_request"
+                        primaryKey="uid">
+
+            <column name="uid" type="UUID" />
+            <column name="sender_uid" type="NUMERIC"/>
+            <column name="recipient_uid" type="NUMERIC"/>
+            <column name="text" type="STRING"/>
+            <column name="sending_time" type="DATE"/>
+            <column name="acception_status" type="NUMERIC"/>
+        </loadUpdateData>
+
+    </changeSet>
+
+</databaseChangeLog>

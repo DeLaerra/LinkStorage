@@ -1,0 +1,4 @@
+uid;uid_user;name;surname;age;sex;birth_date;avatar;chat_id
+98;0;Name;Surname;0;0;2020-08-17;null;null
+99;98;Сергей;Гомзяк;20;1;2000-02-19;null;2
+2;1;Иван;Петров;24;1;1996-08-17;null;1

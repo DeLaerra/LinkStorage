@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet
+            id="table-data-tags"
+            author="p.gaiduk"
+            logicalFilePath="table-data-tags.xml"
+    >
+        <loadUpdateData catalogName="catalog"
+                        encoding="UTF-8"
+                        file="tags.csv"
+                        relativeToChangelogFile="true"
+                        quotchar="'"
+                        schemaName="public"
+                        separator=";"
+                        tableName="tags"
+                        primaryKey="uid">
+
+            <column name="uid" type="UUID" />
+            <column name="name" type="STRING"/>
+
+        </loadUpdateData>
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -190,7 +190,7 @@ ALTER TABLE "user_info" ADD CONSTRAINT "user_info_fk0" FOREIGN KEY ("uid_user") 
 ALTER TABLE "tags_refs" ADD CONSTRAINT "tags_refs_fk0" FOREIGN KEY ("uid_ref_description") REFERENCES "ref_description"("uid");
 ALTER TABLE "tags_refs" ADD CONSTRAINT "tags_refs_fk1" FOREIGN KEY ("uid_tag") REFERENCES "tags"("uid");
 
-CREATE SEQUENCE hibernate_sequence START 1;
+CREATE SEQUENCE hibernate_sequence START 1000;
 
 --insert roles
 INSERT INTO "role" ("uid", "role")
