@@ -252,7 +252,7 @@
                                                             href="${pm.referenceDescription.source}">${pm.referenceDescription.source}</a>
                                                         <br></#if>
                                                     <#if pm.referenceDescription.additionDate??><b>Дата
-                                                        добавления</b>: ${pm.referenceDescription.additionDate}
+                                                        добавления</b>: ${(pm.referenceDescription.additionDate).format('yyyy-MM-dd HH:mm:ss')}
                                                         <br></#if>
                                                     <#if pm.referenceDescription.description??>
                                                         <b>Описание: </b>${pm.referenceDescription.description}
