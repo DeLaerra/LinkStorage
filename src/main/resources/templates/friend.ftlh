@@ -155,7 +155,8 @@
                                                             <br><#else><a
                                                             href="${userRef.reference.url}">${userRef.reference.url}<br>
                                                             </a></#if>
-                                                        <#if userRef.tag??>Теги: ${userRef.tags}<br></#if>
+                                                        <#if userRef.tag??>Теги: <#list userRef.tag as userRefTag><a class="text-"
+                                                                                                                     href="../searchResult?search=%23${userRefTag.name}&area=notAll">#${userRefTag.name} </a></#list><br></#if>
 
                                                         <div class="btn-toolbar mr-4" role="toolbar"
                                                              aria-label="Toolbar with button groups">
@@ -204,7 +205,8 @@
                                                             <div class="card card-body">
                                                                 <div class="body">
                                                                     <a href="${userRef.reference.url}">${userRef.reference.url}</a><br>
-                                                                    <#if userRef.tag??><b>Теги</b>: ${userRef.tags}
+                                                                    <#if userRef.tag??><b>Теги</b>: <#list userRef.tag as userRefTag><a class="text-"
+                                                                                                                                        href="../searchResult?search=%23${userRefTag.name}&area=notAll">#${userRefTag.name} </a></#list>
                                                                         <br></#if>
                                                                     <#if userRef.source??><b>Источник</b>: <a
                                                                             href="http://${userRef.source}">${userRef.source}</a>
