@@ -417,7 +417,8 @@
                                                     <div class="card card-body">
                                                         <div class="body">
                                                             <a href="${userRef.reference.url}">${userRef.reference.url}</a><br>
-                                                            <#if userRef.tags??><b>Теги</b>: ${userRef.tags}<br></#if>
+                                                            <#if userRef.tags??><b>Теги</b>: <#list userRef.tag as userRefTag><a class="text-"
+                                                                                                                                   href="../searchResult?search=%23${userRefTag.name}&area=notAll">#${userRefTag.name} </a></#list><br></#if>
                                                             <#if userRef.source??><b>Источник</b>: <a
                                                                     href="http://${userRef.source}">${userRef.source}</a>
                                                                 <br></#if>
