@@ -60,7 +60,7 @@ CREATE TABLE "ref_description" (
                                    "uid_reference" bigint NOT NULL,
                                    "name" varchar(255) NOT NULL,
                                    "description" varchar(255),
-                                   "uid_reference_type" bigint NOT NULL,
+                                   "uid_reference_type" bigint,
                                    "adding_date" DATE NOT NULL,
                                    "source" varchar(255),
                                    "uid_adding_method" bigint NOT NULL,
