@@ -32,6 +32,16 @@ hr {
     margin-top: -13px;
 
 }
+.courier {
+    font-family: 'courier';
+    font-size:34px;
+    font-weight: 600;
+    color: #4195ef;
+    position: absolute; /* Абсолютное позиционирование */
+    bottom: 450px; /* Положение от нижнего края */
+    right: 680px; /* Положение от правого края */
+
+}
 
 .home-headline span {
     background-color: #222222;

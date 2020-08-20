@@ -321,7 +321,7 @@
                                                     <div class="btn-group mr-2" role="group" aria-label="Edit">
                                                         <!-- Button trigger modal Edit Изменить...-->
 
-                                                        <button type="submit" class="btn btn-success btn-sm"
+                                                        <button type="submit" class="btn btn-info btn-sm"
                                                                 data-toggle="modal"
                                                                 data-target="#edit_${userRef.uid}">
                                                 <span class="iconify" data-icon="mdi:circle-edit-outline"
@@ -330,7 +330,7 @@
                                                     <div class="btn-group mr-2" role="group" aria-label="Delete">
                                                         <!-- Button Delete Удалить...-->
                                                         <form method="get" action="reference/delete/${userRef.uid}">
-                                                            <button class="btn btn btn-danger btn-sm" type="submit"
+                                                            <button class="btn btn btn-secondary btn-sm" type="submit"
                                                                     name="Delete"
                                                                     value="Удалить">
                                                     <span class="iconify" data-icon="mdi:delete-circle-outline"
