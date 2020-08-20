@@ -14,11 +14,14 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
               integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
               crossorigin="anonymous">
+        <link rel="stylesheet" href="static/css/backgroundImage.css">
+        <link rel="stylesheet" href="static/css/style.css">
 
     </head>
     <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <img src="https://raw.githubusercontent.com/RomanJavaDev/Test2/master/logo5.jpg" class="rounded"/>
         <a class="navbar-brand" href="/">Link Storage</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +55,9 @@
     </nav>
 
     <div class="container mt-5">
-        <#nested>
+        <div class="imgcon">
+            <#nested>
+        </div>
     </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

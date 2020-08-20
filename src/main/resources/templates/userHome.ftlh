@@ -363,7 +363,7 @@
 
                                                     <!-- Button trigger modal Edit Изменить...-->
                                                     <div class="btn-group mr-2" role="group" aria-label="Edit">
-                                                        <button type="submit" class="btn btn-success btn-sm"
+                                                        <button type="submit" class="btn btn-info btn-sm"
                                                                 title="Изменить ссылку"
                                                                 data-toggle="modal"
                                                                 data-target="#edit_${userRef.uid}">
@@ -376,7 +376,7 @@
                                                     <!-- Button Delete Удалить...-->
                                                     <div class="btn-group mr-2" role="group" aria-label="Delete">
                                                         <form method="get" action="reference/delete/${userRef.uid}">
-                                                            <button class="btn btn btn-danger btn-sm" type="submit"
+                                                            <button class="btn btn btn-secondary btn-sm" type="submit"
                                                                     name="Delete"
                                                                     title="Удалить ссылку"
                                                                     value="Удалить">
@@ -389,7 +389,7 @@
 
                                                     <!-- Button trigger modal Send Отправить...-->
                                                     <div class="btn-group mr-2" role="group" aria-label="Send">
-                                                        <button type="submit" class="btn btn-info btn-sm"
+                                                        <button type="submit" class="btn btn-primary btn-sm"
                                                                 title="Отправить ссылку другу"
                                                                 data-toggle="modal"
                                                                 data-target="#send_${userRef.uid}">
