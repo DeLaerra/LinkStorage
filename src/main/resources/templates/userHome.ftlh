@@ -243,16 +243,16 @@
                                                        id="add_urlInput"
                                                        placeholder="Ссылка">
                                             </div>
-<#--                                            <div class="form-group">-->
-<#--                                                <label for="add_refTypeInput">Тип:</label>-->
-<#--                                                <select class="form-control" name="uidReferenceType"-->
-<#--                                                        id="add_refTypeInput">-->
-<#--                                                    <option value="0" selected>текст</option>-->
-<#--                                                    <option value="1">видео</option>-->
-<#--                                                    <option value="2">файл</option>-->
-<#--                                                    <option value="3">картинка</option>-->
-<#--                                                </select>-->
-<#--                                            </div>-->
+                                            <div class="form-group">
+                                                <label for="add_refTypeInput">Тип:</label>
+                                                <select class="form-control" name="uidReferenceType"
+                                                        id="add_refTypeInput" >
+                                                    <option value="0" selected>текст</option>
+                                                    <option value="1">видео</option>
+                                                    <option value="2">файл</option>
+                                                    <option value="3">картинка</option>
+                                                </select>
+                                            </div>
                                             <div class="form-group">
                                                 <label for="add_tagInput">Теги:</label>
                                                 <input type="text" name="tagsFromUser" class="form-control"
@@ -334,29 +334,29 @@
                                                         value="ratingAsc">
                                                     <span class="iconify" data-icon="gg:sort-za"
                                                           data-inline="false"></span>
-                                            </button>
-                                            Рейтинг
-                                        </th>
-                                    </div>
-                                </form>
-                            </div>
-                        </tr>
-                        </thead>
-                        <#list page.content as userRef>
-                            <tr>
-                                <#--                            Строки таблицы-->
-                                <div class="row">
-                                    <div class="col-sm">
-                                        <td> <#if userRef.name??><a
-                                                href="${userRef.reference.url}">${userRef.name}</a>
-                                                <br><#else><a
-                                                href="${userRef.reference.url}">${userRef.reference.url}<br>
-                                                </a></#if>
-                                            <#if userRef.tag??>
-                                                Теги: <#list userRef.tag as userRefTag><a class="text-"
-                                                                                          href="../searchResult?search=%23${userRefTag.name}&area=notAll">#${userRefTag.name} </a></#list>
-                                                <br>
-                                            </#if>
+                                                </button>
+                                                Рейтинг
+                                            </th>
+                                        </div>
+                                    </form>
+                                </div>
+                            </tr>
+                            </thead>
+                            <#list page.content as userRef>
+                                <tr>
+                                    <#--                            Строки таблицы-->
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            <td> <#if userRef.name??><a
+                                                    href="${userRef.reference.url}">${userRef.name}</a>
+                                                    <br><#else><a
+                                                    href="${userRef.reference.url}">${userRef.reference.url}<br>
+                                                    </a></#if>
+                                                <#if userRef.tag??>
+                                                    Теги: <#list userRef.tag as userRefTag><a class="text-"
+                                                                                              href="../searchResult?search=%23${userRefTag.name}&area=notAll">#${userRefTag.name} </a></#list>
+                                                    <br>
+                                                </#if>
 
                                                 <div class="btn-toolbar mr-4" role="toolbar"
                                                      aria-label="Toolbar with button groups">
@@ -418,7 +418,7 @@
                                                         <div class="body">
                                                             <a href="${userRef.reference.url}">${userRef.reference.url}</a><br>
                                                             <#if userRef.tags??><b>Теги</b>: <#list userRef.tag as userRefTag><a class="text-"
-                                                                                                                                   href="../searchResult?search=%23${userRefTag.name}&area=notAll">#${userRefTag.name} </a></#list><br></#if>
+                                                                                                                                 href="../searchResult?search=%23${userRefTag.name}&area=notAll">#${userRefTag.name} </a></#list><br></#if>
                                                             <#if userRef.source??><b>Источник</b>: <a
                                                                     href="http://${userRef.source}">${userRef.source}</a>
                                                                 <br></#if>
@@ -622,43 +622,43 @@
                                                                                placeholder="Ссылка"
                                                                                value="<#if userRef.reference.url??>${userRef.reference.url}</#if>">
                                                                     </div>
-<#--                                                                    <#if userRef.description??>-->
-<#--                                                                        <div class="form-group">-->
-<#--                                                                            <label for="${userRef.uid}descriptionInput">Описание:</label>-->
-<#--                                                                            <input readonly type="text"-->
-<#--                                                                                   name="description"-->
-<#--                                                                                   class="form-control"-->
-<#--                                                                                   id="${userRef.uid}descriptionInput"-->
-<#--                                                                                   value="<#if userRef.description??>${userRef.description}</#if>">-->
-<#--                                                                        </div>-->
-<#--                                                                    </#if>-->
-<#--                                                                    <div class="form-group">-->
-<#--                                                                        <label for="${userRef.uid}refTypeInput">Тип:</label>-->
-<#--                                                                        <input readonly type="text"-->
-<#--                                                                               name="uidReferenceType"-->
-<#--                                                                               class="form-control"-->
-<#--                                                                               id="${userRef.uid}refTypeInput"-->
-<#--                                                                               value="<#if userRef.uidReferenceType == 0>текст-->
-<#--                                                                                        <#elseif userRef.uidReferenceType == 1>видео-->
-<#--                                                                                        <#elseif userRef.uidReferenceType == 2>файл-->
-<#--                                                                                        <#elseif userRef.uidReferenceType == 3>картинка</#if>">-->
-<#--                                                                    </div>-->
+                                                                    <#if userRef.description??>
+                                                                        <div class="form-group" type="hidden">
+                                                                            <#--                                                                            <label for="${userRef.uid}descriptionInput">Описание:</label>-->
+                                                                            <input readonly type="hidden"
+                                                                                   name="description"
+                                                                                   class="form-control"
+                                                                                   id="${userRef.uid}descriptionInput"
+                                                                                   value="<#if userRef.description??>${userRef.description}</#if>">
+                                                                        </div>
+                                                                    </#if>
+                                                                    <div class="form-group">
+                                                                        <#--                                                                        <label for="${userRef.uid}refTypeInput">Тип:</label>-->
+                                                                        <input readonly type="hidden"
+                                                                               name="uidReferenceType"
+                                                                               class="form-control"
+                                                                               id="${userRef.uid}refTypeInput"
+                                                                               value="<#if userRef.uidReferenceType == 0>текст
+                                                                                        <#elseif userRef.uidReferenceType == 1>видео
+                                                                                        <#elseif userRef.uidReferenceType == 2>файл
+                                                                                        <#elseif userRef.uidReferenceType == 3>картинка</#if>">
+                                                                    </div>
                                                                     <#if userRef.tags??>
                                                                         <div class="form-group">
-                                                                            <label for="${userRef.uid}tagInput">Теги:</label>
-                                                                            <input readonly type="text" name="tag"
+                                                                            <#--                                                                            <label for="${userRef.uid}tagInput">Теги:</label>-->
+                                                                            <input readonly type="hidden" name="tag"
                                                                                    class="form-control"
                                                                                    id="${userRef.uid}tagInput"
                                                                                    value="<#if userRef.tags??>${userRef.tags}</#if>">
                                                                         </div>
                                                                     </#if>
-<#--                                                                    <div class="form-group">-->
-<#--                                                                        <label for="${userRef.uid}sourceInput">Источник:</label>-->
-<#--                                                                        <input readonly type="text" name="source"-->
-<#--                                                                               class="form-control"-->
-<#--                                                                               id="${userRef.uid}sourceInput"-->
-<#--                                                                               value="<#if userRef.source??>${userRef.source}</#if>">-->
-<#--                                                                    </div>-->
+                                                                    <div class="form-group">
+                                                                        <#--                                                                        <label for="${userRef.uid}sourceInput">Источник:</label>-->
+                                                                        <input readonly type="hidden" name="source"
+                                                                               class="form-control"
+                                                                               id="${userRef.uid}sourceInput"
+                                                                               value="<#if userRef.source??>${userRef.source}</#if>">
+                                                                    </div>
                                                                     <div class="form-group">
                                                                         <label for="${userRef.uid}accessLevelInput">Уровень
                                                                             доступа:</label>

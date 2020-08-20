@@ -37,10 +37,10 @@ public class LinkStorageBot extends TelegramLongPollingBot {
     private Map<Long, String> recipients = new HashMap<>();
 
 
-    @Value("1382682447:AAF5lYS10l43ZNgrXuEwm2qCnArQpEfAy_M")
+    @Value("1200269672:AAH3aHuv7Lis3y9SoyReOK42tp3I-niNEu0")
     private String token;
 
-    @Value("link_storage_bot")
+    @Value("link_st_bot")
     private String botUsername;
 
 
