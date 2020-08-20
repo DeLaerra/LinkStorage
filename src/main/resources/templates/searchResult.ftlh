@@ -313,7 +313,7 @@
                                         <td> <#if userRef.name??><a href="${userRef.reference.url}">${userRef.name}</a>
                                                 <br><#else><a
                                                 href="${userRef.reference.url}">${userRef.reference.url}<br></a></#if>
-                                            <#if userRef.tag??>Теги: <#list userRef.tag as userRefTag><a class="text-"href="../searchResult?search=%23${userRefTag.name}">#${userRefTag.name} </a></#list><br></#if>
+                                            <#if userRef.tag??>Теги: <#list userRef.tag as userRefTag><a class="text-"href="../searchResult?search=%23${userRefTag.name}&area=notAll">#${userRefTag.name} </a></#list><br></#if>
 
                                             <div class="btn-toolbar mr-4" role="toolbar"
                                                  aria-label="Toolbar with button groups">
