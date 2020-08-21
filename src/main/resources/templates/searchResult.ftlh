@@ -99,160 +99,160 @@
                         </div>
                     </div>
                 </form>
-                <div class="row">
-                    <div class="col-sm">
-                        <!-- Button trigger modal Add Добавить...-->
-                        <button type="button" title="Добавить ссылку" class="btn btn-success btn-sm" data-toggle="modal"
-                                data-target="#add_user_form">
-                            Добавить новую ссылку
-                        </button>
-                        <#if refAddError??>
-                            <div class="invalid-feedback">
-                                ${refAddError}
-                            </div>
-                        </#if>
-                        <!-- Modal Add-->
-                        <div class="modal fade" id="add_user_form" tabindex="-1" role="dialog"
-                             aria-labelledby="add_Label" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <b>Добавление ссылки</b>
-                                        <button type="button" class="close" title="Закрыть" data-dismiss="modal"
-                                                aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form method="post" name="userRef" action="reference/add/${user.uid}">
-                                            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-                                            <div class="form-group">
-                                                <label for="add_nameInput">Название:</label>
-                                                <input type="text" name="name" class="form-control" id="add_nameInput"
-                                                       placeholder="Название">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="add_urlInput">Ссылка:</label>
-                                                <input type="url" name="url" required class="form-control"
-                                                       id="add_urlInput"
-                                                       placeholder="Ссылка">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="add_descriptionInput">Описание:</label>
-                                                <input type="text" name="description" class="form-control"
-                                                       id="add_descriptionInput"
-                                                       placeholder="Описание">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="add_refTypeInput">Тип:</label>
-                                                <select class="form-control" name="uidReferenceType"
-                                                        id="add_refTypeInput">
-                                                    <option value="0" selected>текст</option>
-                                                    <option value="1">видео</option>
-                                                    <option value="2">файл</option>
-                                                    <option value="3">картинка</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="add_tagInput">Теги:</label>
-                                                <input type="text" name="tag" class="form-control" id="add_tagInput"
-                                                       placeholder="Тэг">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="add_accessLevelInput">Уровень доступа:</label>
-                                                <select class="form-control" name="uidAccessLevel"
-                                                        id="add_accessLevelInput">
-                                                    <option value="0" selected>публичная</option>
-                                                    <option value="1">личная</option>
-                                                </select>
-                                            </div>
-                                            <input type="submit" class="btn btn-success btn-sm" value="Добавить">
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+<#--                <div class="row">-->
+<#--                    <div class="col-sm">-->
+<#--                        <!-- Button trigger modal Add Добавить...&ndash;&gt;-->
+<#--                        <button type="button" title="Добавить ссылку" class="btn btn-success btn-sm" data-toggle="modal"-->
+<#--                                data-target="#add_user_form">-->
+<#--                            Добавить новую ссылку-->
+<#--                        </button>-->
+<#--                        <#if refAddError??>-->
+<#--                            <div class="invalid-feedback">-->
+<#--                                ${refAddError}-->
+<#--                            </div>-->
+<#--                        </#if>-->
+<#--                        <!-- Modal Add&ndash;&gt;-->
+<#--                        <div class="modal fade" id="add_user_form" tabindex="-1" role="dialog"-->
+<#--                             aria-labelledby="add_Label" aria-hidden="true">-->
+<#--                            <div class="modal-dialog" role="document">-->
+<#--                                <div class="modal-content">-->
+<#--                                    <div class="modal-header">-->
+<#--                                        <b>Добавление ссылки</b>-->
+<#--                                        <button type="button" class="close" title="Закрыть" data-dismiss="modal"-->
+<#--                                                aria-label="Close">-->
+<#--                                            <span aria-hidden="true">&times;</span>-->
+<#--                                        </button>-->
+<#--                                    </div>-->
+<#--                                    <div class="modal-body">-->
+<#--                                        <form method="post" name="userRef" action="reference/add/${user.uid}">-->
+<#--                                            <input type="hidden" name="_csrf" value="${_csrf.token}"/>-->
+<#--                                            <div class="form-group">-->
+<#--                                                <label for="add_nameInput">Название:</label>-->
+<#--                                                <input type="text" name="name" class="form-control" id="add_nameInput"-->
+<#--                                                       placeholder="Название">-->
+<#--                                            </div>-->
+<#--                                            <div class="form-group">-->
+<#--                                                <label for="add_urlInput">Ссылка:</label>-->
+<#--                                                <input type="url" name="url" required class="form-control"-->
+<#--                                                       id="add_urlInput"-->
+<#--                                                       placeholder="Ссылка">-->
+<#--                                            </div>-->
+<#--                                            <div class="form-group">-->
+<#--                                                <label for="add_descriptionInput">Описание:</label>-->
+<#--                                                <input type="text" name="description" class="form-control"-->
+<#--                                                       id="add_descriptionInput"-->
+<#--                                                       placeholder="Описание">-->
+<#--                                            </div>-->
+<#--                                            <div class="form-group">-->
+<#--                                                <label for="add_refTypeInput">Тип:</label>-->
+<#--                                                <select class="form-control" name="uidReferenceType"-->
+<#--                                                        id="add_refTypeInput">-->
+<#--                                                    <option value="0" selected>текст</option>-->
+<#--                                                    <option value="1">видео</option>-->
+<#--                                                    <option value="2">файл</option>-->
+<#--                                                    <option value="3">картинка</option>-->
+<#--                                                </select>-->
+<#--                                            </div>-->
+<#--                                            <div class="form-group">-->
+<#--                                                <label for="add_tagInput">Теги:</label>-->
+<#--                                                <input type="text" name="tag" class="form-control" id="add_tagInput"-->
+<#--                                                       placeholder="Тэг">-->
+<#--                                            </div>-->
+<#--                                            <div class="form-group">-->
+<#--                                                <label for="add_accessLevelInput">Уровень доступа:</label>-->
+<#--                                                <select class="form-control" name="uidAccessLevel"-->
+<#--                                                        id="add_accessLevelInput">-->
+<#--                                                    <option value="0" selected>публичная</option>-->
+<#--                                                    <option value="1">личная</option>-->
+<#--                                                </select>-->
+<#--                                            </div>-->
+<#--                                            <input type="submit" class="btn btn-success btn-sm" value="Добавить">-->
+<#--                                        </form>-->
+<#--                                    </div>-->
+<#--                                </div>-->
+<#--                            </div>-->
+<#--                        </div>-->
 
                         <!-- Button trigger modal SendToFriend Отправить другу...-->
-                        <button type="button" title="Отправить ссылку" class="btn btn-info btn-sm"
-                                data-toggle="modal"
-                                data-target="#send_user_form">
-                            Отправить новую ссылку другу
-                        </button>
-                        <!-- Modal SendToFriend -->
-                        <div class="modal fade" id="send_user_form" tabindex="-1" role="dialog"
-                             aria-labelledby="add_Label" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <b>Отправить ссылку</b>
-                                        <button type="button" class="close" title="Закрыть" data-dismiss="modal"
-                                                aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form method="post" name="userRef" action="reference/send-new">
-                                            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-                                            <div class="form-group">
-                                                <label for="${user.uid}ReceiverInput">Кому:</label>
-                                                <select class="form-control"
-                                                        name="receiver"
-                                                        id="${user.uid}receiver">
-                                                    <#if listFriends??>
-                                                        <#list listFriends as friend>
-                                                            <option value="${friend.username}"
-                                                            <a href="../friend?idFriend=${friend.uid}">
-                                                                ${friend.username}
-                                                            </a>
-                                                            </option>
-                                                        </#list>
-                                                    </#if>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="${user.uid}descriptionInput">Комментарий:</label>
-                                                <input type="text" name="text"
-                                                       class="form-control"
-                                                       id="${user.uid}textInput"
-                                                       placeholder="Комментарий">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="add_nameInput">Название:</label>
-                                                <input type="text" name="name" class="form-control"
-                                                       id="add_nameInput"
-                                                       placeholder="Название">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="add_urlInput">Ссылка:</label>
-                                                <input type="url" name="url" class="form-control"
-                                                       id="add_urlInput"
-                                                       placeholder="Ссылка">
-                                            </div>
-                                            <#--                                            <div class="form-group">-->
-                                            <#--                                                <label for="add_refTypeInput">Тип:</label>-->
-                                            <#--                                                <select class="form-control" name="uidReferenceType"-->
-                                            <#--                                                        id="add_refTypeInput">-->
-                                            <#--                                                    <option value="0" selected>текст</option>-->
-                                            <#--                                                    <option value="1">видео</option>-->
-                                            <#--                                                    <option value="2">файл</option>-->
-                                            <#--                                                    <option value="3">картинка</option>-->
-                                            <#--                                                </select>-->
-                                            <#--                                            </div>-->
-                                            <div class="form-group">
-                                                <label for="add_tagInput">Теги:</label>
-                                                <input type="text" name="tag" class="form-control"
-                                                       id="add_tagInput"
-                                                       placeholder="Тэг">
-                                            </div>
-                                            <input type="submit" class="btn btn-info btn-sm" value="Отправить">
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<#--                        <button type="button" title="Отправить ссылку" class="btn btn-info btn-sm"-->
+<#--                                data-toggle="modal"-->
+<#--                                data-target="#send_user_form">-->
+<#--                            Отправить новую ссылку другу-->
+<#--                        </button>-->
+<#--                        <!-- Modal SendToFriend &ndash;&gt;-->
+<#--                        <div class="modal fade" id="send_user_form" tabindex="-1" role="dialog"-->
+<#--                             aria-labelledby="add_Label" aria-hidden="true">-->
+<#--                            <div class="modal-dialog" role="document">-->
+<#--                                <div class="modal-content">-->
+<#--                                    <div class="modal-header">-->
+<#--                                        <b>Отправить ссылку</b>-->
+<#--                                        <button type="button" class="close" title="Закрыть" data-dismiss="modal"-->
+<#--                                                aria-label="Close">-->
+<#--                                            <span aria-hidden="true">&times;</span>-->
+<#--                                        </button>-->
+<#--                                    </div>-->
+<#--                                    <div class="modal-body">-->
+<#--                                        <form method="post" name="userRef" action="reference/send-new">-->
+<#--                                            <input type="hidden" name="_csrf" value="${_csrf.token}"/>-->
+<#--                                            <div class="form-group">-->
+<#--                                                <label for="${user.uid}ReceiverInput">Кому:</label>-->
+<#--                                                <select class="form-control"-->
+<#--                                                        name="receiver"-->
+<#--                                                        id="${user.uid}receiver">-->
+<#--                                                    <#if listFriends??>-->
+<#--                                                        <#list listFriends as friend>-->
+<#--                                                            <option value="${friend.username}"-->
+<#--                                                            <a href="../friend?idFriend=${friend.uid}">-->
+<#--                                                                ${friend.username}-->
+<#--                                                            </a>-->
+<#--                                                            </option>-->
+<#--                                                        </#list>-->
+<#--                                                    </#if>-->
+<#--                                                </select>-->
+<#--                                            </div>-->
+<#--                                            <div class="form-group">-->
+<#--                                                <label for="${user.uid}descriptionInput">Комментарий:</label>-->
+<#--                                                <input type="text" name="text"-->
+<#--                                                       class="form-control"-->
+<#--                                                       id="${user.uid}textInput"-->
+<#--                                                       placeholder="Комментарий">-->
+<#--                                            </div>-->
+<#--                                            <div class="form-group">-->
+<#--                                                <label for="add_nameInput">Название:</label>-->
+<#--                                                <input type="text" name="name" class="form-control"-->
+<#--                                                       id="add_nameInput"-->
+<#--                                                       placeholder="Название">-->
+<#--                                            </div>-->
+<#--                                            <div class="form-group">-->
+<#--                                                <label for="add_urlInput">Ссылка:</label>-->
+<#--                                                <input type="url" name="url" class="form-control"-->
+<#--                                                       id="add_urlInput"-->
+<#--                                                       placeholder="Ссылка">-->
+<#--                                            </div>-->
+<#--                                            <div class="form-group">-->
+<#--                                                <label for="add_refTypeInput">Тип:</label>-->
+<#--                                                <select class="form-control" name="uidReferenceType"-->
+<#--                                                        id="add_refTypeInput">-->
+<#--                                                    <option value="0" selected>текст</option>-->
+<#--                                                    <option value="1">видео</option>-->
+<#--                                                    <option value="2">файл</option>-->
+<#--                                                    <option value="3">картинка</option>-->
+<#--                                                </select>-->
+<#--                                            </div>-->
+<#--                                            <div class="form-group">-->
+<#--                                                <label for="add_tagInput">Теги:</label>-->
+<#--                                                <input type="text" name="tag" class="form-control"-->
+<#--                                                       id="add_tagInput"-->
+<#--                                                       placeholder="Тэг">-->
+<#--                                            </div>-->
+<#--                                            <input type="submit" class="btn btn-info btn-sm" value="Отправить">-->
+<#--                                        </form>-->
+<#--                                    </div>-->
+<#--                                </div>-->
+<#--                            </div>-->
+<#--                        </div>-->
+<#--                    </div>-->
+<#--                </div>-->
                 <#if page??>
                 <#if page.content?size !=0 >
                 <div class="container">
@@ -313,7 +313,9 @@
                                         <td> <#if userRef.name??><a href="${userRef.reference.url}">${userRef.name}</a>
                                                 <br><#else><a
                                                 href="${userRef.reference.url}">${userRef.reference.url}<br></a></#if>
-                                            <#if userRef.tag??>Теги: <#list userRef.tag as userRefTag><a class="text-"href="../searchResult?search=%23${userRefTag.name}&area=notAll">#${userRefTag.name} </a></#list><br></#if>
+                                            <#if userRef.tag??>Теги: <#list userRef.tag as userRefTag><a class="text-"
+                                                                                                         href="../searchResult?search=%23${userRefTag.name}&area=notAll">
+                                                #${userRefTag.name} </a></#list><br></#if>
 
                                             <div class="btn-toolbar mr-4" role="toolbar"
                                                  aria-label="Toolbar with button groups">
@@ -321,7 +323,7 @@
                                                     <div class="btn-group mr-2" role="group" aria-label="Edit">
                                                         <!-- Button trigger modal Edit Изменить...-->
 
-                                                        <button type="submit" class="btn btn-success btn-sm"
+                                                        <button type="submit" class="btn btn-info btn-sm"
                                                                 data-toggle="modal"
                                                                 data-target="#edit_${userRef.uid}">
                                                 <span class="iconify" data-icon="mdi:circle-edit-outline"
@@ -330,7 +332,7 @@
                                                     <div class="btn-group mr-2" role="group" aria-label="Delete">
                                                         <!-- Button Delete Удалить...-->
                                                         <form method="get" action="reference/delete/${userRef.uid}">
-                                                            <button class="btn btn btn-danger btn-sm" type="submit"
+                                                            <button class="btn btn btn-secondary btn-sm" type="submit"
                                                                     name="Delete"
                                                                     value="Удалить">
                                                     <span class="iconify" data-icon="mdi:delete-circle-outline"
@@ -373,10 +375,14 @@
                                                 <div class="card card-body">
                                                     <div class="body">
                                                         <a href="${userRef.reference.url}">${userRef.reference.url}</a><br>
-                                                        <#if userRef.tag??><b>Теги</b>: <#list userRef.tag as userRefTag><a class="text-"
-                                                                                                                            href="../searchResult?search=%23${userRefTag.name}&area=notAll">#${userRefTag.name} </a></#list><br></#if>
+                                                        <#if userRef.tag??>
+                                                            <b>Теги</b>: <#list userRef.tag as userRefTag><a
+                                                            class="text-"
+                                                            href="../searchResult?search=%23${userRefTag.name}&area=notAll">
+                                                            #${userRefTag.name} </a></#list><br></#if>
                                                         <#if userRef.source??><b>Источник</b>: <a
-                                                                href="http://${userRef.source}">${userRef.source}</a><br></#if>
+                                                                href="http://${userRef.source}">${userRef.source}</a>
+                                                            <br></#if>
                                                         <#if userRef.additionDate??><b>Дата
                                                             добавления</b>: ${(userRef.additionDate).format('yyyy-MM-dd HH:mm:ss')}
                                                             <br></#if>
