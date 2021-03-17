@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet
+            id="table-data-user-info"
+            author="p.gaiduk"
+            logicalFilePath="table-data-user-info.xml"
+    >
+        <loadUpdateData catalogName="catalog"
+                        encoding="UTF-8"
+                        file="user_info.csv"
+                        relativeToChangelogFile="true"
+                        quotchar="'"
+                        schemaName="public"
+                        separator=";"
+                        tableName="user_info"
+                        primaryKey="uid">
+
+            <column name="uid" type="UUID" />
+            <column name="uid_user" type="NUMERIC"/>
+            <column name="name" type="STRING"/>
+            <column name="surname" type="STRING"/>
+            <column name="age" type="NUMERIC"/>
+            <column name="sex" type="NUMERIC"/>
+            <column name="birth_date" type="DATE"/>
+            <column name="avatar" type="BLOB"/>
+            <column name="chat_id" type="NUMERIC"/>
+
+        </loadUpdateData>
+
+    </changeSet>
+
+</databaseChangeLog>

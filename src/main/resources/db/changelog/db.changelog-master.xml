@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+        logicalFilePath="">
+    <include file="db/changelog/db.changelog-1.0.sql" relativeToChangelogFile="false"/>
+    <include file="table-data-usercreds.xml" relativeToChangelogFile="true"/>
+    <include file="table-data-user-info.xml" relativeToChangelogFile="true"/>
+    <include file="table-data-friends.xml" relativeToChangelogFile="true"/>
+    <include file="table-data-friendship-request.xml" relativeToChangelogFile="true"/>
+    <include file="table-data-refs.xml" relativeToChangelogFile="true"/>
+    <include file="table-data-ref-description.xml" relativeToChangelogFile="true"/>
+    <include file="table-data-private-message.xml" relativeToChangelogFile="true"/>
+    <include file="table-data-tags.xml" relativeToChangelogFile="true"/>
+    <include file="table-data-tags-refs.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>

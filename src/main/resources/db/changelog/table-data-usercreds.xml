@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet
+            id="table-data-usercreds"
+            author="p.gaiduk"
+            logicalFilePath="table-data-usercreds.xml"
+    >
+        <loadUpdateData catalogName="catalog"
+                        encoding="UTF-8"
+                        file="usercreds.csv"
+                        relativeToChangelogFile="true"
+                        quotchar="'"
+                        schemaName="public"
+                        separator=";"
+                        tableName="usercreds"
+                        primaryKey="uid">
+
+            <column name="uid" type="UUID" />
+            <column name="role_uid" type="NUMERIC"/>
+            <column name="username" type="STRING"/>
+            <column name="password" type="STRING"/>
+            <column name="active" type="BOOLEAN"/>
+            <column name="email" type="STRING"/>
+            <column name="date_registration" type="DATE"/>
+
+        </loadUpdateData>
+
+    </changeSet>
+
+</databaseChangeLog>

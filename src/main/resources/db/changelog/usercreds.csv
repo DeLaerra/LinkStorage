@@ -1,0 +1,4 @@
+uid;role_uid;username;password;active;email;date_registration
+1;0;ivan96;$2a$12$EMcKHSSOUkUL7BwEUTinoufFJw6fcj9iIFifwJggP/CJTpS6Ej6Mi;true;iv96@mail.ru;2020-08-17
+0;0;storage;$2a$12$pyPTjny4kMOjEAyoPaM5R.VRZVwjvpTemDmGeteBkDqWeUpBtu/Em;true;storage@mm.ru;2020-08-17
+98;0;destroyer18;$2a$12$QbGwXGD5OUVePYjfM6VYke9lrcbKiMOlB3LGJvNf9skTj0GWLZxWW;true;destroyer@yandex.ru;2020-08-17

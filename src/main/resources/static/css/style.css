@@ -1,0 +1,62 @@
+body {
+
+}
+
+hr {
+    border: none;
+    height: 1px;
+    color: #333333;
+    background-color: #333333;
+}
+.container {
+    width: 80%;
+}
+/*.page-top {*/
+/*    margin-top: -70px;*/
+/*}*/
+
+.navbar {
+    margin-bottom: 20px;
+}
+
+.box {
+    border: 1px solid red;
+}
+
+.home-headline {
+    font-family: 'Times New Roman', Times, serif;
+    font-size:24px;
+    color: #fff;
+    margin: auto;
+    text-align: center;
+    margin-top: -13px;
+
+}
+.courier {
+    font-family: 'courier';
+    font-size:34px;
+    font-weight: 600;
+    color: #4195ef;
+    position: absolute; /* Абсолютное позиционирование */
+    bottom: 450px; /* Положение от нижнего края */
+    right: 680px; /* Положение от правого края */
+
+}
+
+.home-headline span {
+    background-color: #222222;
+    padding: 5px 22px;
+}
+
+.section-headline {
+    font-family: 'Times New Roman', Times, serif;
+    font-size:24px;
+    color: #fff;
+    margin: auto;
+    text-align: center;
+    margin-top: 90px;
+}
+.section-headline span {
+    background-color: #222222;
+    padding: 5px 22px;
+}
